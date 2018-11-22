@@ -1,16 +1,5 @@
 # How to contribute
 
-This project is due to the 'Projektwoche' at THM in SoSe 18, from May 28th until June 1st. If you want to contribute, 
-please contact one of our team members. 
-
-> For contact information, see [AUTHORS.md](AUTHORS.md)
-
-## Horizon
-
-This project is meant to build a ebay-like clone. A seller will be able to sell products via an auction, which 
-customers are able to place bids on.
-
-For more information, see our [README.md](README.md).
 
 ## Getting Started
 
@@ -29,8 +18,6 @@ For more information, see our [README.md](README.md).
 * Check for unnecessary whitespaces with `git diff --check` before commiting.
 * Create tests for your changes, if possible (yes, it takes time, it is annoying, but also it is **necassary**)
 * Run *all* tests to assure nothing else was accidentally broken.
-* When creating new components/services/guards/interceptors/..., please stick to the conventions named in our 
-[Wiki](https://git.thm.de/ekpf11/wbs-projekt/wikis/Angular-Conventions)
 
 ## Submitting Changes
 
