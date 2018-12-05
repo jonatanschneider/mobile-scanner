@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "documents": {
+      "$documentId": {
+        ".read": "data.child('owner').val() == auth.uid || data.child('users').hasChild(auth.uid)",
+        ".write": "data.child('owner').val() == auth.uid || data.child('users').hasChild(auth.uid)"
+      }
+    },
+    "users": {
+      ".read": "auth !== null",
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    }
+  }
+}
