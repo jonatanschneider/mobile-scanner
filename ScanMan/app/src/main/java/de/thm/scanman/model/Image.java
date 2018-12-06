@@ -2,13 +2,13 @@ package de.thm.scanman.model;
 
 public class Image {
     private String file;
-    private String timestamp;
+    private String createdAt;
 
     public Image() { }
 
-    public Image(String file, String timestamp) {
+    public Image(String file, String createdAt) {
         this.file = file;
-        this.timestamp = timestamp;
+        this.createdAt = createdAt;
     }
 
     public String getFile() {
@@ -19,16 +19,16 @@ public class Image {
         this.file = file;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
-        return file + ", Created At: " + timestamp;
+        return file + ", Created At: " + createdAt;
     }
 }
