@@ -3,6 +3,7 @@ package de.thm.scanman.model;
 import java.util.List;
 
 public class Document {
+    private String id;
     private String name;
     private List<String> tags;
     private List<Image> images;
@@ -10,9 +11,7 @@ public class Document {
     private User owner;
     private List<User> users;
 
-    public Document() {
-
-    }
+    public Document() { }
 
     public Document(String name, List<String> tags, List<Image> images, String createdAt, User owner, List<User> users) {
         this.name = name;
@@ -21,6 +20,14 @@ public class Document {
         this.createdAt = createdAt;
         this.owner = owner;
         this.users = users;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -70,4 +77,6 @@ public class Document {
     public void setUsers(List<User> users) {
         this.users = users;
     }
+
+
 }
