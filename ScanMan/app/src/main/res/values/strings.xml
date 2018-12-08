@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ScanMan</string>
+    <string name="settings">Einstellungen</string>
 </resources>
