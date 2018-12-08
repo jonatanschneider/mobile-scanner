@@ -60,6 +60,20 @@ public class User {
 
     @Override
     public String toString() {
-        return name + " - " + mail;
+        StringBuilder sb = new StringBuilder();
+        sb.append("User: ")
+                .append(id).append(" - ")
+                .append(name).append(" - ")
+                .append(mail).append("\n");
+
+        sb.append("Created Documents: \n");
+        createdDocuments.forEach(d -> sb.append("\t")
+                .append(d.toString()).append("\n"));
+
+        sb.append("Documents shared with User: \n");
+        sharedDocuments.forEach(d -> sb.append("\t")
+                .append(d.toString()).append("\n"));
+
+        return sb.toString();
     }
 }
