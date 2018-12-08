@@ -11,10 +11,11 @@ public class User {
 
     public User() {}
 
-    public User(String name, String mail, List<Document> createdDocuments) {
+    public User(String name, String mail, List<Document> createdDocuments, List<Document> sharedDocuments) {
         this.name = name;
         this.mail = mail;
         this.createdDocuments = createdDocuments;
+        this.sharedDocuments = sharedDocuments;
     }
 
     public String getId() {
