@@ -78,5 +78,28 @@ public class Document {
         this.users = users;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Document: ")
+                .append(id).append(" - ")
+                .append(name).append(" - ")
+                .append("Owner: ").append(owner).append(" - ")
+                .append("Created At: ").append(createdAt).append("\n");
+
+        sb.append("Images: \n");
+        images.forEach(i -> sb.append("\t")
+                .append(i.toString()).append("\n"));
+
+        sb.append("Shared With: \n");
+        users.forEach(u -> sb.append("\t")
+                .append(u.toString()).append("\n"));
+
+        sb.append("Tags: \n");
+        tags.forEach(t -> sb.append(t).append(","));
+
+        return sb.toString();
+    }
+
 
 }

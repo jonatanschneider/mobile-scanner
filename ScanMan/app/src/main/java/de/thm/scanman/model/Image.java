@@ -38,6 +38,6 @@ public class Image {
 
     @Override
     public String toString() {
-        return file + ", Created At: " + createdAt;
+        return "File: " + id + " - " + file + " - " + "Created At: " + createdAt;
     }
 }
