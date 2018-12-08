@@ -6,15 +6,15 @@ public class User {
     private String id;
     private String name;
     private String mail;
-    private List<Document> documents;
+    private List<Document> createdDocuments;
     private List<Document> sharedDocuments;
 
     public User() {}
 
-    public User(String name, String mail, List<Document> documents) {
+    public User(String name, String mail, List<Document> createdDocuments) {
         this.name = name;
         this.mail = mail;
-        this.documents = documents;
+        this.createdDocuments = createdDocuments;
     }
 
     public String getId() {
@@ -41,12 +41,12 @@ public class User {
         this.mail = mail;
     }
 
-    public List<Document> getDocuments() {
-        return documents;
+    public List<Document> getCreatedDocuments() {
+        return createdDocuments;
     }
 
-    public void setDocuments(List<Document> documents) {
-        this.documents = documents;
+    public void setCreatedDocuments(List<Document> createdDocuments) {
+        this.createdDocuments = createdDocuments;
     }
 
     public List<Document> getSharedDocuments() {
