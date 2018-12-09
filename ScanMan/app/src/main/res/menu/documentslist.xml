@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".RecordsActivity">
+
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_menu_search_48dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/search"/>
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_menu_sort_48dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/sort"/>
+
+    <item
+        android:id="@+id/action_stats"
+        app:showAsAction="never"
+        android:title="@string/stats"/>
+    <item
+        android:id="@+id/action_settings"
+        app:showAsAction="never"
+        android:title="@string/settings"/>
+
+</menu>
