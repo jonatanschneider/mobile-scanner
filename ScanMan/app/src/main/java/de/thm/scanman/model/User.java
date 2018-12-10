@@ -1,19 +1,22 @@
 package de.thm.scanman.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class User {
     private String id;
     private String name;
     private String mail;
+    private Date createdAt;
     private List<Document> createdDocuments;
     private List<Document> sharedDocuments;
 
     public User() {}
 
-    public User(String name, String mail, List<Document> createdDocuments, List<Document> sharedDocuments) {
+    public User(String name, String mail, Date createdAt, List<Document> createdDocuments, List<Document> sharedDocuments) {
         this.name = name;
         this.mail = mail;
+        this.createdAt = createdAt;
         this.createdDocuments = createdDocuments;
         this.sharedDocuments = sharedDocuments;
     }
@@ -40,6 +43,14 @@ public class User {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public List<Document> getCreatedDocuments() {
