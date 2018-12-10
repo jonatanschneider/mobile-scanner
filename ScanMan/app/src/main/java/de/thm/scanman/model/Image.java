@@ -1,13 +1,15 @@
 package de.thm.scanman.model;
 
+import java.util.Date;
+
 public class Image {
     private String id;
     private String file;
-    private String createdAt;
+    private Date createdAt;
 
     public Image() { }
 
-    public Image(String file, String createdAt) {
+    public Image(String file, Date createdAt) {
         this.file = file;
         this.createdAt = createdAt;
     }
@@ -28,16 +30,16 @@ public class Image {
         this.file = file;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
-        return "File: " + id + " - " + file + " - " + "Created At: " + createdAt;
+        return "File: " + id + " - " + file + " - " + "Created At: " + createdAt.toString();
     }
 }
