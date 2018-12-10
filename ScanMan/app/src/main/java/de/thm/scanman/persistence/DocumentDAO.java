@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import com.google.firebase.database.DatabaseReference;
 
 import de.thm.scanman.model.Document;
+import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
 
