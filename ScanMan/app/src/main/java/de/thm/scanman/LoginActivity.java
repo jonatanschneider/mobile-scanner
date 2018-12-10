@@ -100,8 +100,6 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Actually make the login request based on the credentials validated before and adjust the ui
      * accordingly
-     * @param email
-     * @param password
      */
     private void makeLogin(String email, String password) {
         // Show a progress spinner, and kick off a background task to
@@ -134,6 +132,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        // Create no backstack history so a logged in user doesn't get back to the login screen
+        // when trying to close the app
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
