@@ -74,27 +74,27 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailView.getText().toString();
         String password = passwordView.getText().toString();
 
-        boolean cancel = false;
+        boolean isValid = true;
         View focusView = null;
 
         if (!isPasswordValid(password)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
-            cancel = true;
+            isValid = false;
         }
 
         if (!isEmailValid(email)) {
             emailView.setError(getString(R.string.error_invalid_email));
             focusView = emailView;
-            cancel = true;
+            isValid = false;
         }
 
-        if (cancel) {
+        if (isValid) {
+            makeLogin(email, password);
+        } else {
             // There was an error; don't attempt login and focus the first
             // form field with an error
             focusView.requestFocus();
-        } else {
-            makeLogin(email, password);
         }
     }
 
