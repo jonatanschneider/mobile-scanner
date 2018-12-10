@@ -38,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         if (auth.getCurrentUser() != null) {
             // Show main activity when user is already logged in
             // TODO: extract string resource
-            // TODO: remove LoginActivity from back stack
             Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show();
             startMainActivity();
         }
@@ -137,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
