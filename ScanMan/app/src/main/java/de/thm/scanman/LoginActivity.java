@@ -34,13 +34,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
+        startMainActivityIfAlreadyLoggedIn();
 
-        if (auth.getCurrentUser() != null) {
-            // Show main activity when user is already logged in
-            Toast.makeText(this, R.string.login_welcome_back, Toast.LENGTH_SHORT).show();
-            startMainActivity();
-        }
+        setupView();
+    }
 
+    private void setupView() {
         emailView = findViewById(R.id.email);
 
         passwordView = findViewById(R.id.password);
@@ -57,6 +56,17 @@ public class LoginActivity extends AppCompatActivity {
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
+    }
+
+    /**
+     * When the user is already logged in (session stored from previous app usage) skip the login
+     * form and navigate directly to the main activity
+     */
+    private void startMainActivityIfAlreadyLoggedIn() {
+        if (auth.getCurrentUser() != null) {
+            Toast.makeText(this, R.string.login_welcome_back, Toast.LENGTH_SHORT).show();
+            startMainActivity();
+        }
     }
 
     /**
