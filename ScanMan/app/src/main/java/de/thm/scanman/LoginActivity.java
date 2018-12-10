@@ -33,8 +33,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // TODO: check if user is already logged in
         auth = FirebaseAuth.getInstance();
+
+        if (auth.getCurrentUser() != null) {
+            // Show main activity when user is already logged in
+            // TODO: extract string resource
+            // TODO: remove LoginActivity from back stack
+            Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show();
+            startMainActivity();
+        }
 
         emailView = findViewById(R.id.email);
 
@@ -108,11 +115,11 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, start main activity
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        startMainActivity();
                     } else {
                         // If sign in fails, show the form and an error message
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        // TODO: extract string resource
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
                         showProgress(false);
@@ -126,6 +133,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         return !TextUtils.isEmpty(password);
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**
