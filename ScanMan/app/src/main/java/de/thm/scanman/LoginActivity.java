@@ -37,8 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (auth.getCurrentUser() != null) {
             // Show main activity when user is already logged in
-            // TODO: extract string resource
-            Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.login_welcome_back, Toast.LENGTH_SHORT).show();
             startMainActivity();
         }
 
@@ -118,8 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, show the form and an error message
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        // TODO: extract string resource
-                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                        Toast.makeText(LoginActivity.this, R.string.login_failed,
                                 Toast.LENGTH_SHORT).show();
                         showProgress(false);
                     }
