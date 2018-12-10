@@ -42,32 +42,31 @@ public class UserLiveData extends LiveData<User> {
 
             GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
 
-            ScanmanLiveData liveDataCreatedDocuments = new ScanmanLiveData(FirebaseDatabase.createdDocsRef.child(userId));
-            liveDataCreatedDocuments.observe(owner, ds -> {
-                Log.e("LiveData2", "" + ds);
-                List<String> ids = null;
-                if (ds.getValue() != null) {
-                    ids = ds.getValue(t);
+            ScanmanLiveData createdDocumentsLiveData = new ScanmanLiveData(FirebaseDatabase.createdDocsRef.child(userId));
+            createdDocumentsLiveData.observe(owner, snapshot -> {
+                List<String> ids;
+                if (snapshot.getValue() != null) {
+                    ids = snapshot.getValue(t);
 
                     ids.forEach(id -> {
-                        database.documentDAO.get(id, owner).observe(owner, doc -> {
-                            Log.e("LiveData Document", "" + doc);
-                            createdDocuments.add(doc);
+                        database.documentDAO.get(id, owner).observe(owner, document -> {
+                            Log.e("LiveData Document", "" + document);
+                            createdDocuments.add(document);
                         });
                     });
                 }
             });
 
-            ScanmanLiveData liveDataSharedDocuments = new ScanmanLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
-            liveDataSharedDocuments.observe(owner, ds -> {
-                Log.e("LiveData2", "" + ds);
+            ScanmanLiveData sharedDocumentsLiveData = new ScanmanLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
+            sharedDocumentsLiveData.observe(owner, snapshot -> {
+                Log.e("LiveData2", "" + snapshot);
                 sharedDocumentIds.clear();
-                if (ds.getValue() != null) {
-                    sharedDocumentIds.addAll(ds.getValue(t));
+                if (snapshot.getValue() != null) {
+                    sharedDocumentIds.addAll(snapshot.getValue(t));
                     sharedDocumentIds.forEach(id -> {
-                        database.documentDAO.get(id, owner).observe(owner, temp -> {
-                            Log.e("LiveData Document", temp.toString());
-                            sharedDocuments.add(temp);
+                        database.documentDAO.get(id, owner).observe(owner, document -> {
+                            Log.e("LiveData Document", document.toString());
+                            sharedDocuments.add(document);
                         });
                     });
                 }
