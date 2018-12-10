@@ -1,5 +1,6 @@
 package de.thm.scanman.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class Document {
@@ -7,13 +8,13 @@ public class Document {
     private String name;
     private List<String> tags;
     private List<Image> images;
-    private String createdAt;
+    private Date createdAt;
     private User owner;
     private List<User> users;
 
     public Document() { }
 
-    public Document(String name, List<String> tags, List<Image> images, String createdAt, User owner, List<User> users) {
+    public Document(String name, List<String> tags, List<Image> images, Date createdAt, User owner, List<User> users) {
         this.name = name;
         this.tags = tags;
         this.images = images;
@@ -54,11 +55,11 @@ public class Document {
         this.images = images;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -85,7 +86,7 @@ public class Document {
                 .append(id).append(" - ")
                 .append(name).append(" - ")
                 .append("Owner: ").append(owner).append(" - ")
-                .append("Created At: ").append(createdAt).append("\n");
+                .append("Created At: ").append(createdAt.toString()).append("\n");
 
         sb.append("Images: \n");
         images.forEach(i -> sb.append("\t")
