@@ -13,4 +13,6 @@
     <string name="action_sign_in">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is invalid</string>
+    <string name="login_welcome_back">Welcome back!</string>
+    <string name="login_failed">Authentication failed.</string>
 </resources>
