@@ -16,7 +16,6 @@ import java.util.List;
 
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
-import de.thm.scanman.persistence.DocumentDAO;
 import de.thm.scanman.persistence.FirebaseDatabase;
 
 public class UserLiveData extends LiveData<User> {
@@ -30,6 +29,7 @@ public class UserLiveData extends LiveData<User> {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            FirebaseDatabase database = new FirebaseDatabase();
             Log.e("LiveData", "" + dataSnapshot);
             User user = dataSnapshot.getValue(User.class);
             user.setId(dataSnapshot.getKey());
@@ -39,7 +39,6 @@ public class UserLiveData extends LiveData<User> {
             List<Document> sharedDocuments = new ArrayList<>();
 
             List<String> sharedDocumentIds = new ArrayList<>();
-            DocumentDAO documentDAO = new DocumentDAO();
 
             GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
 
@@ -51,7 +50,7 @@ public class UserLiveData extends LiveData<User> {
                     ids = ds.getValue(t);
 
                     ids.forEach(id -> {
-                        documentDAO.get(id, owner).observe(owner, doc -> {
+                        database.documentDAO.get(id, owner).observe(owner, doc -> {
                             Log.e("LiveData Document", "" + doc);
                             createdDocuments.add(doc);
                         });
@@ -66,7 +65,7 @@ public class UserLiveData extends LiveData<User> {
                 if (ds.getValue() != null) {
                     sharedDocumentIds.addAll(ds.getValue(t));
                     sharedDocumentIds.forEach(id -> {
-                        documentDAO.get(id, owner).observe(owner, temp -> {
+                        database.documentDAO.get(id, owner).observe(owner, temp -> {
                             Log.e("LiveData Document", temp.toString());
                             sharedDocuments.add(temp);
                         });
