@@ -1,4 +1,4 @@
-package de.thm.scanman.persistence;
+package de.thm.scanman.persistence.liveData;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
@@ -16,6 +16,8 @@ import java.util.List;
 
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
+import de.thm.scanman.persistence.DocumentDAO;
+import de.thm.scanman.persistence.FirebaseDatabase;
 
 public class UserLiveData extends LiveData<User> {
     private Query query;
@@ -39,8 +41,7 @@ public class UserLiveData extends LiveData<User> {
             List<String> sharedDocumentIds = new ArrayList<>();
             DocumentDAO documentDAO = new DocumentDAO();
 
-            GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {
-            };
+            GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
 
             ScanmanLiveData liveDataCreatedDocuments = new ScanmanLiveData(FirebaseDatabase.createdDocsRef.child(userId));
             liveDataCreatedDocuments.observe(owner, ds -> {

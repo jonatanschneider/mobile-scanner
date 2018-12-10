@@ -1,4 +1,4 @@
-package de.thm.scanman.persistence;
+package de.thm.scanman.persistence.liveData;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
