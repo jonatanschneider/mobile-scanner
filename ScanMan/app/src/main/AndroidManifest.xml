@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name=".MainActivity">
+=======
+        <activity android:name=".DocumentsListActivity">
+>>>>>>> 7739e139e32ba52345f8bf438673400f6c078a4c
         </activity>
         <activity
             android:name=".LoginActivity"
