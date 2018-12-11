@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">ScanMan</string>
+    <string name="no_documents">Keine Dokumente</string>
+    <string name="search">Dokument suchen</string>
+    <string name="stats">Statistik</string>
+    <string name="settings">Einstellungen</string>
+    <string name="sort">Dokumente sortieren</string>
 
     <!-- Login -->
     <string name="title_activity_login">Sign in</string>
