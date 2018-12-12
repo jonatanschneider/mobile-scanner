@@ -1,5 +1,6 @@
 package de.thm.scanman.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,10 @@ public class Document {
     private User owner;
     private List<User> users;
 
-    public Document() { }
+    public Document() {
+        users = new ArrayList<>();
+        tags = new ArrayList<>();
+    }
 
     public Document(String name, List<String> tags, List<Image> images, Date createdAt, User owner, List<User> users) {
         this.name = name;
