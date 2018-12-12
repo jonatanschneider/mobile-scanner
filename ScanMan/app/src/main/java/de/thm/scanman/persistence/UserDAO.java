@@ -28,6 +28,8 @@ public class UserDAO {
 
     public LiveData<User> get(String userId, LifecycleOwner owner) {
         return new UserLiveData(FirebaseDatabase.usersRef.child(userId), userId, owner);
+    public LiveData<User> getInfo(String userId, LifecycleOwner owner) {
+        return new UserLiveData(FirebaseDatabase.usersRef.child(userId));
     }
 
     public void update(User user) {
