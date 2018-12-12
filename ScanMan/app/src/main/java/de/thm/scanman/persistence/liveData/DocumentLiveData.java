@@ -10,20 +10,29 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.thm.scanman.model.Document;
 
-public class DocumentLiveData extends LiveData<Document> {
+public class DocumentLiveData extends LiveData<List<Document>> {
     private Query query;
     private LifecycleOwner owner;
     private final UserListener userListener = new UserListener();
+    private List<Document> documentList = new ArrayList<>();
 
     private class UserListener implements ValueEventListener {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            Document document = dataSnapshot.getValue(Document.class);
-            document.setId(dataSnapshot.getKey());
-            setValue(document);
+            Iterable<DataSnapshot> it = dataSnapshot.getChildren();
+            documentList.clear();
+            for(DataSnapshot ds: it) {
+                Document document = ds.getValue(Document.class);
+                document.setId(ds.getKey());
+                documentList.add(document);
+            }
+            setValue(documentList);
         }
 
         @Override
