@@ -1,5 +1,6 @@
 package de.thm.scanman.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,10 @@ public class User {
     private List<Document> createdDocuments;
     private List<Document> sharedDocuments;
 
-    public User() {}
+    public User() {
+        createdDocuments = new ArrayList<>();
+        sharedDocuments = new ArrayList<>();
+    }
 
     public User(String name, String mail, Date createdAt, List<Document> createdDocuments, List<Document> sharedDocuments) {
         this.name = name;
