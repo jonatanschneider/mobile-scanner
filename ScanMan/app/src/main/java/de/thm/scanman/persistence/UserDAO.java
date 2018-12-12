@@ -2,6 +2,8 @@ package de.thm.scanman.persistence;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Transformations;
 
 import com.google.firebase.database.DatabaseReference;
 
@@ -26,8 +28,28 @@ public class UserDAO {
         documentDAO.addCreatedDocuments(user, createdDocuments);
     }
 
+
     public LiveData<User> get(String userId, LifecycleOwner owner) {
-        return new UserLiveData(FirebaseDatabase.usersRef.child(userId), userId, owner);
+        DocumentDAO documentDAO = new DocumentDAO();
+        LiveData<List<Document>> createdDocuments = documentDAO.get(FirebaseDatabase.createdDocsRef.child(userId), owner);
+        LiveData<List<Document>> sharedDocuments = documentDAO.get(FirebaseDatabase.sharedDocsRef.child(userId), owner);
+
+        return Transformations.switchMap(getInfo(userId, owner), user -> {
+            MediatorLiveData<User> mediator = new MediatorLiveData<>();
+            mediator.addSource(createdDocuments, created -> {
+                if (created == null || created.isEmpty()) return;
+                user.setCreatedDocuments(created);
+                mediator.setValue(user);
+            });
+            mediator.addSource(sharedDocuments, shared -> {
+                if (shared == null || shared.isEmpty()) return;
+                user.setCreatedDocuments(shared);
+                mediator.setValue(user);
+            });
+            return mediator;
+        });
+    }
+
     public LiveData<User> getInfo(String userId, LifecycleOwner owner) {
         return new UserLiveData(FirebaseDatabase.usersRef.child(userId));
     }
