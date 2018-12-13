@@ -51,8 +51,8 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
+        Button loginButton = findViewById(R.id.login_button);
+        loginButton.setOnClickListener(view -> attemptLogin());
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
