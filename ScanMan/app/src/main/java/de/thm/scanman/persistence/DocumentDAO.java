@@ -38,8 +38,8 @@ public class DocumentDAO {
         return new DocumentLiveData(reference);
     }
 
-    public void update(Document... documentList) {
-        Arrays.asList(documentList).forEach(document -> {
+    public void update(Document... documents) {
+        Arrays.asList(documents).forEach(document -> {
             // Update in createdDocs
             FirebaseDatabase
                     .createdDocsRef
