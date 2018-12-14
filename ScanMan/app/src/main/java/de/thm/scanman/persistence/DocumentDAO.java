@@ -19,17 +19,26 @@ public class DocumentDAO {
         documentRef.setValue(document);
     }
 
-    public void addCreatedDocuments(User user, List<Document> documentList) {
+    /**
+     * Add all documents from the list into the createdDocuments node
+     * Will also set the documents ownerId to the corresponding user id
+     * @param owner
+     * @param documentList
+     */
+    public void addCreatedDocuments(User owner, List<Document> documentList) {
         documentList.forEach(document -> {
-            document.setOwnerId(user.getId());
-            add(FirebaseDatabase.createdDocsRef.child(user.getId()), document);
+            document.setOwnerId(owner.getId());
+            add(FirebaseDatabase.createdDocsRef.child(owner.getId()), document);
         });
     }
 
+    /**
+     * Add all documents from the list into the sharedDocuments node
+     * @param user
+     * @param documentList
+     */
     public void addSharedDocuments(User user, List<Document> documentList) {
-        documentList.forEach(document -> {
-            add(FirebaseDatabase.createdDocsRef.child(user.getId()), document);
-        });
+        documentList.forEach(document -> add(FirebaseDatabase.createdDocsRef.child(user.getId()), document));
     }
 
     private LiveData<List<Document>> get(DatabaseReference reference) {
