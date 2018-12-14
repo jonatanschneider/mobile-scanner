@@ -30,7 +30,6 @@ public class DocumentDAO {
         documentList.forEach(document -> {
             document.setOwnerId(user.getId());
             add(FirebaseDatabase.createdDocsRef.child(user.getId()), document);
-            FirebaseDatabase.documentRef.child(document.getId()).setValue(document);
         });
     }
 
