@@ -1,6 +1,5 @@
 package de.thm.scanman.persistence;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 
 import com.google.firebase.database.DatabaseReference;
