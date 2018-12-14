@@ -10,7 +10,7 @@ public class Document {
     private List<String> tags;
     private List<Image> images;
     private Date createdAt;
-    private User owner;
+    private String ownerId;
     private List<User> users;
 
     public Document() {
@@ -18,12 +18,12 @@ public class Document {
         tags = new ArrayList<>();
     }
 
-    public Document(String name, List<String> tags, List<Image> images, Date createdAt, User owner, List<User> users) {
+    public Document(String name, List<String> tags, List<Image> images, Date createdAt, String ownerId, List<User> users) {
         this.name = name;
         this.tags = tags;
         this.images = images;
         this.createdAt = createdAt;
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.users = users;
     }
 
@@ -67,12 +67,12 @@ public class Document {
         this.createdAt = createdAt;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public List<User> getUsers() {
@@ -89,7 +89,7 @@ public class Document {
         sb.append("Document: ")
                 .append(id).append(" - ")
                 .append(name).append(" - ")
-                .append("Owner: ").append(owner).append(" - ")
+                .append("Owner: ").append(ownerId).append(" - ")
                 .append("Created At: ").append(createdAt.toString()).append("\n");
 
         sb.append("Images: \n");
