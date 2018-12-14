@@ -29,6 +29,15 @@ public class DocumentDAO {
         });
     }
 
+    public void addSharedDocuments(User user, List<Document> documentList) {
+        documentList.forEach(document -> {
+            DatabaseReference reference = FirebaseDatabase.createdDocsRef.child(user.getId()).push();
+            document.setId(reference.getKey());
+            reference.setValue(document);
+            FirebaseDatabase.documentRef.child(document.getId()).setValue(document);
+        });
+    }
+
     public LiveData<List<Document>> get(DatabaseReference reference, LifecycleOwner owner) {
         return new DocumentLiveData(reference, owner);
     }
