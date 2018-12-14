@@ -28,7 +28,7 @@ public class UserLiveData extends LiveData<User> {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e("UserLiveData", "DatabaseError: " + databaseError.getCode());
+            Log.e("UserLiveData", "DatabaseError: " + databaseError.getDetails());
         }
     }
 

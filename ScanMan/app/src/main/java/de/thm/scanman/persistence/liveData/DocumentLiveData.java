@@ -35,7 +35,7 @@ public class DocumentLiveData extends LiveData<List<Document>> {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e("DocumentLiveData","DatabaseError: " + databaseError.getCode());
+            Log.e("DocumentLiveData","DatabaseError: " + databaseError.getMessage());
         }
     }
 
