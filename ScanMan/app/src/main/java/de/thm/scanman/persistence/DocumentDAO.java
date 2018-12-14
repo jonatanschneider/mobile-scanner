@@ -13,7 +13,7 @@ import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
 
-    public void add(DatabaseReference reference, Document document) {
+    private void add(DatabaseReference reference, Document document) {
         DatabaseReference documentRef = reference.push();
         document.setId(documentRef.getKey());
         documentRef.setValue(document);
