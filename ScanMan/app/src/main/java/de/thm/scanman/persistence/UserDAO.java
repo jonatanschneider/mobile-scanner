@@ -17,10 +17,12 @@ import de.thm.scanman.persistence.liveData.UserLiveData;
 public class UserDAO {
 
     public void add(User user) {
+        // Remove documents from user object, will be stored independently in other nodes
         List<Document> createdDocuments = user.getCreatedDocuments();
         List<Document> sharedDocuments = user.getSharedDocuments();
         user.setCreatedDocuments(new ArrayList<>());
         user.setSharedDocuments(new ArrayList<>());
+
         DatabaseReference reference = FirebaseDatabase.usersRef.push();
         user.setId(reference.getKey());
         reference.setValue(user);
