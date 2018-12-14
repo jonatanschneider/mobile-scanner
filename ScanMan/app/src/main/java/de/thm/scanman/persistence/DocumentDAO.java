@@ -34,8 +34,8 @@ public class DocumentDAO {
         });
     }
 
-    public LiveData<List<Document>> get(DatabaseReference reference, LifecycleOwner owner) {
-        return new DocumentLiveData(reference, owner);
+    public LiveData<List<Document>> get(DatabaseReference reference) {
+        return new DocumentLiveData(reference);
     }
 
     public void update(Document document) {
