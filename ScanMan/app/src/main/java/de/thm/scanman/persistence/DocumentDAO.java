@@ -22,6 +22,7 @@ public class DocumentDAO {
     public void addCreatedDocuments(User user, List<Document> documentList) {
         documentList.forEach(document -> {
             DatabaseReference reference = FirebaseDatabase.createdDocsRef.child(user.getId()).push();
+            document.setOwnerId(user.getId());
             document.setId(reference.getKey());
             reference.setValue(document);
             FirebaseDatabase.documentRef.child(document.getId()).setValue(document);
