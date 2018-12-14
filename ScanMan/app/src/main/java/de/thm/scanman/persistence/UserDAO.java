@@ -15,7 +15,14 @@ import de.thm.scanman.persistence.liveData.UserLiveData;
 
 public class UserDAO {
 
-    public void add(User user) {
+    /**
+     * Add a single user and all it's created and shared Documents to the database.
+     * The owner attribute of all createdDocuments will automatically be set to the
+     * corresponding user id.
+     * @param user
+     * @return user with set id
+     */
+    public User add(User user) {
         // Remove documents from user object, will be stored independently in other nodes
         List<Document> createdDocuments = user.getCreatedDocuments();
         List<Document> sharedDocuments = user.getSharedDocuments();
@@ -28,9 +35,13 @@ public class UserDAO {
 
         FirebaseDatabase.documentDAO.addCreatedDocuments(user, createdDocuments);
         FirebaseDatabase.documentDAO.addSharedDocuments(user, sharedDocuments);
+        return user;
     }
 
-
+    /**
+     * @param userId
+     * @return LiveData of a user object with all it's documents
+     */
     public LiveData<User> get(String userId) {
         DocumentDAO documentDAO = new DocumentDAO();
         LiveData<List<Document>> createdDocuments = documentDAO.get(FirebaseDatabase.createdDocsRef.child(userId));
@@ -52,6 +63,10 @@ public class UserDAO {
         });
     }
 
+    /**
+     * @param userId
+     * @return LiveData of a user object with all it's public info (name, email, createdAt), all other attributes are not set
+     */
     public LiveData<User> getInfo(String userId) {
         return new UserLiveData(FirebaseDatabase.usersRef.child(userId));
     }
@@ -60,6 +75,10 @@ public class UserDAO {
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
     }
 
+    /**
+     * Removes a user and all it's createdDocuments
+     * @param user
+     */
     public void remove(User user) {
         FirebaseDatabase.usersRef.child(user.getId()).removeValue();
         FirebaseDatabase.documentDAO.remove();
