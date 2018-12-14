@@ -34,7 +34,7 @@ public class UserDAO {
         LiveData<List<Document>> createdDocuments = documentDAO.get(FirebaseDatabase.createdDocsRef.child(userId), owner);
         LiveData<List<Document>> sharedDocuments = documentDAO.get(FirebaseDatabase.sharedDocsRef.child(userId), owner);
 
-        return Transformations.switchMap(getInfo(userId, owner), user -> {
+        return Transformations.switchMap(getInfo(userId), user -> {
             MediatorLiveData<User> mediator = new MediatorLiveData<>();
             mediator.addSource(createdDocuments, created -> {
                 if (created == null || created.isEmpty()) return;
@@ -50,7 +50,7 @@ public class UserDAO {
         });
     }
 
-    public LiveData<User> getInfo(String userId, LifecycleOwner owner) {
+    public LiveData<User> getInfo(String userId) {
         return new UserLiveData(FirebaseDatabase.usersRef.child(userId));
     }
 
