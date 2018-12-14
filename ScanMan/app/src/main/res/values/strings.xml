@@ -5,4 +5,14 @@
     <string name="stats">Statistik</string>
     <string name="settings">Einstellungen</string>
     <string name="sort">Dokumente sortieren</string>
+
+    <!-- Login -->
+    <string name="title_activity_login">Anmelden</string>
+    <string name="prompt_email">E-Mail</string>
+    <string name="prompt_password">Passwort</string>
+    <string name="action_login">Anmelden</string>
+    <string name="error_invalid_email">Ungültige E-Mail-Adresse</string>
+    <string name="error_invalid_password">Ungültiges Passwort</string>
+    <string name="login_welcome_back">Willkommen zurück!</string>
+    <string name="login_failed">Anmeldung fehlgeschlagen.</string>
 </resources>
