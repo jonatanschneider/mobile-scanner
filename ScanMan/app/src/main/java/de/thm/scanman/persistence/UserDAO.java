@@ -76,11 +76,11 @@ public class UserDAO {
     }
 
     /**
-     * Removes a user and all it's createdDocuments
+     * Removes a user and all it's entries in createdDocuments and sharedDocuments
      * @param user
      */
     public void remove(User user) {
         FirebaseDatabase.usersRef.child(user.getId()).removeValue();
-        FirebaseDatabase.documentDAO.remove();
+        FirebaseDatabase.documentDAO.removeUserDocuments(user.getId());
     }
 }

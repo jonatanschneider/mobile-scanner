@@ -65,8 +65,13 @@ public class DocumentDAO {
 
     }
 
-    public void remove(Document... documents) {
-        Arrays.asList(documents).forEach(document -> {
+    public void removeUserDocuments(String userId) {
+        FirebaseDatabase.createdDocsRef.child(userId).removeValue();
+        FirebaseDatabase.sharedDocsRef.child(userId).removeValue();
+    }
+
+    public void remove(List<Document> documentList) {
+        documentList.forEach(document -> {
             // Remove from createdDocuments
             FirebaseDatabase
                     .createdDocsRef
@@ -82,6 +87,10 @@ public class DocumentDAO {
                             .child(document.getId())
                             .removeValue());
         });
+    }
+
+    public void remove(Document... documents) {
+        remove(Arrays.asList(documents));
     }
 
 }
