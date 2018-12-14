@@ -32,7 +32,7 @@ public class UserDAO {
     }
 
 
-    public LiveData<User> get(String userId, LifecycleOwner owner) {
+    public LiveData<User> get(String userId) {
         DocumentDAO documentDAO = new DocumentDAO();
         LiveData<List<Document>> createdDocuments = documentDAO.get(FirebaseDatabase.createdDocsRef.child(userId));
         LiveData<List<Document>> sharedDocuments = documentDAO.get(FirebaseDatabase.sharedDocsRef.child(userId));
