@@ -61,7 +61,7 @@ public class UserDAO {
     }
 
     public void remove(User user) {
-        FirebaseDatabase.usersRef.child(id).removeValue();
+        FirebaseDatabase.usersRef.child(user.getId()).removeValue();
         FirebaseDatabase.documentDAO.remove();
     }
 }
