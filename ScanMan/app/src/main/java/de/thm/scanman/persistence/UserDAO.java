@@ -4,8 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Transformations;
 
-import com.google.firebase.database.DatabaseReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +27,10 @@ public class UserDAO {
         user.setCreatedDocuments(new ArrayList<>());
         user.setSharedDocuments(new ArrayList<>());
 
-        DatabaseReference reference = FirebaseDatabase.usersRef.push();
-        user.setId(reference.getKey());
-        reference.setValue(user);
+        FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
 
-        FirebaseDatabase.documentDAO.addCreatedDocuments(user, createdDocuments);
-        FirebaseDatabase.documentDAO.addSharedDocuments(user, sharedDocuments);
+        FirebaseDatabase.documentDAO.addCreatedDocuments(user.getId(), createdDocuments);
+        FirebaseDatabase.documentDAO.addSharedDocuments(user.getId(), sharedDocuments);
         return user;
     }
 
@@ -50,13 +46,15 @@ public class UserDAO {
         return Transformations.switchMap(getInfo(userId), user -> {
             MediatorLiveData<User> mediator = new MediatorLiveData<>();
             mediator.addSource(createdDocuments, created -> {
-                if (created == null || created.isEmpty()) return;
-                user.setCreatedDocuments(created);
+                if (created != null && !created.isEmpty()) {
+                    user.setCreatedDocuments(created);
+                }
                 mediator.setValue(user);
             });
             mediator.addSource(sharedDocuments, shared -> {
-                if (shared == null || shared.isEmpty()) return;
-                user.setCreatedDocuments(shared);
+                if (shared != null && !shared.isEmpty()) {
+                    user.setCreatedDocuments(shared);
+                }
                 mediator.setValue(user);
             });
             return mediator;
@@ -77,10 +75,10 @@ public class UserDAO {
 
     /**
      * Removes a user and all it's entries in createdDocuments and sharedDocuments
-     * @param user
+     * @param userId
      */
-    public void remove(User user) {
-        FirebaseDatabase.usersRef.child(user.getId()).removeValue();
-        FirebaseDatabase.documentDAO.removeUserDocuments(user.getId());
+    public void remove(String userId) {
+        FirebaseDatabase.usersRef.child(userId).removeValue();
+        FirebaseDatabase.documentDAO.removeUserDocuments(userId);
     }
 }
