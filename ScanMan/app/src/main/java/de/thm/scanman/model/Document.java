@@ -11,20 +11,20 @@ public class Document {
     private List<Image> images;
     private Date createdAt;
     private String ownerId;
-    private List<User> users;
+    private List<String> userIds;
 
     public Document() {
-        users = new ArrayList<>();
+        userIds = new ArrayList<>();
         tags = new ArrayList<>();
     }
 
-    public Document(String name, List<String> tags, List<Image> images, Date createdAt, String ownerId, List<User> users) {
+    public Document(String name, List<String> tags, List<Image> images, Date createdAt, String ownerId, List<String> userIds) {
         this.name = name;
         this.tags = tags;
         this.images = images;
         this.createdAt = createdAt;
         this.ownerId = ownerId;
-        this.users = users;
+        this.userIds = userIds;
     }
 
     public String getId() {
@@ -75,12 +75,12 @@ public class Document {
         this.ownerId = ownerId;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<String> getUserIds() {
+        return userIds;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserIds(List<String> userIds) {
+        this.userIds = userIds;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class Document {
                 .append(i.toString()).append("\n"));
 
         sb.append("Shared With: \n");
-        users.forEach(u -> sb.append("\t")
+        userIds.forEach(u -> sb.append("\t")
                 .append(u.toString()).append("\n"));
 
         sb.append("Tags: \n");
