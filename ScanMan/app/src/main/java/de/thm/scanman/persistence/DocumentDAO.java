@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.thm.scanman.model.Document;
@@ -37,17 +38,43 @@ public class DocumentDAO {
         return new DocumentLiveData(reference);
     }
 
-    public void update(Document document) {
-        FirebaseDatabase.createdDocsRef.child(document.getOwnerId()).child(document.getId()).setValue(document);
-        document.getUserIds().forEach(userId -> {
-            FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
+    public void update(Document... documentList) {
+        Arrays.asList(documentList).forEach(document -> {
+            // Update in createdDocs
+            FirebaseDatabase
+                    .createdDocsRef
+                    .child(document.getOwnerId())
+                    .child(document.getId())
+                    .setValue(document);
+
+            // Update in sharedDocs
+            document.getUserIds().forEach(userId -> {
+                FirebaseDatabase
+                        .sharedDocsRef
+                        .child(userId)
+                        .child(document.getId())
+                        .setValue(document);
+            });
         });
+
     }
 
-    public void remove(Document document) {
-        FirebaseDatabase.createdDocsRef.child(document.getOwnerId()).child(document.getId()).removeValue();
-        document.getUserIds().forEach(userId -> {
-            FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).removeValue();
+    public void remove(Document... documents) {
+        Arrays.asList(documents).forEach(document -> {
+            // Remove from createdDocuments
+            FirebaseDatabase
+                    .createdDocsRef
+                    .child(document.getOwnerId())
+                    .child(document.getId())
+                    .removeValue();
+
+            // Remove from sharedDocuments
+            document.getUserIds().forEach(userId ->
+                    FirebaseDatabase
+                            .sharedDocsRef
+                            .child(userId)
+                            .child(document.getId())
+                            .removeValue());
         });
     }
 
