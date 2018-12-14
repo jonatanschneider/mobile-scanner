@@ -1,6 +1,6 @@
 package de.thm.scanman;
 
-import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +10,7 @@ import android.widget.ListView;
 public class DocumentsListActivity extends AppCompatActivity {
 
     private ListView documentsListView;
+    private FloatingActionButton addFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,11 @@ public class DocumentsListActivity extends AppCompatActivity {
 
         documentsListView = findViewById(R.id.documents_list);
         documentsListView.setEmptyView(findViewById(R.id.documents_list_empty));
+
+        addFab = findViewById(R.id.add_fab);
+        //addFab.setOnClickListener(
+                // implement call for new intent here
+        //);
     }
 
     @Override
