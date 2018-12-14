@@ -28,6 +28,7 @@ public class UserDAO {
         reference.setValue(user);
 
         FirebaseDatabase.documentDAO.addCreatedDocuments(user, createdDocuments);
+        FirebaseDatabase.documentDAO.addSharedDocuments(user, sharedDocuments);
     }
 
 
