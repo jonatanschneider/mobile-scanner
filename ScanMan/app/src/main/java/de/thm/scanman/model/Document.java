@@ -9,7 +9,7 @@ public class Document {
     private String name;
     private List<String> tags;
     private List<Image> images;
-    private Date createdAt;
+    private long createdAt;
     private String ownerId;
     private List<String> userIds;
 
@@ -18,7 +18,7 @@ public class Document {
         tags = new ArrayList<>();
     }
 
-    public Document(String name, List<String> tags, List<Image> images, Date createdAt, String ownerId, List<String> userIds) {
+    public Document(String name, List<String> tags, List<Image> images, long createdAt, String ownerId, List<String> userIds) {
         this.name = name;
         this.tags = tags;
         this.images = images;
@@ -59,11 +59,11 @@ public class Document {
         this.images = images;
     }
 
-    public Date getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -90,7 +90,7 @@ public class Document {
                 .append(id).append(" - ")
                 .append(name).append(" - ")
                 .append("Owner: ").append(ownerId).append(" - ")
-                .append("Created At: ").append(createdAt.toString()).append("\n");
+                .append("Created At: ").append(new Date(createdAt).toString()).append("\n");
 
         sb.append("Images: \n");
         images.forEach(i -> sb.append("\t")
@@ -109,11 +109,11 @@ public class Document {
     public static class Image {
         private String id;
         private String file;
-        private Date createdAt;
+        private long createdAt;
 
         public Image() { }
 
-        public Image(String file, Date createdAt) {
+        public Image(String file, long createdAt) {
             this.file = file;
             this.createdAt = createdAt;
         }
@@ -134,17 +134,17 @@ public class Document {
             this.file = file;
         }
 
-        public Date getCreatedAt() {
+        public long getCreatedAt() {
             return createdAt;
         }
 
-        public void setCreatedAt(Date createdAt) {
+        public void setCreatedAt(long createdAt) {
             this.createdAt = createdAt;
         }
 
         @Override
         public String toString() {
-            return "File: " + id + " - " + file + " - " + "Created At: " + createdAt.toString();
+            return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
         }
     }
 
