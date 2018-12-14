@@ -24,8 +24,8 @@ public class UserDAO {
         DatabaseReference reference = FirebaseDatabase.usersRef.push();
         user.setId(reference.getKey());
         reference.setValue(user);
-        DocumentDAO documentDAO = new DocumentDAO();
-        documentDAO.addCreatedDocuments(user, createdDocuments);
+
+        FirebaseDatabase.documentDAO.addCreatedDocuments(user, createdDocuments);
     }
 
 
