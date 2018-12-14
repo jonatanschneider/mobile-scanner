@@ -44,8 +44,8 @@ public class UserDAO {
      */
     public LiveData<User> get(String userId) {
         DocumentDAO documentDAO = new DocumentDAO();
-        LiveData<List<Document>> createdDocuments = documentDAO.get(FirebaseDatabase.createdDocsRef.child(userId));
-        LiveData<List<Document>> sharedDocuments = documentDAO.get(FirebaseDatabase.sharedDocsRef.child(userId));
+        LiveData<List<Document>> createdDocuments = documentDAO.getCreatedDocuments(userId);
+        LiveData<List<Document>> sharedDocuments = documentDAO.getSharedDocuments(userId);
 
         return Transformations.switchMap(getInfo(userId), user -> {
             MediatorLiveData<User> mediator = new MediatorLiveData<>();

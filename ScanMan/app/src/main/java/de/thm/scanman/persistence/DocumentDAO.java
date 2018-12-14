@@ -32,8 +32,16 @@ public class DocumentDAO {
         });
     }
 
-    public LiveData<List<Document>> get(DatabaseReference reference) {
+    private LiveData<List<Document>> get(DatabaseReference reference) {
         return new DocumentLiveData(reference);
+    }
+
+    public LiveData<List<Document>> getCreatedDocuments(String userId) {
+        return get(FirebaseDatabase.createdDocsRef.child(userId));
+    }
+
+    public LiveData<List<Document>> getSharedDocuments(String userId) {
+        return get(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
     public void update(Document... documents) {
