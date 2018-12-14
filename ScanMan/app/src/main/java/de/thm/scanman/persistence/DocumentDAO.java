@@ -39,12 +39,17 @@ public class DocumentDAO {
     }
 
     public void update(Document document) {
-        FirebaseDatabase.documentRef.child(document.getId()).setValue(document);
-
+        FirebaseDatabase.createdDocsRef.child(document.getOwnerId()).child(document.getId()).setValue(document);
+        document.getUserIds().forEach(userId -> {
+            FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
+        });
     }
 
-    public void remove(String id) {
-        FirebaseDatabase.documentRef.child(id).removeValue();
+    public void remove(Document document) {
+        FirebaseDatabase.createdDocsRef.child(document.getOwnerId()).child(document.getId()).removeValue();
+        document.getUserIds().forEach(userId -> {
+            FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).removeValue();
+        });
     }
 
 }
