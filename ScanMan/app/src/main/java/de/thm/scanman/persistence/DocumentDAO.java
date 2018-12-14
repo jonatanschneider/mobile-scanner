@@ -13,27 +13,23 @@ import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
 
-    public void add(Document document) {
-        DatabaseReference reference = FirebaseDatabase.documentRef.push();
-        document.setId(reference.getKey());
-        reference.setValue(document);
+    public void add(DatabaseReference reference, Document document) {
+        DatabaseReference documentRef = reference.push();
+        document.setId(documentRef.getKey());
+        documentRef.setValue(document);
     }
 
     public void addCreatedDocuments(User user, List<Document> documentList) {
         documentList.forEach(document -> {
-            DatabaseReference reference = FirebaseDatabase.createdDocsRef.child(user.getId()).push();
             document.setOwnerId(user.getId());
-            document.setId(reference.getKey());
-            reference.setValue(document);
-            FirebaseDatabase.documentRef.child(document.getId()).setValue(document);
+            add(FirebaseDatabase.createdDocsRef.child(user.getId()), document);
         });
     }
 
     public void addSharedDocuments(User user, List<Document> documentList) {
         documentList.forEach(document -> {
-            DatabaseReference reference = FirebaseDatabase.createdDocsRef.child(user.getId()).push();
-            document.setId(reference.getKey());
-            reference.setValue(document);
+            document.setOwnerId(user.getId());
+            add(FirebaseDatabase.createdDocsRef.child(user.getId()), document);
             FirebaseDatabase.documentRef.child(document.getId()).setValue(document);
         });
     }
