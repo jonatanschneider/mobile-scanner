@@ -28,7 +28,6 @@ public class DocumentDAO {
 
     public void addSharedDocuments(User user, List<Document> documentList) {
         documentList.forEach(document -> {
-            document.setOwnerId(user.getId());
             add(FirebaseDatabase.createdDocsRef.child(user.getId()), document);
         });
     }
