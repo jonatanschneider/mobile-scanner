@@ -17,7 +17,6 @@ import de.thm.scanman.model.Document;
 
 public class DocumentLiveData extends LiveData<List<Document>> {
     private Query query;
-    private LifecycleOwner owner;
     private final UserListener userListener = new UserListener();
     private List<Document> documentList = new ArrayList<>();
 
@@ -41,9 +40,8 @@ public class DocumentLiveData extends LiveData<List<Document>> {
         }
     }
 
-    public DocumentLiveData(Query query, LifecycleOwner owner) {
+    public DocumentLiveData(Query query) {
         this.query = query;
-        this.owner = owner;
     }
 
     @Override
