@@ -6,6 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".DocumentsListActivity">
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tbl_main_content"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="top">
+
+        </android.support.design.widget.TabLayout>
+
+        <TextView
+            android:id="@+id/lbl_basic_content"
+            android:layout_below="@id/tbl_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@android:color/black" />
+    </android.support.v4.view.ViewPager>
+
     <ListView
         android:id="@+id/documents_list"
         android:layout_width="0dp"
@@ -20,7 +42,7 @@
         android:id="@+id/documents_list_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="56dp"
         android:text="@string/no_documents"
         android:textSize="18sp"
 
