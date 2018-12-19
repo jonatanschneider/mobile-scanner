@@ -2,6 +2,7 @@ package de.thm.scanman;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -47,9 +48,10 @@ public class DocumentsListActivity extends AppCompatActivity implements TabLayou
         tabBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTab));
 
         tabBar.addOnTabSelectedListener(this);
+        //tabBar.setupWithViewPager(pager);
 
-        documentsListView = findViewById(R.id.documents_list);
-        documentsListView.setEmptyView(findViewById(R.id.documents_list_empty));
+        //documentsListView = findViewById(R.id.documents_list);
+        //documentsListView.setEmptyView(findViewById(R.id.documents_list_empty));
 
         addFab = findViewById(R.id.add_fab);
         //addFab.setOnClickListener(
@@ -86,7 +88,17 @@ public class DocumentsListActivity extends AppCompatActivity implements TabLayou
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        content.setText(tab.getText().toString());
+        //content.setText(tab.getText().toString());
+        if(tab.getText().toString().equals("Alle Dokumente")) {
+            Fragment fragment = new AllDocumentsFragment();
+            //Bundle bundle = new Bundle();
+            //bundle.putString("id", checkedRecord.getId());
+            //fragment.setArguments(bundle);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment, "details")
+                    .commit();
+        }
     }
 
     @Override
