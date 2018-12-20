@@ -24,6 +24,8 @@ public class LoginActivity extends AuthenticationBaseActivity {
     private View progressView;
     private View loginFormView;
 
+    private View signUpLink;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,9 @@ public class LoginActivity extends AuthenticationBaseActivity {
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
+
+        signUpLink = findViewById(R.id.sign_up_link);
+        signUpLink.setOnClickListener(view -> startSignUpActivity());
     }
 
     /**
@@ -166,6 +171,10 @@ public class LoginActivity extends AuthenticationBaseActivity {
                 progressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
+    private void startSignUpActivity() {
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
     }
 }
 
