@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -13,15 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 /**
  * A login screen that offers login via email/password
  */
-public class LoginActivity extends AppCompatActivity {
+// TODO: Check whether additional logic can be moved to the superclass.
+public class LoginActivity extends AuthenticationBaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
-
-    private FirebaseAuth auth;
 
     private EditText emailView;
     private EditText passwordView;
@@ -33,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        auth = FirebaseAuth.getInstance();
         startMainActivityIfAlreadyLoggedIn();
 
         setupView();
@@ -63,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
      * form and navigate directly to the main activity
      */
     private void startMainActivityIfAlreadyLoggedIn() {
-        if (auth.getCurrentUser() != null) {
+        if (getAuth().getCurrentUser() != null) {
             Toast.makeText(this, R.string.login_welcome_back, Toast.LENGTH_SHORT).show();
             startMainActivity();
         }
@@ -114,10 +109,10 @@ public class LoginActivity extends AppCompatActivity {
     private void makeLogin(String email, String password) {
         // Show a progress spinner, and kick off a background task to
         // perform the user login attempt
-        showProgress(true);
+        showProgress(loginFormView, progressView, true);
 
         // Start firebase auth task
-        auth.signInWithEmailAndPassword(email, password)
+        getAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, start main activity
@@ -127,20 +122,20 @@ public class LoginActivity extends AppCompatActivity {
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                         Toast.makeText(LoginActivity.this, R.string.login_failed,
                                 Toast.LENGTH_SHORT).show();
-                        showProgress(false);
+                        showProgress(loginFormView, progressView, false);
                     }
                 });
     }
 
-    private boolean isEmailValid(String email) {
+    protected boolean isEmailValid(String email) {
         return !TextUtils.isEmpty(email) && email.contains("@");
     }
 
-    private boolean isPasswordValid(String password) {
+    protected boolean isPasswordValid(String password) {
         return !TextUtils.isEmpty(password);
     }
 
-    private void startMainActivity() {
+    protected void startMainActivity() {
         Intent intent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
         // Create no backstack history so a logged in user doesn't get back to the login screen
         // when trying to close the app
