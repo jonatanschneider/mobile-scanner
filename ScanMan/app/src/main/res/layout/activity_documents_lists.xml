@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DocumentsListActivity">
+    tools:context=".DocumentsListsActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -17,21 +17,13 @@
             android:layout_width="match_parent"
             android:layout_gravity="top">
         </android.support.design.widget.TabLayout>
-
-        <TextView
-            android:id="@+id/lbl_basic_content"
-            android:layout_below="@id/tbl_main_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@android:color/black" />
-
     </android.support.v4.view.ViewPager>
 
+    <!--TODO: Kommt das hier hin?
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />-->
 
     <!--<ListView
         android:id="@+id/documents_list"

@@ -5,4 +5,7 @@
     <string name="stats">Statistik</string>
     <string name="settings">Einstellungen</string>
     <string name="sort">Dokumente sortieren</string>
+    <string name="all_documents">Alle Dokumente</string>
+    <string name="my_documents">Meine Dokumente</string>
+    <string name="shared_documents">Geteilte Dokumente</string>
 </resources>
