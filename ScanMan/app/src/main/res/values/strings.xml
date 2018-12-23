@@ -15,4 +15,7 @@
     <string name="error_invalid_password">Ungültiges Passwort</string>
     <string name="login_welcome_back">Willkommen zurück!</string>
     <string name="login_failed">Anmeldung fehlgeschlagen.</string>
+
+    <!-- Settings -->
+    <string name="logout">Abmelden</string>
 </resources>
