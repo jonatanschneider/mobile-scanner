@@ -45,11 +45,11 @@ public class DocumentDAO {
         return new DocumentLiveData(reference);
     }
 
-    public LiveData<List<Document>> getCreatedDocuments(String userId) {
+    LiveData<List<Document>> getCreatedDocuments(String userId) {
         return get(FirebaseDatabase.createdDocsRef.child(userId));
     }
 
-    public LiveData<List<Document>> getSharedDocuments(String userId) {
+    LiveData<List<Document>> getSharedDocuments(String userId) {
         return get(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
