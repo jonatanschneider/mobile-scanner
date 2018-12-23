@@ -1,5 +1,6 @@
 package de.thm.scanman;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -31,7 +32,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         addFab = findViewById(R.id.add_fab);
         /*addFab.setOnClickListener(
-        // implement call for new intent here
+            // implement call for new intent here
         );*/
     }
 
@@ -56,7 +57,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 //new StatsTask(this).execute(documents);
                 return true;
             case R.id.action_settings:
-                // implement call for settings here
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
                 return true;
         }
         return super.onOptionsItemSelected(item);
