@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-// TODO: Check whether additional logic can be moved to the superclass.
 public class SignUpActivity extends AuthenticationBaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
     private EditText emailView;
@@ -60,14 +59,13 @@ public class SignUpActivity extends AuthenticationBaseActivity {
         boolean isValid = true;
         View focusView = null;
 
-        // TODO: check if password.length >= 6
         if (!isPasswordValid(password)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
             isValid = false;
         }
 
-        if (!repeatPassword.equals(password)) {
+        if (!isRepeatPasswordValid(password, repeatPassword)) {
             repeatPasswordView.setError(getString(R.string.error_unequal_passwords));
             focusView = repeatPasswordView;
             isValid = false;
@@ -86,6 +84,10 @@ public class SignUpActivity extends AuthenticationBaseActivity {
             // form field with an error
             focusView.requestFocus();
         }
+    }
+
+    private boolean isRepeatPasswordValid(String password, String repeatPassword) {
+        return repeatPassword.equals(password);
     }
 
     /**
