@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Activity offering base actions for authentication screens (login, register, ..)
  */
 public abstract class AuthenticationBaseActivity extends AppCompatActivity {
+    private static final int PASSWORD_MIN_LENGTH = 6;
     private FirebaseAuth auth;
 
     @Override
@@ -32,7 +33,7 @@ public abstract class AuthenticationBaseActivity extends AppCompatActivity {
     }
 
     protected boolean isPasswordValid(String password) {
-        return !TextUtils.isEmpty(password);
+        return !TextUtils.isEmpty(password) && password.length() >= PASSWORD_MIN_LENGTH;
     }
 
     protected void startMainActivity() {
