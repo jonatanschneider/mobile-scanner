@@ -92,7 +92,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
     }
 
-    // TODO: Sollte man hier lieber FragmentPagerAdapter verwenden, weil es nur drei Fragments sind?
     public class TabAdapter extends FragmentStatePagerAdapter {
 
         private final String[] pageTitles = {
