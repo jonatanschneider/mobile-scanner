@@ -58,22 +58,24 @@ public class DocumentDAO {
     }
 
     public void update(Document... documents) {
+        String userId = FirebaseAuth.getInstance().getUid();
         Arrays.asList(documents).forEach(document -> {
-            // Update in createdDocs
-            FirebaseDatabase
-                    .createdDocsRef
-                    .child(document.getOwnerId())
-                    .child(document.getId())
-                    .setValue(document);
-
-            // Update in sharedDocs
-            document.getUserIds().forEach(userId -> {
+            // Update created docs
+            if (document.getOwnerId().equals(userId)) {
+                FirebaseDatabase
+                        .createdDocsRef
+                        .child(document.getOwnerId())
+                        .child(document.getId())
+                        .setValue(document);
+            }
+            // Update shared docs
+            else {
                 FirebaseDatabase
                         .sharedDocsRef
                         .child(userId)
                         .child(document.getId())
                         .setValue(document);
-            });
+            }
         });
 
     }
