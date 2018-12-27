@@ -38,7 +38,11 @@ public class DocumentDAO {
      * @param documentList
      */
     public void addSharedDocuments(String userId, List<Document> documentList) {
-        documentList.forEach(document -> add(FirebaseDatabase.sharedDocsRef.child(userId), document));
+        documentList.forEach(document -> {
+            List<String> users = document.getUserIds();
+            users.add(userId);
+            add(FirebaseDatabase.sharedDocsRef.child(userId), document);
+        });
     }
 
     private LiveData<List<Document>> get(DatabaseReference reference) {
