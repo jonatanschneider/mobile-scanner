@@ -53,7 +53,7 @@ public class UserDAO {
             });
             mediator.addSource(sharedDocuments, shared -> {
                 if (shared != null && !shared.isEmpty()) {
-                    user.setCreatedDocuments(shared);
+                    user.setSharedDocuments(shared);
                 }
                 mediator.setValue(user);
             });
