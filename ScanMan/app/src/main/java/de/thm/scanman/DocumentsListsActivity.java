@@ -31,9 +31,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         setUpPagerAndTabs();
 
         addFab = findViewById(R.id.add_fab);
-        /*addFab.setOnClickListener(
+        addFab.setOnClickListener(
             // implement call for new intent here
-        );*/
+            view -> {}
+        );
     }
 
     @Override
