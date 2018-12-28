@@ -2,13 +2,13 @@ package de.thm.scanman.persistence;
 
 import android.arch.lifecycle.LiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.Arrays;
 import java.util.List;
 
 import de.thm.scanman.model.Document;
-import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
@@ -86,26 +86,32 @@ public class DocumentDAO {
     }
 
     public void remove(List<Document> documentList) {
+        String uid = FirebaseAuth.getInstance().getUid();
         documentList.forEach(document -> {
             // Remove from createdDocuments
-            FirebaseDatabase
-                    .createdDocsRef
-                    .child(document.getOwnerId())
-                    .child(document.getId())
-                    .removeValue();
+            if (document.getOwnerId().equals(uid)) removeCreatedDocument(document);
 
             // Remove from sharedDocuments
-            document.getUserIds().forEach(userId ->
-                    FirebaseDatabase
-                            .sharedDocsRef
-                            .child(userId)
-                            .child(document.getId())
-                            .removeValue());
+            document.getUserIds().forEach(userId -> removeSharedDocument(userId, document));
         });
     }
 
     public void remove(Document... documents) {
         remove(Arrays.asList(documents));
+    }
+
+    private void removeCreatedDocument(Document document) {
+        FirebaseDatabase.createdDocsRef
+                .child(document.getOwnerId())
+                .child(document.getId())
+                .removeValue();
+    }
+
+    private void removeSharedDocument(String userId, Document document) {
+        FirebaseDatabase.sharedDocsRef
+                .child(userId)
+                .child(document.getId())
+                .removeValue();
     }
 
 }
