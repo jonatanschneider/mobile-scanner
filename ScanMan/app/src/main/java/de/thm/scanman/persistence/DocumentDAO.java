@@ -62,19 +62,11 @@ public class DocumentDAO {
         Arrays.asList(documents).forEach(document -> {
             // Update created docs
             if (document.getOwnerId().equals(userId)) {
-                FirebaseDatabase
-                        .createdDocsRef
-                        .child(document.getOwnerId())
-                        .child(document.getId())
-                        .setValue(document);
+                FirebaseDatabase.getCreatedDocumentsReference(document).setValue(document);
             }
             // Update shared docs
             else {
-                FirebaseDatabase
-                        .sharedDocsRef
-                        .child(userId)
-                        .child(document.getId())
-                        .setValue(document);
+                FirebaseDatabase.getSharedDocumentsReference(userId, document).setValue(document);
             }
         });
 
@@ -89,29 +81,17 @@ public class DocumentDAO {
         String uid = FirebaseAuth.getInstance().getUid();
         documentList.forEach(document -> {
             // Remove from createdDocuments
-            if (document.getOwnerId().equals(uid)) removeCreatedDocument(document);
+            if (document.getOwnerId().equals(uid))
+                FirebaseDatabase.getCreatedDocumentsReference(document).removeValue();
 
             // Remove from sharedDocuments
-            document.getUserIds().forEach(userId -> removeSharedDocument(userId, document));
+            document.getUserIds().forEach(userId ->
+                    FirebaseDatabase.getSharedDocumentsReference(userId, document).removeValue());
         });
     }
 
     public void remove(Document... documents) {
         remove(Arrays.asList(documents));
-    }
-
-    private void removeCreatedDocument(Document document) {
-        FirebaseDatabase.createdDocsRef
-                .child(document.getOwnerId())
-                .child(document.getId())
-                .removeValue();
-    }
-
-    private void removeSharedDocument(String userId, Document document) {
-        FirebaseDatabase.sharedDocsRef
-                .child(userId)
-                .child(document.getId())
-                .removeValue();
     }
 
 }
