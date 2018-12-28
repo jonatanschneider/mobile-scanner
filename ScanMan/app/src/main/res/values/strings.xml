@@ -5,7 +5,9 @@
     <string name="stats">Statistik</string>
     <string name="settings">Einstellungen</string>
     <string name="sort">Dokumente sortieren</string>
-
+    <string name="all_documents">Alle Dokumente</string>
+    <string name="my_documents">Meine Dokumente</string>
+    <string name="shared_documents">Geteilte Dokumente</string>
     <!-- Login -->
     <string name="title_activity_login">Anmelden</string>
     <string name="prompt_email">E-Mail</string>
@@ -15,7 +17,6 @@
     <string name="error_invalid_password">Ungültiges Passwort</string>
     <string name="login_welcome_back">Willkommen zurück!</string>
     <string name="login_failed">Anmeldung fehlgeschlagen.</string>
-
     <!-- Settings -->
     <string name="logout">Abmelden</string>
 </resources>
