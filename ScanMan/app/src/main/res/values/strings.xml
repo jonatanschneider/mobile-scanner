@@ -12,11 +12,16 @@
     <string name="title_activity_login">Anmelden</string>
     <string name="prompt_email">E-Mail</string>
     <string name="prompt_password">Passwort</string>
+    <string name="prompt_repeat_password">Passwort wiederholen</string>
     <string name="action_login">Anmelden</string>
+    <string name="action_sign_up">Registrieren</string>
+    <string name="action_no_account_yet">Noch kein Account? Jetzt registrieren.</string>
     <string name="error_invalid_email">Ungültige E-Mail-Adresse</string>
-    <string name="error_invalid_password">Ungültiges Passwort</string>
+    <string name="error_invalid_password">Das Passwort muss mindestens 6 Zeichen lang sein.</string>
+    <string name="error_unequal_passwords">Die Passwörter stimmen nicht überein.</string>
     <string name="login_welcome_back">Willkommen zurück!</string>
     <string name="login_failed">Anmeldung fehlgeschlagen.</string>
+    <string name="sign_up_failed">Registrierung fehlgeschlagen.</string>
     <!-- Settings -->
     <string name="logout">Abmelden</string>
 </resources>
