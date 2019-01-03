@@ -69,12 +69,20 @@ public class UserDAO {
         return new UserLiveData(FirebaseDatabase.usersRef.child(userId));
     }
 
+    /**
+     * Update the user and all it's documents
+     * @param user
+     */
     public void update(User user) {
         updateInfo(user);
         FirebaseDatabase.documentDAO.update(user.getCreatedDocuments());
         FirebaseDatabase.documentDAO.update(user.getSharedDocuments());
     }
 
+    /**
+     * Update the users info (name, email, createdAt)
+     * @param user
+     */
     public void updateInfo(User user) {
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
     }
