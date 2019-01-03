@@ -45,16 +45,15 @@ public class DocumentDAO {
         return new DocumentLiveData(reference);
     }
 
-    LiveData<List<Document>> getCreatedDocuments(String userId) {
+    LiveData<List<Document>> getCreatedDocuments() {
         return get(FirebaseDatabase.createdDocsRef.child(userId));
     }
 
-    LiveData<List<Document>> getSharedDocuments(String userId) {
+    LiveData<List<Document>> getSharedDocuments() {
         return get(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
     public void update(Document... documents) {
-        String userId = FirebaseAuth.getInstance().getUid();
         Arrays.asList(documents).forEach(document -> {
             // Update created docs
             if (document.getOwnerId().equals(userId)) {
@@ -71,7 +70,7 @@ public class DocumentDAO {
         update(documentList.toArray(new Document[0]));
     }
 
-    public void removeUserDocuments(String userId) {
+    public void removeUserDocuments() {
         FirebaseDatabase.createdDocsRef.child(userId).removeValue();
         FirebaseDatabase.sharedDocsRef.child(userId).removeValue();
     }

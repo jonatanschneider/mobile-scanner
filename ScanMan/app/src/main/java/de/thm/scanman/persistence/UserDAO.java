@@ -29,8 +29,8 @@ public class UserDAO {
 
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
 
-        FirebaseDatabase.documentDAO.addCreatedDocuments(user.getId(), createdDocuments);
-        FirebaseDatabase.documentDAO.addSharedDocuments(user.getId(), sharedDocuments);
+        FirebaseDatabase.documentDAO.addCreatedDocuments(createdDocuments);
+        FirebaseDatabase.documentDAO.addSharedDocuments(sharedDocuments);
         return user;
     }
 
@@ -40,8 +40,8 @@ public class UserDAO {
      */
     public LiveData<User> get(String userId) {
         DocumentDAO documentDAO = new DocumentDAO();
-        LiveData<List<Document>> createdDocuments = documentDAO.getCreatedDocuments(userId);
-        LiveData<List<Document>> sharedDocuments = documentDAO.getSharedDocuments(userId);
+        LiveData<List<Document>> createdDocuments = documentDAO.getCreatedDocuments();
+        LiveData<List<Document>> sharedDocuments = documentDAO.getSharedDocuments();
 
         return Transformations.switchMap(getInfo(userId), user -> {
             MediatorLiveData<User> mediator = new MediatorLiveData<>();
@@ -85,6 +85,6 @@ public class UserDAO {
      */
     public void remove(String userId) {
         FirebaseDatabase.usersRef.child(userId).removeValue();
-        FirebaseDatabase.documentDAO.removeUserDocuments(userId);
+        FirebaseDatabase.documentDAO.removeUserDocuments();
     }
 }
