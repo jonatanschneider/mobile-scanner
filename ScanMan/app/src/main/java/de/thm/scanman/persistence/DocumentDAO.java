@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.thm.scanman.model.Document;
-import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
@@ -55,16 +54,12 @@ public class DocumentDAO {
         documentList.forEach(this::addSharedDocument);
     }
 
-    private LiveData<List<Document>> get(DatabaseReference reference) {
-        return new DocumentLiveData(reference);
-    }
-
     LiveData<List<Document>> getCreatedDocuments() {
-        return get(FirebaseDatabase.createdDocsRef.child(userId));
+        return new DocumentLiveData(FirebaseDatabase.createdDocsRef.child(userId));
     }
 
     LiveData<List<Document>> getSharedDocuments() {
-        return get(FirebaseDatabase.sharedDocsRef.child(userId));
+        return new DocumentLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
     public void update(Document... documents) {
