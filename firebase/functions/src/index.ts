@@ -22,19 +22,16 @@ export const createOnSharedDocuments = functions.database.ref('/sharedDocuments/
 
 // Called when a document in 'sharedDocuments' is updated
 // This function will update the owner document
-export const updateOnSharedDocument = functions.database.ref('/sharedDocuments/{userId}/{docId}').onUpdate((change, context) => {
+export const updateOnSharedDocuments = functions.database.ref('/sharedDocuments/{userId}/{docId}').onUpdate((change, context) => {
     const document = change.after.val();
     const docId = context.params.docId;
     const ownerId = document.ownerId;
-    const updates = [];
 
     if (change.before.val() === change.after.val()) return null;
 
-    updates.push(change.before.ref.root.child(`createdDocuments/${ownerId}/${docId}`).set(document));
-    updates.push(change.after.ref.set(document));
+    return change.before.ref.root.child(`createdDocuments/${ownerId}/${docId}`).set(document);
+});
 
-    return Promise.all(updates);
-})
 export const deleteOnSharedDocuments = functions.database.ref('/sharedDocuments/{userId}/{docId}').onDelete((data, context) => {
     const document = data.val();
     const docId = context.params.docId;
