@@ -12,36 +12,32 @@ import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
-
-    private void add(DatabaseReference reference, Document document) {
-        DatabaseReference documentRef = reference.push();
-        document.setId(documentRef.getKey());
-        documentRef.setValue(document);
-    }
+    String userId = FirebaseAuth.getInstance().getUid();
 
     /**
      * Add all documents from the list into the createdDocuments node
      * Will also set the documents ownerId to the corresponding user id
-     * @param ownerId
      * @param documentList
      */
-    public void addCreatedDocuments(String ownerId, List<Document> documentList) {
+    public void addCreatedDocuments(List<Document> documentList) {
         documentList.forEach(document -> {
-            document.setOwnerId(ownerId);
-            add(FirebaseDatabase.createdDocsRef.child(ownerId), document);
+            document.setOwnerId(userId);
+            DatabaseReference documentRef = FirebaseDatabase.createdDocsRef.child(userId).push();
+            document.setId(documentRef.getKey());
+            documentRef.setValue(document);
         });
     }
 
     /**
      * Add all documents from the list into the sharedDocuments node
-     * @param userId
      * @param documentList
      */
-    public void addSharedDocuments(String userId, List<Document> documentList) {
+    public void addSharedDocuments(List<Document> documentList) {
+        //TODO meaningful error messages instead of simple return
         documentList.forEach(document -> {
-            List<String> users = document.getUserIds();
-            users.add(userId);
-            add(FirebaseDatabase.sharedDocsRef.child(userId), document);
+            if (userId.equals(document.getOwnerId())) return;
+            if (document.getId().equals("") || document.getId() == null) return;
+            FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
         });
     }
 
