@@ -35,6 +35,16 @@ export const updateOnSharedDocument = functions.database.ref('/sharedDocuments/{
 
     return Promise.all(updates);
 })
+export const deleteOnSharedDocuments = functions.database.ref('/sharedDocuments/{userId}/{docId}').onDelete((data, context) => {
+    const document = data.val();
+    const docId = context.params.docId;
+    const ownerId = document.ownerId;
+
+    // Filter document's user ids for the user that removed its shared document node
+    document.userIds = document.userIds.filter(id => id !== context.params.userId);
+
+    return data.ref.root.child(`createdDocuments/${ownerId}/${docId}`).set(document);
+});
 
 // Called when a document in 'createdDocuments' is updated
 // This function will update all documents in 'sharedDocuments' which are linked in the 'userIds' field
