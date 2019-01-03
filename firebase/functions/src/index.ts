@@ -60,3 +60,17 @@ export const updateOnCreatedDocuments = functions.database.ref('/createdDocument
 
     return Promise.all(updates);
 });
+
+export const deleteOnCreatedDocuments = functions.database.ref('/createdDocuments/{userId}/{docId}').onDelete((data, context) => {
+    const document = data.val();
+    const docId = context.params.docId;
+    const updates = [];
+
+    if(document.userIds) {
+        document.userIds.forEach(userId =>
+            updates.push(data.ref.root.child(`sharedDocuments/${userId}/${docId}`).remove())
+        );
+    }
+
+    return Promise.all(updates);
+});
