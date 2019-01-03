@@ -16,17 +16,24 @@ public class DocumentDAO {
     String userId = FirebaseAuth.getInstance().getUid();
 
     /**
+     * Add the document into the createdDocuments node
+     * Will also set the documents ownerId to the corresponding user id
+     * @param document
+     */
+    public void addCreatedDocument(Document document) {
+        document.setOwnerId(userId);
+        DatabaseReference documentRef = FirebaseDatabase.createdDocsRef.child(userId).push();
+        document.setId(documentRef.getKey());
+        documentRef.setValue(document);
+    }
+
+    /**
      * Add all documents from the list into the createdDocuments node
      * Will also set the documents ownerId to the corresponding user id
      * @param documentList
      */
     public void addCreatedDocuments(List<Document> documentList) {
-        documentList.forEach(document -> {
-            document.setOwnerId(userId);
-            DatabaseReference documentRef = FirebaseDatabase.createdDocsRef.child(userId).push();
-            document.setId(documentRef.getKey());
-            documentRef.setValue(document);
-        });
+        documentList.forEach(this::addCreatedDocument);
     }
 
     /**
