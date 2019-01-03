@@ -51,13 +51,6 @@ export const updateOnCreatedDocuments = functions.database.ref('/createdDocument
 
     if (change.before.val() === change.after.val()) return null;
 
-    // Grab all users that got removed from the userIds list and remove the node from sharedDocuments
-    const removedUsers = change.before.val().filter(user => change.after.val().indexOf(user) < 0);
-
-    removedUsers.forEach(userId => {
-        updates.push(change.before.ref.root.child(`sharedDocuments/${userId}/${docId}`).remove())
-    });
-
     if(change.after.val().userIds) {
         change.after.val().userIds.forEach(userId =>
             updates.push(change.before.ref.root.child(`sharedDocuments/${userId}/${docId}`).set(document))
