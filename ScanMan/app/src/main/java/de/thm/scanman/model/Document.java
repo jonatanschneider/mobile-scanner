@@ -14,8 +14,9 @@ public class Document {
     private List<String> userIds;
 
     public Document() {
-        userIds = new ArrayList<>();
         tags = new ArrayList<>();
+        images = new ArrayList<>();
+        userIds = new ArrayList<>();
     }
 
     public Document(String name, List<String> tags, List<Image> images, long createdAt, String ownerId, List<String> userIds) {
