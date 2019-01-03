@@ -2,10 +2,23 @@ import * as functions from 'firebase-functions';
 
 // Called when a document gets added to 'sharedDocuments'
 // This function will add the userId to the owner documents 'userIds' field
-/*export const onAddSharedDocument = functions.database.ref('/sharedDocuments/{userId}/{docId}').onCreate((snapshot, context) => {
-    
+export const createOnSharedDocuments = functions.database.ref('/sharedDocuments/{userId}/{docId}').onCreate((data, context) => {
+    // TODO: add user id to createdDocuments userIds
+    const document = data.val();
+    const userId = context.params.userId;
+    const docId = context.params.docId;
+    const ownerId = document.ownerId;
 
-})*/
+    return data.ref.root.child(`createdDocuments/${ownerId}/${docId}`).once('value').then(snap => {
+        const snapData = snap.val();
+        if (!snapData.userIds) {
+            snapData.userIds = [];
+        }
+        snapData.userIds.push(userId);
+
+        return snap.ref.set(snapData);
+    });
+});
 
 // Called when a document in 'sharedDocuments' is updated
 // This function will update the owner document
