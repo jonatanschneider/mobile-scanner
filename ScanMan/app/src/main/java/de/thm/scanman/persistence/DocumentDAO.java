@@ -12,7 +12,7 @@ import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
-    String userId = FirebaseAuth.getInstance().getUid();
+    private String userId = FirebaseAuth.getInstance().getUid();
 
     /**
      * Add the document into the createdDocuments node
