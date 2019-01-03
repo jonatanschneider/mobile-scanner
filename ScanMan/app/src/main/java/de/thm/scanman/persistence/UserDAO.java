@@ -68,8 +68,8 @@ public class UserDAO {
     public LiveData<User> getInfo(String userId) {
         return new UserLiveData(FirebaseDatabase.usersRef.child(userId));
     }
-
-    public void update(User user) {
+    
+    public void updateInfo(User user) {
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
     }
 
