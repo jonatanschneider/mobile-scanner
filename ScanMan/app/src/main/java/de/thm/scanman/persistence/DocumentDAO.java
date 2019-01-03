@@ -69,7 +69,10 @@ public class DocumentDAO {
                 FirebaseDatabase.getSharedDocumentsReference(userId, document).setValue(document);
             }
         });
+    }
 
+    public void update(List<Document> documentList) {
+        update(documentList.toArray(new Document[0]));
     }
 
     public void removeUserDocuments(String userId) {
