@@ -37,16 +37,22 @@ public class DocumentDAO {
     }
 
     /**
+     * Add document into the sharedDocuments node
+     * @param document
+     */
+    public void addSharedDocument(Document document) {
+        //TODO meaningful error messages instead of simple return
+        if (userId.equals(document.getOwnerId())) return;
+        if (document.getId().equals("") || document.getId() == null) return;
+        FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
+    }
+
+    /**
      * Add all documents from the list into the sharedDocuments node
      * @param documentList
      */
     public void addSharedDocuments(List<Document> documentList) {
-        //TODO meaningful error messages instead of simple return
-        documentList.forEach(document -> {
-            if (userId.equals(document.getOwnerId())) return;
-            if (document.getId().equals("") || document.getId() == null) return;
-            FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
-        });
+        documentList.forEach(this::addSharedDocument);
     }
 
     private LiveData<List<Document>> get(DatabaseReference reference) {
