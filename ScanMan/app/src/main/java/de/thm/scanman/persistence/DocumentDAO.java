@@ -62,6 +62,11 @@ public class DocumentDAO {
         return new DocumentLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
+    /**
+     * Updates all documents
+     * Automatically decides whether updating created or shared documents
+     * @param documents single document or an array of documents
+     */
     public void update(Document... documents) {
         Arrays.asList(documents).forEach(document -> {
             // Update created docs
@@ -75,10 +80,21 @@ public class DocumentDAO {
         });
     }
 
+    /**
+     * Updates all documents
+     * Automatically decides whether updating created or shared documents
+     * @param documentList
+     */
     public void update(List<Document> documentList) {
         update(documentList.toArray(new Document[0]));
     }
 
+    /**
+     * Remove the given document
+     * If the user is the owner, the document will be deleted from the database
+     * Otherwise the user is removing their access to the document
+     * @param document
+     */
     public void remove(Document document) {
         DatabaseReference reference = document.getOwnerId().equals(userId) ?
                         FirebaseDatabase.createdDocsRef :
@@ -86,12 +102,21 @@ public class DocumentDAO {
         reference.child(userId).child(document.getId()).removeValue();
     }
 
+    /**
+     * Remove access to an document for an user
+     * Only the owner can remove accesses
+     * @param document
+     * @param userToBeRemoved
+     */
     public void removeAccess(Document document, String userToBeRemoved) {
         if (!document.getOwnerId().equals(userId)) return;
         document.getUserIds().remove(userToBeRemoved);
         update(document);
     }
 
+    /**
+     * Remove all documents from a user
+     */
     public void removeUserDocuments() {
         FirebaseDatabase.createdDocsRef.child(userId).removeValue();
         FirebaseDatabase.sharedDocsRef.child(userId).removeValue();
