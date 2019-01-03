@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.thm.scanman.model.Document;
+import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
@@ -70,26 +71,21 @@ public class DocumentDAO {
         update(documentList.toArray(new Document[0]));
     }
 
+    public void remove(Document document) {
+        DatabaseReference reference = document.getOwnerId().equals(userId) ?
+                        FirebaseDatabase.createdDocsRef :
+                        FirebaseDatabase.sharedDocsRef;
+        reference.child(userId).child(document.getId()).removeValue();
+    }
+
+    public void removeAccess(Document document, String userToBeRemoved) {
+        if (!document.getOwnerId().equals(userId)) return;
+        document.getUserIds().remove(userToBeRemoved);
+        update(document);
+    }
+
     public void removeUserDocuments() {
         FirebaseDatabase.createdDocsRef.child(userId).removeValue();
         FirebaseDatabase.sharedDocsRef.child(userId).removeValue();
     }
-
-    public void remove(List<Document> documentList) {
-        String uid = FirebaseAuth.getInstance().getUid();
-        documentList.forEach(document -> {
-            // Remove from createdDocuments
-            if (document.getOwnerId().equals(uid))
-                FirebaseDatabase.getCreatedDocumentsReference(document).removeValue();
-
-            // Remove from sharedDocuments
-            document.getUserIds().forEach(userId ->
-                    FirebaseDatabase.getSharedDocumentsReference(userId, document).removeValue());
-        });
-    }
-
-    public void remove(Document... documents) {
-        remove(Arrays.asList(documents));
-    }
-
 }
