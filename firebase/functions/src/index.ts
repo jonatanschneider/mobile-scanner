@@ -52,13 +52,11 @@ export const updateOnCreatedDocuments = functions.database.ref('/createdDocument
 
     if (change.before.val() === change.after.val()) return null;
 
-    if(change.before.val().userIds) {
-        change.before.val().userIds.forEach(userId =>
+    if(change.after.val().userIds) {
+        change.after.val().userIds.forEach(userId =>
             updates.push(change.before.ref.root.child(`sharedDocuments/${userId}/${docId}`).set(document))
         );
     }
-
-    updates.push(change.before.ref.set(document));
 
     return Promise.all(updates);
 });
