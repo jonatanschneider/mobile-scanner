@@ -45,19 +45,36 @@ export const deleteOnSharedDocuments = functions.database.ref('/sharedDocuments/
 // Called when a document in 'createdDocuments' is updated
 // This function will update all documents in 'sharedDocuments' which are linked in the 'userIds' field
 export const updateOnCreatedDocuments = functions.database.ref('/createdDocuments/{userId}/{docId}').onUpdate((change, context) => {
-    const document = change.after.val();
+    const beforeDocument = change.before.val();
+    const afterDocument = change.after.val();
     const docId = context.params.docId;
     const updates = [];
 
-    if (change.before.val() === change.after.val()) return null;
+    if (beforeDocument === afterDocument) return null;
 
-    if(change.after.val().userIds) {
-        change.after.val().userIds.forEach(userId =>
-            updates.push(change.before.ref.root.child(`sharedDocuments/${userId}/${docId}`).set(document))
+    if (afterDocument.userIds) {
+        afterDocument.userIds.forEach(userId =>
+            updates.push(change.before.ref.root.child(`sharedDocuments/${userId}/${docId}`).set(afterDocument))
+        );
+    }
+
+    if (beforeDocument.userIds) {
+        getRemovedUserIds().forEach(userId =>
+            updates.push(change.before.ref.root.child(`sharedDocuments/${userId}/${docId}`).remove())
         );
     }
 
     return Promise.all(updates);
+
+    /**
+     * Get the userIds removed in this transaction based on the beforeDoc.userIds and the afterDoc.userIds
+     */
+    function getRemovedUserIds() {
+        // If afterDoc has userIds -> Keep ids in beforeDocument.userIds that are not in afterDocument.userIds
+        // If afterDoc has no userIds -> Return all beforeDoc.userIds as all userIds has been removed
+        return afterDocument.userIds ?
+            beforeDocument.userIds.filter(id => !afterDocument.userIds.includes(id)) : beforeDocument.userIds;
+    }
 });
 
 export const deleteOnCreatedDocuments = functions.database.ref('/createdDocuments/{userId}/{docId}').onDelete((data, context) => {
@@ -65,7 +82,7 @@ export const deleteOnCreatedDocuments = functions.database.ref('/createdDocument
     const docId = context.params.docId;
     const updates = [];
 
-    if(document.userIds) {
+    if (document.userIds) {
         document.userIds.forEach(userId =>
             updates.push(data.ref.root.child(`sharedDocuments/${userId}/${docId}`).remove())
         );
