@@ -40,7 +40,6 @@ public class DocumentDAO {
      * @param document
      */
     public void addSharedDocument(Document document) {
-        //TODO meaningful error messages instead of simple return
         if (userId.equals(document.getOwnerId())) return;
         if (document.getId().equals("") || document.getId() == null) return;
         FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
