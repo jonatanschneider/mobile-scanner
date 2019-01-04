@@ -41,7 +41,7 @@ public class DocumentDAO {
      */
     public void addSharedDocument(Document document) {
         if (userId.equals(document.getOwnerId())) return;
-        if (document.getId().equals("") || document.getId() == null) return;
+        if (document.getId() == null || document.getId().equals("")) return;
         FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
     }
 
