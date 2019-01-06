@@ -1,5 +1,6 @@
 package de.thm.scanman.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,19 +9,23 @@ public class Document {
     private String name;
     private List<String> tags;
     private List<Image> images;
-    private Date createdAt;
-    private User owner;
-    private List<User> users;
+    private long createdAt;
+    private String ownerId;
+    private List<String> userIds;
 
-    public Document() { }
+    public Document() {
+        tags = new ArrayList<>();
+        images = new ArrayList<>();
+        userIds = new ArrayList<>();
+    }
 
-    public Document(String name, List<String> tags, List<Image> images, Date createdAt, User owner, List<User> users) {
+    public Document(String name, List<String> tags, List<Image> images, long createdAt, String ownerId, List<String> userIds) {
         this.name = name;
         this.tags = tags;
         this.images = images;
         this.createdAt = createdAt;
-        this.owner = owner;
-        this.users = users;
+        this.ownerId = ownerId;
+        this.userIds = userIds;
     }
 
     public String getId() {
@@ -55,28 +60,28 @@ public class Document {
         this.images = images;
     }
 
-    public Date getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<String> getUserIds() {
+        return userIds;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserIds(List<String> userIds) {
+        this.userIds = userIds;
     }
 
     @Override
@@ -85,15 +90,15 @@ public class Document {
         sb.append("Document: ")
                 .append(id).append(" - ")
                 .append(name).append(" - ")
-                .append("Owner: ").append(owner).append(" - ")
-                .append("Created At: ").append(createdAt.toString()).append("\n");
+                .append("Owner: ").append(ownerId).append(" - ")
+                .append("Created At: ").append(new Date(createdAt).toString()).append("\n");
 
         sb.append("Images: \n");
         images.forEach(i -> sb.append("\t")
                 .append(i.toString()).append("\n"));
 
         sb.append("Shared With: \n");
-        users.forEach(u -> sb.append("\t")
+        userIds.forEach(u -> sb.append("\t")
                 .append(u.toString()).append("\n"));
 
         sb.append("Tags: \n");
@@ -102,5 +107,46 @@ public class Document {
         return sb.toString();
     }
 
+    public static class Image {
+        private String id;
+        private String file;
+        private long createdAt;
+
+        public Image() { }
+
+        public Image(String file, long createdAt) {
+            this.file = file;
+            this.createdAt = createdAt;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        public void setFile(String file) {
+            this.file = file;
+        }
+
+        public long getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(long createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        @Override
+        public String toString() {
+            return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
+        }
+    }
 
 }
