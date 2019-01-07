@@ -1,7 +1,7 @@
 package de.thm.scanman.persistence.liveData;
 
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
