@@ -1,8 +1,8 @@
 package de.thm.scanman.persistence;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Transformations;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
 import java.util.List;
