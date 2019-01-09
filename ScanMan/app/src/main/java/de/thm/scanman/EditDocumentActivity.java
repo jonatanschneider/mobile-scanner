@@ -50,9 +50,9 @@ public class EditDocumentActivity extends AppCompatActivity {
         ia = new ImageAdapter(this, imagesList.getList());
         gridview.setAdapter(ia);
         gridview.setOnItemClickListener((parent, v, position, id) -> {
-            if (id == ia.getCount() - 1) {  // addButton
+            if (id == ia.getCount() - 1) {  // click on addButton
                 shootNewImage();
-            } else {                        // real image
+            } else {                        // click on real image
                 imageNr = position;
                 Uri selectedImage = (Uri)ia.getItem(position);
                 CropImage.activity(selectedImage)
@@ -69,7 +69,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (firstVisit) {// no "real" image
+        if (firstVisit) {   // There is no "real" image
             shootNewImage();
         }
     }
@@ -104,13 +104,13 @@ public class EditDocumentActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Uri resultUri = result.getUri();
 
-                    if (imageNr == DEFAULT_IMAGE_NR){
+                    if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
-                    } else {
+                    } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
                     }
 
-                    ia.notifyDataSetChanged();
+                    ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     System.out.println(result.getError());
                 }

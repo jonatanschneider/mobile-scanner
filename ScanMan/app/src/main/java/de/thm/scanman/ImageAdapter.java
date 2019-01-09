@@ -10,9 +10,12 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+/**
+ * This class is used to display pictures in an Adapter
+ * It is specified for EditDocumentsActivity
+ * */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private int SQUARE_SIZE = 480;
     private List<Uri> imagesList;
     
     ImageAdapter(Context c, List<Uri>imagesList) {
@@ -42,6 +45,7 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
+        int SQUARE_SIZE = 480;
 
         if (convertView == null) {
             imageView = new ImageView(mContext);

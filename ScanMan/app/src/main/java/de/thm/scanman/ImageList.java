@@ -3,6 +3,11 @@ package de.thm.scanman;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is a List with one fix last element, the addImage.
+ * @param <E> The Type the list contains
+ * This class is used to display a List in a GridView with a picture of a "+" as last element.
+ */
 class ImageList<E> {
     private E addImage;
     private List<E> list;
