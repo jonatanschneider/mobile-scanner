@@ -1,6 +1,7 @@
 package de.thm.scanman;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -38,8 +39,11 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         addFab = findViewById(R.id.add_fab);
         addFab.setOnClickListener(
             // implement call for new intent here
-            view -> {}
-        );
+            view -> {
+                Intent i = new Intent(this, EditDocumentActivity.class);
+                i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
+                startActivity(i);
+            });
     }
 
     @Override

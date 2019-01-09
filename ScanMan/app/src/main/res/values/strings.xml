@@ -24,4 +24,12 @@
     <string name="sign_up_failed">Registrierung fehlgeschlagen.</string>
     <!-- Settings -->
     <string name="logout">Abmelden</string>
+    <!-- EditDocument -->
+    <string name="exportDocument">Exportieren</string>
+    <string name="shareDocument">Freigeben</string>
+    <string name="exitEditDocument">Sie verlassen das Dokument</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="saveDocuments">Dokument speichern?</string>
+    <string name="cancel">Abbrechen</string>
 </resources>
