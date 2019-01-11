@@ -15,9 +15,16 @@ import de.thm.scanman.R;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
 
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.GridView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
@@ -53,6 +60,8 @@ public class EditDocumentActivity extends AppCompatActivity {
         gridview = findViewById(R.id.grid_view);
         ia = new ImageAdapter(this, imagesList.getList());
         gridview.setAdapter(ia);
+
+        // onClickListener for editing
         gridview.setOnItemClickListener((parent, v, position, id) -> {
             if (id == ia.getCount() - 1) {  // click on addButton
                 shootNewImage();
@@ -76,6 +85,75 @@ public class EditDocumentActivity extends AppCompatActivity {
         if (firstVisit) {   // There is no "real" image
             shootNewImage();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // setMultiChoice Listener
+        gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            List<Uri> selectedImages = new ArrayList<>();
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.delete_menu, menu);
+                System.out.println("MulitChioceModeListener is on");
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_delete:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                        builder.setTitle(R.string.delete);
+                        builder.setMessage(selectedImages.size() + " Bilder löschen?");
+                        builder.setPositiveButton(R.string.yes, (dialog, which) -> selectedImages.forEach(
+                                image -> imagesList.remove(image)
+                        ));
+                        builder.setNeutralButton(R.string.cancel, (dialog, which) -> selectedImages.clear());
+                        builder.show();
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                System.out.println("selected Item: " + position);
+                Object selected = ia.getItem(position);
+                if (Uri.class.equals(selected.getClass())) {
+                    Uri uri = (Uri) selected;
+                    if (checked) {
+                        selectedImages.add(uri);
+                    } else {
+                        selectedImages.remove(uri);
+                    }
+                } else {
+                    System.out.println("ERROR: class is " + selected.getClass());
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                // Here you can make any necessary updates to the activity when
+                // the CAB is removed. By default, selected items are deselected/unchecked
+                selectedImages.clear();
+                System.out.println("MulitChioceModeListener is off");
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an <code><a href="/reference/android/view/ActionMode.html#invalidate()">invalidate()</a></code> request
+                return false;
+            }
+        });
     }
 
     @Override
