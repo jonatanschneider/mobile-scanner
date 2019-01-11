@@ -1,4 +1,4 @@
-package de.thm.scanman;
+package de.thm.scanman.view.activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +7,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import de.thm.scanman.R;
 
 public class SignUpActivity extends AuthenticationBaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();

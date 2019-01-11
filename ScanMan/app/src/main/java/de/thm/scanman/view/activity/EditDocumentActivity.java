@@ -1,4 +1,4 @@
-package de.thm.scanman;
+package de.thm.scanman.view.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,6 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import de.thm.scanman.R;
+import de.thm.scanman.util.ImageAdapter;
+import de.thm.scanman.util.ImageList;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;

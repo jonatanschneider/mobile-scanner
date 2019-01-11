@@ -1,4 +1,4 @@
-package de.thm.scanman;
+package de.thm.scanman.util;
 
 import android.content.Context;
 import android.net.Uri;
@@ -18,7 +18,7 @@ public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private List<Uri> imagesList;
     
-    ImageAdapter(Context c, List<Uri>imagesList) {
+    public ImageAdapter(Context c, List<Uri> imagesList) {
         mContext = c;
         this.imagesList = imagesList;
     }

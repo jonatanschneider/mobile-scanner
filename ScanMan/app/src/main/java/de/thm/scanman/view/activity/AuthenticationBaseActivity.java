@@ -1,9 +1,11 @@
-package de.thm.scanman;
+package de.thm.scanman.view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+import de.thm.scanman.view.activity.DocumentsListsActivity;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;

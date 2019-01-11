@@ -1,4 +1,4 @@
-package de.thm.scanman;
+package de.thm.scanman.view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,6 +11,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import de.thm.scanman.R;
 
 /**
  * A login screen that offers login via email/password
