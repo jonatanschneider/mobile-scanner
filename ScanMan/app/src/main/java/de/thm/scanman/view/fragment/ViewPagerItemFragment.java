@@ -1,7 +1,9 @@
-package de.thm.scanman;
+package de.thm.scanman.view.fragment;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import de.thm.scanman.R;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

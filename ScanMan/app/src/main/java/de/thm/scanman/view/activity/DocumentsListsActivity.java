@@ -1,10 +1,10 @@
-package de.thm.scanman;
+package de.thm.scanman.view.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -12,11 +12,13 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+import de.thm.scanman.R;
+import de.thm.scanman.view.activity.EditDocumentActivity;
+import de.thm.scanman.view.activity.SettingsActivity;
+import de.thm.scanman.view.fragment.ViewPagerItemFragment;
+
 import android.view.Menu;
 import android.view.MenuItem;
-
-import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
-import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
@@ -38,8 +40,11 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         addFab = findViewById(R.id.add_fab);
         addFab.setOnClickListener(
             // implement call for new intent here
-            view -> {}
-        );
+            view -> {
+                Intent i = new Intent(this, EditDocumentActivity.class);
+                i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
+                startActivity(i);
+            });
     }
 
     @Override

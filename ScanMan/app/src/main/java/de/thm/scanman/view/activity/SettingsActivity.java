@@ -1,9 +1,11 @@
-package de.thm.scanman;
+package de.thm.scanman.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import de.thm.scanman.R;
+
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
