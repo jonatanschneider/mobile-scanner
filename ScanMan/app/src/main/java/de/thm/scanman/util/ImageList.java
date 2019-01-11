@@ -55,6 +55,6 @@ public class ImageList<E> {
     }
 
     private boolean validIndex(int index){
-        return index < 0 || index > size();
+        return index >= 0 && index <= size();
     }
 }
