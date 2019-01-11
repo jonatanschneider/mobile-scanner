@@ -1,5 +1,6 @@
 package de.thm.scanman.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.AbsListView;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     ImageAdapter ia;
     private Uri addImage = Uri.parse("android.resource://de.thm.scanman/drawable/ic_add_circle_outline_black_24dp");
     private ImageList<Uri> imagesList = new ImageList<>(addImage);
+    private Context context = this;
 
     private int imageNr;
     private boolean firstVisit;
@@ -91,7 +92,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // setMultiChoice Listener
+        // setMultiChoice Listener TODO Coloring, sorting
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             List<Uri> selectedImages = new ArrayList<>();
@@ -100,21 +101,29 @@ public class EditDocumentActivity extends AppCompatActivity {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.delete_menu, menu);
-                System.out.println("MulitChioceModeListener is on");
-                return false;
+                imagesList.hideAddImage();
+                selectedImages.clear();
+                return true;
             }
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete:
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                       AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle(R.string.delete);
                         builder.setMessage(selectedImages.size() + " Bilder löschen?");
-                        builder.setPositiveButton(R.string.yes, (dialog, which) -> selectedImages.forEach(
-                                image -> imagesList.remove(image)
-                        ));
-                        builder.setNeutralButton(R.string.cancel, (dialog, which) -> selectedImages.clear());
+                        selectedImages.forEach(System.out::println);
+                        imagesList.getList().forEach(System.out::println);
+                        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                            selectedImages.forEach(image -> {
+                                imagesList.remove(image);
+                            });
+                            afterDeleting();
+                        });
+                        builder.setNeutralButton(R.string.cancel, (dialog, which) ->
+                                afterDeleting()
+                        );
                         builder.show();
                         mode.finish();
                         return true;
@@ -127,7 +136,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 System.out.println("selected Item: " + position);
                 Object selected = ia.getItem(position);
-                if (Uri.class.equals(selected.getClass())) {
+                if (selected.getClass().toString().contains("Uri")) {
                     Uri uri = (Uri) selected;
                     if (checked) {
                         selectedImages.add(uri);
@@ -143,8 +152,6 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onDestroyActionMode(ActionMode mode) {
                 // Here you can make any necessary updates to the activity when
                 // the CAB is removed. By default, selected items are deselected/unchecked
-                selectedImages.clear();
-                System.out.println("MulitChioceModeListener is off");
             }
 
             @Override
@@ -234,5 +241,10 @@ public class EditDocumentActivity extends AppCompatActivity {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
+    }
+
+    private void afterDeleting() {
+        imagesList.showAddImage();
+        ia.notifyDataSetChanged();
     }
 }
