@@ -12,12 +12,20 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
@@ -29,6 +37,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private int imageNr;
     private boolean firstVisit;
+    private Document document;
 
     public static final String FIRST_VISIT = "FirstVisit";
     private static final int DEFAULT_IMAGE_NR = -1;
@@ -132,6 +141,22 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private void saveDocument() {
         // TODO implement saveDocument / implement liveData
+        buildDocument();
+        documentDAO.addCreatedDocument(document, this);
+    }
+
+    private void buildDocument() {
+        document = new Document();
+        document.setCreatedAt(new Date().getTime());
+        document.setName("Upload Test");
+        document.setImages(buildImages());
+    }
+
+    private List<Document.Image> buildImages() {
+        return imagesList.getList().stream()
+                .filter(uri -> !uri.equals(addImage))
+                .map(uri -> new Document.Image(uri, new Date().getTime()))
+                .collect(Collectors.toList());
     }
 
     private void exitDocumentActivity() {
