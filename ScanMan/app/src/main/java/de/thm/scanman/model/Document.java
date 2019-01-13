@@ -1,5 +1,9 @@
 package de.thm.scanman.model;
 
+import android.net.Uri;
+
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,14 +113,18 @@ public class Document {
 
     public static class Image {
         private String id;
-        private String file;
+        private String storageUri;
         private long createdAt;
+        private long lastUpdateAt;
+        @Exclude
+        private Uri localUri;
 
         public Image() { }
 
-        public Image(String file, long createdAt) {
-            this.file = file;
+        public Image(Uri localUri, long createdAt) {
+            this.localUri = localUri;
             this.createdAt = createdAt;
+            this.lastUpdateAt = createdAt;
         }
 
         public String getId() {
@@ -127,12 +135,12 @@ public class Document {
             this.id = id;
         }
 
-        public String getFile() {
-            return file;
+        public String getStorageUri() {
+            return storageUri;
         }
 
-        public void setFile(String file) {
-            this.file = file;
+        public void setStorageUri(String storageUri) {
+            this.storageUri = storageUri;
         }
 
         public long getCreatedAt() {
@@ -143,10 +151,28 @@ public class Document {
             this.createdAt = createdAt;
         }
 
+        public long getLastUpdateAt() {
+            return lastUpdateAt;
+        }
+
+        public void setLastUpdateAt(long lastUpdateAt) {
+            this.lastUpdateAt = lastUpdateAt;
+        }
+
+        public Uri getLocalUri() {
+            return localUri;
+        }
+
+        public void setLocalUri(Uri localUri) {
+            this.localUri = localUri;
+        }
+
         @Override
         public String toString() {
-            return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
+            return "File: " + id + " - " + storageUri + " - " + "Created At: " + new Date(createdAt).toString();
         }
+
+
     }
 
 }
