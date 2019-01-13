@@ -38,4 +38,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.5'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 }
