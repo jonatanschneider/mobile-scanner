@@ -1,5 +1,7 @@
 package de.thm.scanman.persistence;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
@@ -20,7 +22,7 @@ public class UserDAO {
      * @param user
      * @return user with set id
      */
-    public User add(User user) {
+    public User add(User user, Context context) {
         // Remove documents from user object, will be stored independently in other nodes
         List<Document> createdDocuments = user.getCreatedDocuments();
         List<Document> sharedDocuments = user.getSharedDocuments();
@@ -29,7 +31,7 @@ public class UserDAO {
 
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
 
-        FirebaseDatabase.documentDAO.addCreatedDocuments(createdDocuments);
+        FirebaseDatabase.documentDAO.addCreatedDocuments(createdDocuments, context);
         FirebaseDatabase.documentDAO.addSharedDocuments(sharedDocuments);
         return user;
     }

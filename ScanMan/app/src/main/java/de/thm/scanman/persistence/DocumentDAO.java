@@ -1,12 +1,25 @@
 package de.thm.scanman.persistence;
 
+import android.content.Context;
+import android.net.Uri;
+
 import androidx.lifecycle.LiveData;
 
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
@@ -19,11 +32,24 @@ public class DocumentDAO {
      * Will also set the documents ownerId to the corresponding user id
      * @param document
      */
-    public void addCreatedDocument(Document document) {
+    public void addCreatedDocument(Document document, Context context) {
         document.setOwnerId(userId);
         DatabaseReference documentRef = FirebaseDatabase.createdDocsRef.child(userId).push();
         document.setId(documentRef.getKey());
+        copyImagesToFilesDir(document, context);
+        uploadImages(document);
+
+        /*
+        We need to copy our local uris temporarily because otherwise firebase would upload
+        the uri to the database, which will result in an error at CustomClassMapper because
+        firebase can't handle URI type
+         */
+        List<Document.Image> images = document.getImages();
+        List<Uri> uriList = images.stream().map(Document.Image::getLocalUri).collect(Collectors.toList());
+        document.getImages().forEach(image -> image.setLocalUri(null));
         documentRef.setValue(document);
+        IntStream.range(0, images.size()).forEach(i -> images.get(i).setLocalUri(uriList.get(i)));
+
     }
 
     /**
@@ -31,8 +57,41 @@ public class DocumentDAO {
      * Will also set the documents ownerId to the corresponding user id
      * @param documentList
      */
-    public void addCreatedDocuments(List<Document> documentList) {
-        documentList.forEach(this::addCreatedDocument);
+    public void addCreatedDocuments(List<Document> documentList, Context context) {
+        documentList.forEach(document -> addCreatedDocument(document, context));
+    }
+
+    private void copyImagesToFilesDir(Document document, Context context) {
+        for (int i = 0; i < document.getImages().size(); i++) {
+
+            Document.Image image = document.getImages().get(i);
+
+            //File: filesDir/documentId/i.jpeg
+            File dest = new File(context.getFilesDir(), document.getId()+ File.separator + i + ".jpeg");
+            File source = new File(image.getLocalUri().getPath());
+
+            try {
+                FileUtils.copyFile(source, dest);
+                image.setLocalUri(Uri.parse(dest.toString()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void uploadImages(Document document) {
+        for (int i = 0; i < document.getImages().size(); i++) {
+            Document.Image image = document.getImages().get(i);
+            StorageReference storage = FirebaseStorage.getInstance().getReference().child("documents").child(document.getId()).child(""+ i);
+            image.setStorageUri(storage.toString());
+
+            UploadTask uploadTask = storage.putFile(Uri.parse("file://" + image.getLocalUri()));
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                System.out.println("upload success");
+            }).addOnFailureListener(exception -> {
+                System.out.println("upload failed");
+            });
+        }
     }
 
     /**
