@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import de.thm.scanman.R;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
@@ -92,7 +93,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // setMultiChoice Listener TODO Coloring, sorting
+        // setMultiChoice Listener
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             List<Uri> selectedImages = new ArrayList<>();
@@ -110,20 +111,16 @@ public class EditDocumentActivity extends AppCompatActivity {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete:
-                       AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle(R.string.delete);
                         builder.setMessage(selectedImages.size() + " Bilder löschen?");
                         selectedImages.forEach(System.out::println);
                         imagesList.getList().forEach(System.out::println);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                            selectedImages.forEach(image -> {
-                                imagesList.remove(image);
-                            });
-                            afterDeleting();
+                            selectedImages.forEach(image -> imagesList.remove(image));
+                            ia.notifyDataSetChanged();
                         });
-                        builder.setNeutralButton(R.string.cancel, (dialog, which) ->
-                                afterDeleting()
-                        );
+                        builder.setNeutralButton(R.string.cancel, null);
                         builder.show();
                         mode.finish();
                         return true;
@@ -136,15 +133,15 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 System.out.println("selected Item: " + position);
                 Object selected = ia.getItem(position);
-                if (selected.getClass().toString().contains("Uri")) {
+                if (selected != null && selected.getClass().toString().contains("Uri")) {
                     Uri uri = (Uri) selected;
                     if (checked) {
+                        gridview.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
                         selectedImages.add(uri);
                     } else {
+                        gridview.getChildAt(position).setBackground(null);
                         selectedImages.remove(uri);
                     }
-                } else {
-                    System.out.println("ERROR: class is " + selected.getClass());
                 }
             }
 
@@ -152,6 +149,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onDestroyActionMode(ActionMode mode) {
                 // Here you can make any necessary updates to the activity when
                 // the CAB is removed. By default, selected items are deselected/unchecked
+                afterDeleting();
             }
 
             @Override
@@ -245,6 +243,9 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private void afterDeleting() {
         imagesList.showAddImage();
+        for (int i = 0; i < gridview.getChildCount(); i++) {
+            gridview.getChildAt(i).setBackground(null);
+        }
         ia.notifyDataSetChanged();
     }
 }
