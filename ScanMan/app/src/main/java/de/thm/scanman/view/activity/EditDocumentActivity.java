@@ -21,6 +21,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
 
@@ -104,6 +105,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                 inflater.inflate(R.menu.delete_menu, menu);
                 imagesList.hideAddImage();
                 selectedImages.clear();
+                saveFab.setVisibility(View.INVISIBLE);
                 return true;
             }
 
@@ -114,8 +116,6 @@ public class EditDocumentActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle(R.string.delete);
                         builder.setMessage(selectedImages.size() + " Bilder löschen?");
-                        selectedImages.forEach(System.out::println);
-                        imagesList.getList().forEach(System.out::println);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             selectedImages.forEach(image -> imagesList.remove(image));
                             ia.notifyDataSetChanged();
@@ -131,7 +131,6 @@ public class EditDocumentActivity extends AppCompatActivity {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                System.out.println("selected Item: " + position);
                 Object selected = ia.getItem(position);
                 if (selected != null && selected.getClass().toString().contains("Uri")) {
                     Uri uri = (Uri) selected;
@@ -142,6 +141,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                         gridview.getChildAt(position).setBackground(null);
                         selectedImages.remove(uri);
                     }
+                } else {
+                    mode.finish();
+                    saveFab.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -149,7 +151,12 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onDestroyActionMode(ActionMode mode) {
                 // Here you can make any necessary updates to the activity when
                 // the CAB is removed. By default, selected items are deselected/unchecked
-                afterDeleting();
+                imagesList.showAddImage();
+                for (int i = 0; i < gridview.getChildCount(); i++) {
+                    gridview.getChildAt(i).setBackground(null);
+                }
+                ia.notifyDataSetChanged();
+                saveFab.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -239,13 +246,5 @@ public class EditDocumentActivity extends AppCompatActivity {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
-    }
-
-    private void afterDeleting() {
-        imagesList.showAddImage();
-        for (int i = 0; i < gridview.getChildCount(); i++) {
-            gridview.getChildAt(i).setBackground(null);
-        }
-        ia.notifyDataSetChanged();
     }
 }
