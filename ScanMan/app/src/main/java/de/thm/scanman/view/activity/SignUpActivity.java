@@ -1,6 +1,7 @@
 package de.thm.scanman.view.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -13,6 +14,7 @@ import de.thm.scanman.R;
 public class SignUpActivity extends AuthenticationBaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
     private EditText emailView;
+    private EditText nameView;
     private EditText passwordView;
     private EditText repeatPasswordView;
 
@@ -29,6 +31,7 @@ public class SignUpActivity extends AuthenticationBaseActivity {
 
     private void setupView() {
         emailView = findViewById(R.id.email);
+        nameView = findViewById(R.id.name);
 
         passwordView = findViewById(R.id.password);
         repeatPasswordView = findViewById(R.id.repeat_password);
@@ -50,11 +53,13 @@ public class SignUpActivity extends AuthenticationBaseActivity {
     private void attemptSignUp() {
         // Reset errors
         emailView.setError(null);
+        nameView.setError(null);
         passwordView.setError(null);
         repeatPasswordView.setError(null);
 
         // Store values at the time of the sign up attempt
         String email = emailView.getText().toString();
+        String name = nameView.getText().toString();
         String password = passwordView.getText().toString();
         String repeatPassword = repeatPasswordView.getText().toString();
 
@@ -73,6 +78,12 @@ public class SignUpActivity extends AuthenticationBaseActivity {
             isValid = false;
         }
 
+        if (!isNameValid(name)) {
+            nameView.setError(getString(R.string.error_invalid_name));
+            focusView = nameView;
+            isValid = false;
+        }
+
         if (!isEmailValid(email)) {
             emailView.setError(getString(R.string.error_invalid_email));
             focusView = emailView;
@@ -86,6 +97,10 @@ public class SignUpActivity extends AuthenticationBaseActivity {
             // form field with an error
             focusView.requestFocus();
         }
+    }
+
+    private boolean isNameValid(String name) {
+        return !TextUtils.isEmpty(name);
     }
 
     private boolean isRepeatPasswordValid(String password, String repeatPassword) {
