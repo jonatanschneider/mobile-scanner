@@ -163,22 +163,37 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private void saveDocument() {
         // TODO implement saveDocument / implement liveData
-        buildDocument();
-        documentDAO.addCreatedDocument(document, this);
+        if (firstVisit) {
+            buildDocument();
+            documentDAO.addCreatedDocument(document);
+        }
+        else {
+            document.setImages(buildImages());
+            document.setLastUpdateAt(new Date().getTime());
+            documentDAO.update(document);
+        }
     }
 
     private void buildDocument() {
-        document = new Document();
         document.setCreatedAt(new Date().getTime());
         document.setName("Upload Test");
         document.setImages(buildImages());
     }
 
     private List<Document.Image> buildImages() {
-        return imagesList.getList().stream()
-                .filter(uri -> !uri.equals(addImage))
-                .map(uri -> new Document.Image(uri, new Date().getTime()))
-                .collect(Collectors.toList());
+        List<Document.Image> images = new ArrayList<>();
+        for(int i = 0; i < imagesList.size(); i++) {
+            Uri uri = imagesList.get(i);
+            if (uri.equals(addImage)) continue;
+            if (!uri.getScheme().equals("file")) {
+                images.add(document.getImages().get(i));
+            } else {
+                Document.Image image = new Document.Image(uri.toString(), new Date().getTime());
+                image.setId("" + i);
+                images.add(image);
+            }
+        }
+        return images;
     }
 
     private void exitDocumentActivity() {
