@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import de.thm.scanman.R;
+import de.thm.scanman.model.User;
 
 public class SignUpActivity extends AuthenticationBaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
@@ -91,7 +92,7 @@ public class SignUpActivity extends AuthenticationBaseActivity {
         }
 
         if (isValid) {
-            makeSignUp(email, password);
+            makeSignUp(email, name, password);
         } else {
             // There was an error; don't attempt sign up and focus the first
             // form field with an error
@@ -111,7 +112,7 @@ public class SignUpActivity extends AuthenticationBaseActivity {
      * Actually make the sign up request based on the credentials validated before and adjust the ui
      * accordingly
      */
-    private void makeSignUp(String email, String password) {
+    private void makeSignUp(String email, String name, String password) {
         // Show a progress spinner, and kick off a background task to
         // perform the user sign up attempt
         showProgress(signUpFormView, progressView, true);
@@ -122,6 +123,11 @@ public class SignUpActivity extends AuthenticationBaseActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success");
+
+                        User user = new User();
+                        user.setId(getAuth().getCurrentUser().getUid());
+                        user.setName(name);
+                        // TODO: push user to database
 
                         startMainActivity();
                     } else {
