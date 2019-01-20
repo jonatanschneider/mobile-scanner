@@ -98,6 +98,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             List<Uri> selectedImages = new ArrayList<>();
+            Integer selectedPictures = 0;
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -137,9 +138,13 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (checked) {
                         gridview.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
                         selectedImages.add(uri);
+                        selectedPictures++;
+                        mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     } else {
                         gridview.getChildAt(position).setBackground(null);
                         selectedImages.remove(uri);
+                        selectedPictures--;
+                        mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     }
                 } else {
                     mode.finish();
