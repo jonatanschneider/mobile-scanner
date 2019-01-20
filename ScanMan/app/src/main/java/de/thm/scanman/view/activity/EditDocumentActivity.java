@@ -77,6 +77,19 @@ public class EditDocumentActivity extends AppCompatActivity {
         Uri data = getIntent().getData();
         if (data != null && data.toString().equals(FIRST_VISIT)) {
             firstVisit = true;
+        } else if (data != null) { //Data is document id
+            liveData = documentDAO.getCreatedDocument(data.toString());
+            liveData.observeForever(doc -> {
+                document = doc;
+                document.getImages().forEach(image -> {
+                    StorageReference reference = documentStorageRef
+                            .child(doc.getId())
+                            .child(image.getId());
+                    imagesList.add(Uri.parse(reference.toString()));
+                });
+                ia.notifyDataSetChanged();
+
+            });
         }
     }
 
@@ -88,6 +101,11 @@ public class EditDocumentActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        liveData.removeObservers(this);
+        super.onDestroy();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_document, menu);
@@ -123,7 +141,6 @@ public class EditDocumentActivity extends AppCompatActivity {
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
                     }
-
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     System.out.println(result.getError());
