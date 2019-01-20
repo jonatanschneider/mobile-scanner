@@ -12,6 +12,7 @@
     <string name="title_activity_login">Anmelden</string>
     <string name="prompt_email">E-Mail</string>
     <string name="prompt_password">Passwort</string>
+    <string name="prompt_name">Name</string>
     <string name="prompt_repeat_password">Passwort wiederholen</string>
     <string name="action_login">Anmelden</string>
     <string name="action_sign_up">Registrieren</string>
