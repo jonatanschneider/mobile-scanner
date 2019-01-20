@@ -3,37 +3,41 @@ package de.thm.scanman.view.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.GridView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.StorageReference;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.GridView;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import static de.thm.scanman.persistence.FirebaseDatabase.addImageRef;
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
+import static de.thm.scanman.persistence.FirebaseDatabase.documentStorageRef;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
     private FloatingActionButton saveFab;
     GridView gridview;
     ImageAdapter ia;
-    private Uri addImage = Uri.parse("android.resource://de.thm.scanman/drawable/ic_add_circle_outline_black_24dp");
+    private Uri addImage = Uri.parse(addImageRef.toString());
     private ImageList<Uri> imagesList = new ImageList<>(addImage);
+    private LiveData<Document> liveData;
 
     private int imageNr;
     private boolean firstVisit;
