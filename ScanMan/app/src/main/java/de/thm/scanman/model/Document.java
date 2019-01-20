@@ -113,16 +113,12 @@ public class Document {
 
     public static class Image {
         private String id;
-        private String storageUri;
         private long createdAt;
         private long lastUpdateAt;
-        @Exclude
-        private Uri localUri;
 
         public Image() { }
 
-        public Image(Uri localUri, long createdAt) {
-            this.localUri = localUri;
+        public Image(long createdAt) {
             this.createdAt = createdAt;
             this.lastUpdateAt = createdAt;
         }
@@ -133,14 +129,6 @@ public class Document {
 
         public void setId(String id) {
             this.id = id;
-        }
-
-        public String getStorageUri() {
-            return storageUri;
-        }
-
-        public void setStorageUri(String storageUri) {
-            this.storageUri = storageUri;
         }
 
         public long getCreatedAt() {
@@ -159,17 +147,10 @@ public class Document {
             this.lastUpdateAt = lastUpdateAt;
         }
 
-        public Uri getLocalUri() {
-            return localUri;
-        }
-
-        public void setLocalUri(Uri localUri) {
-            this.localUri = localUri;
-        }
 
         @Override
         public String toString() {
-            return "File: " + id + " - " + storageUri + " - " + "Created At: " + new Date(createdAt).toString();
+            return "File: " + id + " - " + "Created At: " + new Date(createdAt).toString();
         }
 
 
