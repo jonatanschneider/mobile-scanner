@@ -16,19 +16,11 @@ import de.thm.scanman.persistence.liveData.UserLiveData;
 
 public class UserDAO {
 
-    public User create(User user) {
-        DatabaseReference reference = FirebaseDatabase.usersRef.push();
-        user.setId(reference.getKey());
-        user.setCreatedAt(new Date().getTime());
-        reference.setValue(user);
-        return user;
-    }
-
     /**
      * Add a single user and all it's created and shared Documents to the database.
      * The owner attribute of all createdDocuments will automatically be set to the
-     * corresponding user id. If the id is not set the user will get a new id
-     * @param user
+     * corresponding user id.
+     * @param user with set id
      * @return user
      */
     public User add(User user) {
@@ -39,8 +31,7 @@ public class UserDAO {
         user.setSharedDocuments(new ArrayList<>());
         user.setCreatedAt(new Date().getTime());
 
-        if (user.getId() == null || user.getId().equals("")) user = create(user);
-        else FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
+        FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
 
         FirebaseDatabase.documentDAO.addCreatedDocuments(createdDocuments);
         FirebaseDatabase.documentDAO.addSharedDocuments(sharedDocuments);
