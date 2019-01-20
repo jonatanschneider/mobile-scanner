@@ -16,7 +16,8 @@ public class FirebaseDatabase {
     public static final DatabaseReference createdDocsRef = rootRef.child("createdDocuments");
     public static final DatabaseReference sharedDocsRef = rootRef.child("sharedDocuments");
 
-    public static final StorageReference documentStorage = FirebaseStorage.getInstance().getReference().child("documents");
+    public static final StorageReference documentStorageRef = FirebaseStorage.getInstance().getReference().child("documents");
+    public static final StorageReference addImageRef = documentStorageRef.child("add_image.png");
 
     public static DatabaseReference getCreatedDocumentsReference(Document document) {
         return createdDocsRef.child(document.getOwnerId()).child(document.getId());
