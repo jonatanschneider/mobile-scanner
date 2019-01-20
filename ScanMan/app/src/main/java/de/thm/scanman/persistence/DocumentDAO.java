@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import de.thm.scanman.model.Document;
+import de.thm.scanman.persistence.liveData.DocumentListLiveData;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {
@@ -112,12 +113,16 @@ public class DocumentDAO {
         documentList.forEach(this::addSharedDocument);
     }
 
+    public LiveData<Document> getCreatedDocument(String documentId) {
+        return new DocumentLiveData(FirebaseDatabase.createdDocsRef.child(userId).child(documentId));
+    }
+
     LiveData<List<Document>> getCreatedDocuments() {
-        return new DocumentLiveData(FirebaseDatabase.createdDocsRef.child(userId));
+        return new DocumentListLiveData(FirebaseDatabase.createdDocsRef.child(userId));
     }
 
     LiveData<List<Document>> getSharedDocuments() {
-        return new DocumentLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
+        return new DocumentListLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
     /**
