@@ -31,7 +31,7 @@ public class UserDAO {
 
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
 
-        FirebaseDatabase.documentDAO.addCreatedDocuments(createdDocuments, context);
+        FirebaseDatabase.documentDAO.addCreatedDocuments(createdDocuments);
         FirebaseDatabase.documentDAO.addSharedDocuments(sharedDocuments);
         return user;
     }

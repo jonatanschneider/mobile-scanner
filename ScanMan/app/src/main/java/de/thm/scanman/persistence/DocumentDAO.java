@@ -33,24 +33,12 @@ public class DocumentDAO {
      * Will also set the documents ownerId to the corresponding user id
      * @param document
      */
-    public void addCreatedDocument(Document document, Context context) {
+    public void addCreatedDocument(Document document) {
         document.setOwnerId(userId);
         DatabaseReference documentRef = FirebaseDatabase.createdDocsRef.child(userId).push();
         document.setId(documentRef.getKey());
-        copyImagesToFilesDir(document, context);
         uploadImages(document);
-
-        /*
-        We need to copy our local uris temporarily because otherwise firebase would upload
-        the uri to the database, which will result in an error at CustomClassMapper because
-        firebase can't handle URI type
-         */
-        List<Document.Image> images = document.getImages();
-        List<Uri> uriList = images.stream().map(Document.Image::getLocalUri).collect(Collectors.toList());
-        document.getImages().forEach(image -> image.setLocalUri(null));
         documentRef.setValue(document);
-        IntStream.range(0, images.size()).forEach(i -> images.get(i).setLocalUri(uriList.get(i)));
-
     }
 
     /**
@@ -58,35 +46,24 @@ public class DocumentDAO {
      * Will also set the documents ownerId to the corresponding user id
      * @param documentList
      */
-    public void addCreatedDocuments(List<Document> documentList, Context context) {
-        documentList.forEach(document -> addCreatedDocument(document, context));
-    }
-
-    private void copyImagesToFilesDir(Document document, Context context) {
-        for (int i = 0; i < document.getImages().size(); i++) {
-
-            Document.Image image = document.getImages().get(i);
-
-            //File: filesDir/documentId/i.jpeg
-            File dest = new File(context.getFilesDir(), document.getId()+ File.separator + i + ".jpeg");
-            File source = new File(image.getLocalUri().getPath());
-
-            try {
-                FileUtils.copyFile(source, dest);
-                image.setLocalUri(Uri.parse(dest.toString()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    public void addCreatedDocuments(List<Document> documentList) {
+        documentList.forEach(this::addCreatedDocument);
     }
 
     private void uploadImages(Document document) {
         for (int i = 0; i < document.getImages().size(); i++) {
             Document.Image image = document.getImages().get(i);
-            StorageReference storage = FirebaseStorage.getInstance().getReference().child("documents").child(document.getId()).child(""+ i);
-            image.setStorageUri(storage.toString());
+            Uri uri = Uri.parse(image.getFile());
+            //Skip files that are already uploaded
+            if (!uri.getScheme().equals("file")) continue;
 
-            UploadTask uploadTask = storage.putFile(Uri.parse("file://" + image.getLocalUri()));
+            StorageReference reference = FirebaseDatabase.documentStorage
+                    .child(document.getId())
+                    .child(image.getId());
+
+            image.setFile(reference.toString());
+
+            UploadTask uploadTask = reference.putFile(uri);
             uploadTask.addOnSuccessListener(taskSnapshot -> {
                 System.out.println("upload success");
             }).addOnFailureListener(exception -> {
@@ -132,11 +109,10 @@ public class DocumentDAO {
      */
     public void update(Document... documents) {
         Arrays.asList(documents).forEach(document -> {
-            // Update created docs
+            uploadImages(document);
             if (document.getOwnerId().equals(userId)) {
                 FirebaseDatabase.getCreatedDocumentsReference(document).setValue(document);
             }
-            // Update shared docs
             else {
                 FirebaseDatabase.getSharedDocumentsReference(userId, document).setValue(document);
             }
