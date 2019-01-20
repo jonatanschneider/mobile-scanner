@@ -66,10 +66,11 @@ public class EditDocumentActivity extends AppCompatActivity {
             if (id == ia.getCount() - 1) {  // click on addButton
                 shootNewImage();
             } else {                        // click on real image
+                //TODO implement view image with button to edit image
                 imageNr = position;
-                Uri selectedImage = (Uri)ia.getItem(position);
+                /*Uri selectedImage = (Uri)ia.getItem(position);
                 CropImage.activity(selectedImage)
-                        .start(this);
+                        .start(this);*/
             }
         });
 
