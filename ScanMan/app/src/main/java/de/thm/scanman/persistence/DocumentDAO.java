@@ -1,25 +1,16 @@
 package de.thm.scanman.persistence;
 
-import android.content.Context;
 import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentListLiveData;
@@ -57,7 +48,7 @@ public class DocumentDAO {
             //Skip files that are already uploaded
             if (!uri.getScheme().equals("file")) continue;
 
-            StorageReference reference = FirebaseDatabase.documentStorage
+            StorageReference reference = FirebaseDatabase.documentStorageRef
                     .child(document.getId())
                     .child(image.getId());
 
