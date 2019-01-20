@@ -1,5 +1,7 @@
 package de.thm.scanman.persistence;
 
+import android.net.Uri;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -22,5 +24,13 @@ public class FirebaseDatabase {
 
     public static DatabaseReference getSharedDocumentsReference(String userId, Document document) {
         return sharedDocsRef.child(userId).child(document.getId());
+    }
+
+    public static StorageReference toStorageReference(Uri uri) {
+        StorageReference reference = FirebaseStorage.getInstance().getReference();
+        for (String segment : uri.getPathSegments()) {
+            reference = reference.child(segment);
+        }
+        return reference;
     }
 }
