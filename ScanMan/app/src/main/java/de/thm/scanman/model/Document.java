@@ -1,9 +1,5 @@
 package de.thm.scanman.model;
 
-import android.net.Uri;
-
-import com.google.firebase.database.Exclude;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -113,12 +109,14 @@ public class Document {
 
     public static class Image {
         private String id;
+        private String file;
         private long createdAt;
         private long lastUpdateAt;
 
         public Image() { }
 
-        public Image(long createdAt) {
+        public Image(String file, long createdAt) {
+            this.file = file;
             this.createdAt = createdAt;
             this.lastUpdateAt = createdAt;
         }
@@ -129,6 +127,14 @@ public class Document {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        public void setFile(String file) {
+            this.file = file;
         }
 
         public long getCreatedAt() {
@@ -150,7 +156,7 @@ public class Document {
 
         @Override
         public String toString() {
-            return "File: " + id + " - " + "Created At: " + new Date(createdAt).toString();
+            return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
         }
 
 
