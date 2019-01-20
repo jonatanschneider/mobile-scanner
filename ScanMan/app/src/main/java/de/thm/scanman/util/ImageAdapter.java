@@ -78,9 +78,14 @@ public class ImageAdapter extends BaseAdapter {
 
     private void setImage(ImageView view, int position) {
         Uri uri = imagesList.get(position);
-        GlideApp.with(mContext)
-                .load(FirebaseDatabase.toStorageReference(uri))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(view);
+        if (!uri.getScheme().equals("file")) {
+            GlideApp.with(mContext)
+                    .load(FirebaseDatabase.toStorageReference(uri))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(view);
+        }
+        else { //Show local image
+            view.setImageURI(uri);
+        }
     }
 }
