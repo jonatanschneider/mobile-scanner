@@ -22,6 +22,7 @@ public class DocumentDAO {
     /**
      * Add the document into the createdDocuments node
      * Will also set the documents ownerId to the corresponding user id
+     *
      * @param document
      */
     public void addCreatedDocument(Document document) {
@@ -35,6 +36,7 @@ public class DocumentDAO {
     /**
      * Add all documents from the list into the createdDocuments node
      * Will also set the documents ownerId to the corresponding user id
+     *
      * @param documentList
      */
     public void addCreatedDocuments(List<Document> documentList) {
@@ -65,6 +67,7 @@ public class DocumentDAO {
 
     /**
      * Add document into the sharedDocuments node
+     *
      * @param document
      */
     public void addSharedDocument(Document document) {
@@ -75,6 +78,7 @@ public class DocumentDAO {
 
     /**
      * Add all documents from the list into the sharedDocuments node
+     *
      * @param documentList
      */
     public void addSharedDocuments(List<Document> documentList) {
@@ -96,6 +100,7 @@ public class DocumentDAO {
     /**
      * Updates all documents
      * Automatically decides whether updating created or shared documents
+     *
      * @param documents single document or an array of documents
      */
     public void update(Document... documents) {
@@ -103,8 +108,7 @@ public class DocumentDAO {
             uploadImages(document);
             if (document.getOwnerId().equals(userId)) {
                 FirebaseDatabase.getCreatedDocumentsReference(document).setValue(document);
-            }
-            else {
+            } else {
                 FirebaseDatabase.getSharedDocumentsReference(userId, document).setValue(document);
             }
         });
@@ -113,6 +117,7 @@ public class DocumentDAO {
     /**
      * Updates all documents
      * Automatically decides whether updating created or shared documents
+     *
      * @param documentList
      */
     public void update(List<Document> documentList) {
@@ -123,18 +128,20 @@ public class DocumentDAO {
      * Remove the given document
      * If the user is the owner, the document will be deleted from the database
      * Otherwise the user is removing their access to the document
+     *
      * @param document
      */
     public void remove(Document document) {
         DatabaseReference reference = document.getOwnerId().equals(userId) ?
-                        FirebaseDatabase.createdDocsRef :
-                        FirebaseDatabase.sharedDocsRef;
+                FirebaseDatabase.createdDocsRef :
+                FirebaseDatabase.sharedDocsRef;
         reference.child(userId).child(document.getId()).removeValue();
     }
 
     /**
      * Remove access to an document for an user
      * Only the owner can remove accesses
+     *
      * @param document
      * @param userToBeRemoved
      */
