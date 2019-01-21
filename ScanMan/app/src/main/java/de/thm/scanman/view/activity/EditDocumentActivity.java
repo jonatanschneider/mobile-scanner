@@ -34,6 +34,8 @@ import de.thm.scanman.persistence.GlideApp;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
 
+import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
+import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.addImageRef;
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
@@ -105,7 +107,11 @@ public class EditDocumentActivity extends AppCompatActivity {
         if (data != null && data.toString().equals(FIRST_VISIT)) {
             firstVisit = true;
         } else if (data != null) { //Data is document id
-            liveData = documentDAO.getCreatedDocument(data.toString());
+            int documentType = getIntent().getIntExtra("documentType", -1);
+            if (documentType == CREATED_DOCUMENT) liveData = documentDAO.getCreatedDocument(data.toString());
+            else if (documentType == SHARED_DOCUMENT) liveData = documentDAO.getSharedDocument(data.toString());
+            else if (documentType == -1) return;
+
             liveData.observeForever(doc -> {
                 document = doc;
                 document.getImages().forEach(image -> {
