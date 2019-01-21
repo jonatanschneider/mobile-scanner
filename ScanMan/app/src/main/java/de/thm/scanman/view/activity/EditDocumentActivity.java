@@ -165,6 +165,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                         imagesList.add(resultUri);
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
+                        document.getImages().get(imageNr).setFile(resultUri.toString());
                     }
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
