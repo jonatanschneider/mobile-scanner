@@ -61,12 +61,10 @@ public class DocumentListLiveData extends LiveData<List<Document>> {
     @Override
     protected void onActive() {
         query.addValueEventListener(userListener);
-        Log.d("LiveData", "Document Live Data connected");
     }
 
     @Override
     protected void onInactive() {
         query.removeEventListener(userListener);
-        Log.d("LiveData", "Document Live Data disconnected");
     }
 }

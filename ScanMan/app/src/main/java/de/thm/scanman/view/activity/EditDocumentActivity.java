@@ -95,7 +95,6 @@ public class EditDocumentActivity extends AppCompatActivity {
                                 @Override
                                 public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                                     //TODO Start Activity to View Image
-                                    System.out.println("Showing image: " + uri);
                                     CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
                                 }
                             });
