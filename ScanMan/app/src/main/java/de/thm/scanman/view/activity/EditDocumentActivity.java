@@ -86,9 +86,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             liveData.observeForever(doc -> {
                 document = doc;
                 document.getImages().forEach(image -> {
-                    StorageReference reference = documentStorageRef
-                            .child(doc.getId())
-                            .child(image.getId());
+                    StorageReference reference = FirebaseDatabase.toStorageReference(Uri.parse(image.getFile()));
                     imagesList.add(Uri.parse(reference.toString()));
                 });
                 ia.notifyDataSetChanged();
