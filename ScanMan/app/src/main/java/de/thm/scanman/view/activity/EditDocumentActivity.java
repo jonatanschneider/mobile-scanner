@@ -1,5 +1,6 @@
 package de.thm.scanman.view.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,15 +8,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.StorageReference;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -23,12 +29,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
+import de.thm.scanman.persistence.FirebaseDatabase;
+import de.thm.scanman.persistence.GlideApp;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.addImageRef;
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
-import static de.thm.scanman.persistence.FirebaseDatabase.documentStorageRef;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
@@ -70,11 +77,27 @@ public class EditDocumentActivity extends AppCompatActivity {
             if (id == ia.getCount() - 1) {  // click on addButton
                 shootNewImage();
             } else {                        // click on real image
-                //TODO implement view image with button to edit image
                 imageNr = position;
-                /*Uri selectedImage = (Uri)ia.getItem(position);
-                CropImage.activity(selectedImage)
-                        .start(this);*/
+                Uri uri = imagesList.get(position);
+
+                if (uri.getScheme().equals("file")) {
+                    CropImage.activity(uri).start(this);
+                }
+                else {
+                    Activity activity = this;
+                    GlideApp.with(this)
+                            .asFile()
+                            .load(FirebaseDatabase.toStorageReference(uri))
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                            .into(new SimpleTarget<File>() {
+                                @Override
+                                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                                    //TODO Start Activity to View Image
+                                    System.out.println("Showing image: " + uri);
+                                    CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
+                                }
+                            });
+                }
             }
         });
 
