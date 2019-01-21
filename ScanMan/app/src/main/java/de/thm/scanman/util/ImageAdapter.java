@@ -81,7 +81,7 @@ public class ImageAdapter extends BaseAdapter {
         if (!uri.getScheme().equals("file")) {
             GlideApp.with(mContext)
                     .load(FirebaseDatabase.toStorageReference(uri))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
         }
         else { //Show local image
