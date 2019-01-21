@@ -19,6 +19,9 @@ public class FirebaseDatabase {
     public static final StorageReference documentStorageRef = FirebaseStorage.getInstance().getReference().child("documents");
     public static final StorageReference addImageRef = documentStorageRef.child("add_image.png");
 
+    public static final int CREATED_DOCUMENT = 1;
+    public static final int SHARED_DOCUMENT = 2;
+
     public static DatabaseReference getCreatedDocumentsReference(Document document) {
         return createdDocsRef.child(document.getOwnerId()).child(document.getId());
     }
