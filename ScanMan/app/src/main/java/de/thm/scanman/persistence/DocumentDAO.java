@@ -88,6 +88,12 @@ public class DocumentDAO {
         documentList.forEach(this::addSharedDocument);
     }
 
+    /**
+     * LiveData for a single created document
+     *
+     * @param documentId
+     * @return
+     */
     public LiveData<Document> getCreatedDocument(String documentId) {
         return new DocumentLiveData(FirebaseDatabase.createdDocsRef.child(userId).child(documentId));
     }
