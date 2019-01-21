@@ -11,6 +11,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentListLiveData;
@@ -44,26 +45,28 @@ public class DocumentDAO {
     }
 
     private void uploadImages(Document document) {
-        for (int i = 0; i < document.getImages().size(); i++) {
-            Document.Image image = document.getImages().get(i);
-            Uri uri = Uri.parse(image.getFile());
-            //Skip files that are already uploaded
-            if (!uri.getScheme().equals("file")) continue;
+        document.getImages().stream()
+                .filter(isLocalFile)
+                .forEach(image -> {
+                    Uri uri = Uri.parse(image.getFile());
 
-            StorageReference reference = FirebaseDatabase.documentStorageRef
-                    .child(document.getId())
-                    .child(image.getId());
+                    StorageReference reference = FirebaseDatabase.documentStorageRef
+                            .child(document.getId())
+                            .child(uri.getLastPathSegment());
 
-            image.setFile(reference.toString());
+                    image.setFile(reference.toString());
 
-            UploadTask uploadTask = reference.putFile(uri);
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-                System.out.println("upload success");
-            }).addOnFailureListener(exception -> {
-                System.out.println("upload failed");
-            });
-        }
+                    UploadTask uploadTask = reference.putFile(uri);
+                    uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        System.out.println("upload success");
+                    }).addOnFailureListener(exception -> {
+                        System.out.println("upload failed");
+                    });
+                });
     }
+
+    private Predicate<Document.Image> isLocalFile = image -> Uri.parse(image.getFile()).getScheme().equals("file");
+
 
     /**
      * Add document into the sharedDocuments node
