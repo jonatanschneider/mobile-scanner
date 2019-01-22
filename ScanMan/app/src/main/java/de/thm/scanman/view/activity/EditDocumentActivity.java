@@ -164,6 +164,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                 for (int i = 0; i < gridview.getChildCount(); i++) {
                     gridview.getChildAt(i).setBackground(null);
                 }
+                selectedPictures = 0;
                 ia.notifyDataSetChanged();
                 saveFab.setVisibility(View.VISIBLE);
             }
