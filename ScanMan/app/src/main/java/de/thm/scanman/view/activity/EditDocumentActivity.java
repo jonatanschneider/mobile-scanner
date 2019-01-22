@@ -189,6 +189,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void saveDocument() {
+        liveData.removeObservers(this);
         // TODO implement saveDocument / implement liveData
         if (firstVisit) {
             buildDocument();
