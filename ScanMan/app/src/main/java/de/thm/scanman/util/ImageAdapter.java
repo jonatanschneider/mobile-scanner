@@ -30,7 +30,7 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if (position < 0 | position > imagesList.size()){
+        if (position < 0 | position >= imagesList.size()){
             return null;
         } else {
             return imagesList.get(position);
@@ -50,7 +50,7 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             imageView = new ImageView(mContext);
             imageView.setLayoutParams(new GridView.LayoutParams(SQUARE_SIZE, SQUARE_SIZE));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setPadding(8, 8, 8, 8);
         }
         else
