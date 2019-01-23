@@ -148,7 +148,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        liveData.removeObservers(this);
+        if (liveData != null) liveData.removeObservers(this);
         super.onDestroy();
     }
 
