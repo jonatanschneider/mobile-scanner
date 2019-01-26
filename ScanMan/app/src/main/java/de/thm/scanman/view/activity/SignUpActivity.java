@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import de.thm.scanman.R;
 import de.thm.scanman.model.User;
+import de.thm.scanman.persistence.FirebaseDatabase;
 
 public class SignUpActivity extends AuthenticationBaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
@@ -127,7 +128,7 @@ public class SignUpActivity extends AuthenticationBaseActivity {
                         User user = new User();
                         user.setId(getAuth().getCurrentUser().getUid());
                         user.setName(name);
-                        // TODO: push user to database
+                        FirebaseDatabase.userDAO.add(user);
 
                         startMainActivity();
                     } else {
