@@ -52,49 +52,6 @@ public class ViewPagerItemFragment extends Fragment {
         } else {
             Log.d("TAG", "Error: no arguments!");
         }
-
-        /*userDAO = new UserDAO();
-        //TODO: Debug-Zeug wieder entfernen (und aus <String> <Document> machen):
-        allDocuments = new ArrayList<>();
-        createdDocuments = new ArrayList<>();
-        sharedDocuments = new ArrayList<>();
-        allDocuments.add("Test1");
-        createdDocuments.add("Test2");
-        sharedDocuments.add("Test3");
-
-        LiveData<User> userLiveData = userDAO.get(FirebaseAuth.getInstance().getUid());
-
-        userLiveData.observe(this,
-                user -> {
-                    //allDocuments.clear();
-                    //allDocuments.addAll(user.getCreatedDocuments());
-                    //allDocuments.addAll(user.getSharedDocuments());
-                    if(allDocumentsAdapter == null) {
-                        allDocumentsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
-                        documentsListView.setAdapter(allDocumentsAdapter);
-                    }
-                    else {
-                        allDocumentsAdapter.clear();
-                        allDocumentsAdapter.addAll(allDocuments);
-                    }
-                    if(createdDocumentsAdapter == null) {
-                        createdDocumentsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, createdDocuments);
-                        documentsListView.setAdapter(createdDocumentsAdapter);
-                    }
-                    else {
-                        createdDocumentsAdapter.clear();
-                        createdDocumentsAdapter.addAll(allDocuments);
-                    }
-                    if(sharedDocumentsAdapter == null) {
-                        sharedDocumentsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, sharedDocuments);
-                        documentsListView.setAdapter(sharedDocumentsAdapter);
-                    }
-                    else {
-                        sharedDocumentsAdapter.clear();
-                        sharedDocumentsAdapter.addAll(sharedDocuments);
-                    }
-                }
-        );*/
     }
 
     @Override
