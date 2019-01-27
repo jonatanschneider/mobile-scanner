@@ -147,7 +147,7 @@ public class ViewPagerItemFragment extends Fragment {
                             }
                     );
                     break;
-            case 2: documentListEmpty.setText("Keine geteilten Dokumente");
+            case 2: documentListEmpty.setText(getString(R.string.no_shared_documents));
                     userLiveData.observe(this,
                             user -> {
                                 //sharedDocuments = user.getSharedDocuments();
