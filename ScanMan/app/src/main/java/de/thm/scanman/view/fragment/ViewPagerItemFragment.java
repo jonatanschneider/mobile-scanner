@@ -132,7 +132,7 @@ public class ViewPagerItemFragment extends Fragment {
                             }
                     );
                     break;
-            case 1: documentListEmpty.setText("Keine eigenen Dokumente");
+            case 1: documentListEmpty.setText(getString(R.string.no_created_documents));
                     userLiveData.observe(this,
                             user -> {
                                 //createdDocuments = user.getCreatedDocuments();
