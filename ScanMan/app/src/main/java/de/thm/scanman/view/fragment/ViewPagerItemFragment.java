@@ -27,13 +27,11 @@ public class ViewPagerItemFragment extends Fragment {
 
     private ListView documentsListView;
     private TextView documentListEmpty;
-
     private ArrayAdapter<String> adapter;
-
     private UserDAO userDAO;
-    List<String> allDocuments;
-    List<String> createdDocuments;
-    List<String> sharedDocuments;
+    private List<String> allDocuments;
+    private List<String> createdDocuments;
+    private List<String> sharedDocuments;
 
     public ViewPagerItemFragment(){}
 
@@ -56,11 +54,10 @@ public class ViewPagerItemFragment extends Fragment {
         }
 
         /*userDAO = new UserDAO();
+        //TODO: Debug-Zeug wieder entfernen (und aus <String> <Document> machen):
         allDocuments = new ArrayList<>();
         createdDocuments = new ArrayList<>();
         sharedDocuments = new ArrayList<>();
-
-        //TODO: Debug-Zeug wieder entfernen (und aus <String> <Document> machen):
         allDocuments.add("Test1");
         createdDocuments.add("Test2");
         sharedDocuments.add("Test3");
@@ -98,48 +95,6 @@ public class ViewPagerItemFragment extends Fragment {
                     }
                 }
         );*/
-
-        /*userLiveData.observe(this,
-                user -> {
-                    //allDocuments.clear();
-                    //allDocuments.addAll(user.getCreatedDocuments());
-                    //allDocuments.addAll(user.getSharedDocuments());
-                    if(adapter == null) {
-                        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
-                        documentsListView.setAdapter(adapter);
-                    }
-                    else {
-                        adapter.clear();
-                        adapter.addAll(allDocuments);
-                    }
-                }
-        );
-        userLiveData.observe(this,
-                user -> {
-                    //createdDocuments = user.getCreatedDocuments();
-                    if(adapter == null) {
-                        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, createdDocuments);
-                        documentsListView.setAdapter(adapter);
-                    }
-                    else {
-                        adapter.clear();
-                        adapter.addAll(createdDocuments);
-                    }
-                }
-        );
-        userLiveData.observe(this,
-                user -> {
-                    //sharedDocuments = user.getSharedDocuments();
-                    if(adapter == null) {
-                        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, sharedDocuments);
-                        documentsListView.setAdapter(adapter);
-                    }
-                    else {
-                        adapter.clear();
-                        adapter.addAll(sharedDocuments);
-                    }
-                }
-        );*/
     }
 
     @Override
@@ -150,11 +105,10 @@ public class ViewPagerItemFragment extends Fragment {
         documentListEmpty = view.findViewById(R.id.documents_list_empty);
 
         userDAO = new UserDAO();
+        //TODO: Debug-Zeug wieder entfernen (und aus <String> <Document> machen):
         allDocuments = new ArrayList<>();
         createdDocuments = new ArrayList<>();
         sharedDocuments = new ArrayList<>();
-
-        //TODO: Debug-Zeug wieder entfernen (und aus <String> <Document> machen):
         allDocuments.add("Test1");
         createdDocuments.add("Test2");
         sharedDocuments.add("Test3");
@@ -162,50 +116,54 @@ public class ViewPagerItemFragment extends Fragment {
         LiveData<User> userLiveData = userDAO.get(FirebaseAuth.getInstance().getUid());
 
         switch(page) {
-            case 0: if (adapter == null) {
-                        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
-                    documentsListView.setAdapter(adapter);
-                    } else {
-                        adapter.clear();
-                        adapter.addAll(allDocuments);
-                    }
+            case 0: userLiveData.observe(this,
+                            user -> {
+                                //allDocuments.clear();
+                                //allDocuments.addAll(user.getCreatedDocuments());
+                                //allDocuments.addAll(user.getSharedDocuments());
+                                if(adapter == null) {
+                                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
+                                    documentsListView.setAdapter(adapter);
+                                }
+                                else {
+                                    adapter.clear();
+                                    adapter.addAll(allDocuments);
+                                }
+                            }
+                    );
                     break;
             case 1: documentListEmpty.setText("Keine eigenen Dokumente");
-                    if(adapter == null) {
-                        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, createdDocuments);
-                        documentsListView.setAdapter(adapter);
-                    }
-                    else {
-                        adapter.clear();
-                        adapter.addAll(createdDocuments);
-                    }
+                    userLiveData.observe(this,
+                            user -> {
+                                //createdDocuments = user.getCreatedDocuments();
+                                if(adapter == null) {
+                                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, createdDocuments);
+                                    documentsListView.setAdapter(adapter);
+                                }
+                                else {
+                                    adapter.clear();
+                                    adapter.addAll(createdDocuments);
+                                }
+                            }
+                    );
                     break;
             case 2: documentListEmpty.setText("Keine geteilten Dokumente");
-                    if(adapter == null) {
-                        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, sharedDocuments);
-                        documentsListView.setAdapter(adapter);
-                    }
-                    else {
-                        adapter.clear();
-                        adapter.addAll(sharedDocuments);
-                    }
+                    userLiveData.observe(this,
+                            user -> {
+                                //sharedDocuments = user.getSharedDocuments();
+                                if(adapter == null) {
+                                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, sharedDocuments);
+                                    documentsListView.setAdapter(adapter);
+                                }
+                                else {
+                                    adapter.clear();
+                                    adapter.addAll(sharedDocuments);
+                                }
+                            }
+                    );
                     break;
         }
         documentsListView.setEmptyView(documentListEmpty);
-
-        /*userLiveData.observe(this,
-                user -> {
-                    //allDocuments.clear();
-                    //allDocuments.addAll(user.getCreatedDocuments());
-                    //allDocuments.addAll(user.getSharedDocuments());
-                    if (allDocumentsAdapter == null) {
-                        allDocumentsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
-                        documentsListView.setAdapter(allDocumentsAdapter);
-                    } else {
-                        allDocumentsAdapter.clear();
-                        allDocumentsAdapter.addAll(allDocuments);
-                    }
-                });*/
 
         return view;
     }
