@@ -34,4 +34,6 @@
     <string name="no">Nein</string>
     <string name="saveDocuments">Dokument speichern?</string>
     <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+    <string name="selected">ausgewählt</string>
 </resources>

@@ -11,6 +11,7 @@ import java.util.List;
 public class ImageList<E> {
     private E addImage;
     private List<E> list;
+    private boolean addImageIsHidden;
 
     public ImageList(E addImage){
         this.addImage = addImage;
@@ -56,5 +57,19 @@ public class ImageList<E> {
 
     private boolean validIndex(int index){
         return index < 0 || index > size();
+    }
+
+    public void hideAddImage() {
+        if (!addImageIsHidden) {
+            list.remove(addImage);
+            addImageIsHidden = true;
+        }
+    }
+
+    public void showAddImage() {
+        if (addImageIsHidden) {
+            list.add(addImage);
+            addImageIsHidden = false;
+        }
     }
 }
