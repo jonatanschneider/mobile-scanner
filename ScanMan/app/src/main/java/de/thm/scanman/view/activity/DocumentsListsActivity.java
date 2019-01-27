@@ -13,8 +13,6 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
-import de.thm.scanman.view.activity.EditDocumentActivity;
-import de.thm.scanman.view.activity.SettingsActivity;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
 import android.view.Menu;
@@ -33,7 +31,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         getSupportActionBar().setElevation(0f);
 
-        tabBar = findViewById(R.id.tbl_main_content);
+        tabBar = findViewById(R.id.fragment_container);
         viewPager = findViewById(R.id.viewpager);
         setUpPagerAndTabs();
 
@@ -81,7 +79,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 ContextCompat.getColor(this, R.color.colorAccent));
         tabBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTab));
 
-        viewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new TabPagerAdapter(getSupportFragmentManager()));
+        viewPager.setCurrentItem(0);
 
         tabBar.addOnTabSelectedListener(this);
         tabBar.setupWithViewPager(viewPager);
@@ -102,7 +101,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
     }
 
-    public class TabAdapter extends FragmentStatePagerAdapter {
+    public class TabPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] pageTitles = {
                 getApplicationContext().getString(R.string.all_documents),
@@ -110,7 +109,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 getApplicationContext().getString(R.string.shared_documents)
         };
 
-        public TabAdapter(FragmentManager fm){
+        public TabPagerAdapter(FragmentManager fm){
             super(fm);
         }
 
@@ -121,19 +120,20 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         @Override
         public Fragment getItem(int position) {
-            /*
+
             Fragment fragment = new ViewPagerItemFragment();
-            Record r = records.get(position);
+
             Bundle bundle = new Bundle();
-            bundle.putLong("id", r.id);
+            bundle.putInt("idx", position);
             fragment.setArguments(bundle);
+
             return fragment;
-            */
-            return ViewPagerItemFragment.getInstance(pageTitles[position]);
+
+            //return ViewPagerItemFragment.getInstance(position);//return ViewPagerItemFragment.getInstance(pageTitles[position]);
         }
 
         @Override
-        public CharSequence getPageTitle(int position){
+        public CharSequence getPageTitle(int position) {
             return pageTitles[position];
         }
     }
