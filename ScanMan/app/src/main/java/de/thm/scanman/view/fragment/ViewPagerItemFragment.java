@@ -4,6 +4,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.UserDAO;
 
@@ -27,11 +28,11 @@ public class ViewPagerItemFragment extends Fragment {
 
     private ListView documentsListView;
     private TextView documentListEmpty;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<Document> adapter;
     private UserDAO userDAO;
-    private List<String> allDocuments;
-    private List<String> createdDocuments;
-    private List<String> sharedDocuments;
+    private List<Document> allDocuments;
+    private List<Document> createdDocuments;
+    private List<Document> sharedDocuments;
 
     public ViewPagerItemFragment(){}
 
@@ -62,22 +63,18 @@ public class ViewPagerItemFragment extends Fragment {
         documentListEmpty = view.findViewById(R.id.documents_list_empty);
 
         userDAO = new UserDAO();
-        //TODO: Debug-Zeug wieder entfernen (und aus <String> <Document> machen):
         allDocuments = new ArrayList<>();
         createdDocuments = new ArrayList<>();
         sharedDocuments = new ArrayList<>();
-        allDocuments.add("Test1");
-        createdDocuments.add("Test2");
-        sharedDocuments.add("Test3");
 
         LiveData<User> userLiveData = userDAO.get(FirebaseAuth.getInstance().getUid());
 
         switch(page) {
             case 0: userLiveData.observe(this,
                             user -> {
-                                //allDocuments.clear();
-                                //allDocuments.addAll(user.getCreatedDocuments());
-                                //allDocuments.addAll(user.getSharedDocuments());
+                                allDocuments.clear();
+                                allDocuments.addAll(user.getCreatedDocuments());
+                                allDocuments.addAll(user.getSharedDocuments());
                                 if(adapter == null) {
                                     adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
                                     documentsListView.setAdapter(adapter);
@@ -92,7 +89,7 @@ public class ViewPagerItemFragment extends Fragment {
             case 1: documentListEmpty.setText(getString(R.string.no_created_documents));
                     userLiveData.observe(this,
                             user -> {
-                                //createdDocuments = user.getCreatedDocuments();
+                                createdDocuments = user.getCreatedDocuments();
                                 if(adapter == null) {
                                     adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, createdDocuments);
                                     documentsListView.setAdapter(adapter);
@@ -107,7 +104,7 @@ public class ViewPagerItemFragment extends Fragment {
             case 2: documentListEmpty.setText(getString(R.string.no_shared_documents));
                     userLiveData.observe(this,
                             user -> {
-                                //sharedDocuments = user.getSharedDocuments();
+                                sharedDocuments = user.getSharedDocuments();
                                 if(adapter == null) {
                                     adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, sharedDocuments);
                                     documentsListView.setAdapter(adapter);
