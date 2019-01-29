@@ -7,12 +7,12 @@ import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.UserDAO;
+import de.thm.scanman.util.DocumentArrayAdapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,7 +28,7 @@ public class ViewPagerItemFragment extends Fragment {
 
     private ListView documentsListView;
     private TextView documentListEmpty;
-    private ArrayAdapter<Document> adapter;
+    private DocumentArrayAdapter adapter;
     private UserDAO userDAO;
     private List<Document> allDocuments;
     private List<Document> createdDocuments;
@@ -76,7 +76,7 @@ public class ViewPagerItemFragment extends Fragment {
                                 allDocuments.addAll(user.getCreatedDocuments());
                                 allDocuments.addAll(user.getSharedDocuments());
                                 if(adapter == null) {
-                                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, allDocuments);
+                                    adapter = new DocumentArrayAdapter(getContext(), allDocuments);
                                     documentsListView.setAdapter(adapter);
                                 }
                                 else {
@@ -91,7 +91,7 @@ public class ViewPagerItemFragment extends Fragment {
                             user -> {
                                 createdDocuments = user.getCreatedDocuments();
                                 if(adapter == null) {
-                                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, createdDocuments);
+                                    adapter = new DocumentArrayAdapter(getContext(), createdDocuments);
                                     documentsListView.setAdapter(adapter);
                                 }
                                 else {
@@ -106,7 +106,7 @@ public class ViewPagerItemFragment extends Fragment {
                             user -> {
                                 sharedDocuments = user.getSharedDocuments();
                                 if(adapter == null) {
-                                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, sharedDocuments);
+                                    adapter = new DocumentArrayAdapter(getContext(), sharedDocuments);
                                     documentsListView.setAdapter(adapter);
                                 }
                                 else {
