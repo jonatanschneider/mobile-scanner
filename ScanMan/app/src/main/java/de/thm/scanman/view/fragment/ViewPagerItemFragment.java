@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ViewPagerItemFragment extends Fragment {
@@ -29,10 +30,12 @@ public class ViewPagerItemFragment extends Fragment {
     private ListView documentsListView;
     private TextView documentListEmpty;
     private DocumentArrayAdapter adapter;
+    private DocumentArrayAdapter adapter2;
+    private DocumentArrayAdapter adapter3;
     private UserDAO userDAO;
-    private List<Document> allDocuments;
-    private List<Document> createdDocuments;
-    private List<Document> sharedDocuments;
+    List<Document> allDocuments;
+    List<Document> createdDocuments;
+    List<Document> sharedDocuments;
 
     public ViewPagerItemFragment(){}
 
@@ -63,18 +66,32 @@ public class ViewPagerItemFragment extends Fragment {
         documentListEmpty = view.findViewById(R.id.documents_list_empty);
 
         userDAO = new UserDAO();
-        allDocuments = new ArrayList<>();
-        createdDocuments = new ArrayList<>();
-        sharedDocuments = new ArrayList<>();
+
+        /* // TODO: Debug-Code entfernen!
+        ArrayList<Document.Image> images = new ArrayList<>();
+        Document document = new Document();
+        Document.Image im = new Document.Image("file.jpeg", new Date().getTime());
+        images.add(im);
+        document.setName("Tester Doc");
+        document.setImages(images);
+        document.setCreatedAt(new Date().getTime());
+        List<String> tags = new ArrayList<>();
+        tags.add("tagA");
+        tags.add("tagB");
+        tags.add("tagC");
+        document.setTags(tags);*/
 
         LiveData<User> userLiveData = userDAO.get(FirebaseAuth.getInstance().getUid());
 
         switch(page) {
             case 0: userLiveData.observe(this,
                             user -> {
-                                allDocuments.clear();
+                                allDocuments = new ArrayList<>();
                                 allDocuments.addAll(user.getCreatedDocuments());
                                 allDocuments.addAll(user.getSharedDocuments());
+                                for(Document d : allDocuments) {
+                                    System.out.println("all " + d.getName() + " " + d.getId());
+                                }
                                 if(adapter == null) {
                                     adapter = new DocumentArrayAdapter(getContext(), allDocuments);
                                     documentsListView.setAdapter(adapter);
@@ -90,28 +107,45 @@ public class ViewPagerItemFragment extends Fragment {
                     userLiveData.observe(this,
                             user -> {
                                 createdDocuments = user.getCreatedDocuments();
-                                if(adapter == null) {
-                                    adapter = new DocumentArrayAdapter(getContext(), createdDocuments);
-                                    documentsListView.setAdapter(adapter);
+                                for(Document d : createdDocuments) {
+                                    System.out.println("created " + d.getName() + " " + d.getId());
+                                }
+                                if(adapter2 == null) {
+                                    adapter2 = new DocumentArrayAdapter(getContext(), createdDocuments);
+                                    documentsListView.setAdapter(adapter2);
                                 }
                                 else {
-                                    adapter.clear();
-                                    adapter.addAll(createdDocuments);
+                                    adapter2.clear();
+                                    adapter2.addAll(createdDocuments);
                                 }
                             }
                     );
+                    /* // TODO: Debug-Code entfernen!
+                    createdDocuments = new ArrayList<>();
+                    createdDocuments.add(document);
+                    if(adapter == null) {
+                        adapter = new DocumentArrayAdapter(getContext(), createdDocuments);
+                        documentsListView.setAdapter(adapter);
+                    }
+                    else {
+                        adapter.clear();
+                        adapter.addAll(createdDocuments);
+                    }*/
                     break;
             case 2: documentListEmpty.setText(getString(R.string.no_shared_documents));
                     userLiveData.observe(this,
                             user -> {
                                 sharedDocuments = user.getSharedDocuments();
-                                if(adapter == null) {
-                                    adapter = new DocumentArrayAdapter(getContext(), sharedDocuments);
-                                    documentsListView.setAdapter(adapter);
+                                for(Document d : sharedDocuments) {
+                                    System.out.println("shared " + d.getName() + " " + d.getId());
+                                }
+                                if(adapter3 == null) {
+                                    adapter3 = new DocumentArrayAdapter(getContext(), sharedDocuments);
+                                    documentsListView.setAdapter(adapter3);
                                 }
                                 else {
-                                    adapter.clear();
-                                    adapter.addAll(sharedDocuments);
+                                    adapter3.clear();
+                                    adapter3.addAll(sharedDocuments);
                                 }
                             }
                     );
