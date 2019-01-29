@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 import de.thm.scanman.R;
@@ -35,14 +36,18 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> {
         TextView name = view.findViewById(R.id.name);
         name.setText(d.getName());
 
-        TextView tags = view.findViewById(R.id.subtext);
-        StringBuilder documentTags = new StringBuilder();
+        TextView subtext = view.findViewById(R.id.subtext);
+        StringBuilder dateAndTags = new StringBuilder();
+        dateAndTags.append(new Date(d.getCreatedAt()).toString());
+        dateAndTags.append("\n");
         for(String s : d.getTags()) {
-            documentTags.append(s);
-            documentTags.append(", ");
+            dateAndTags.append(s);
+            dateAndTags.append(", ");
         }
-        documentTags.delete(documentTags.length() - 2, documentTags.length());
-        tags.setText(documentTags.toString());
+        if(dateAndTags.toString().endsWith(", ")) {
+            dateAndTags.delete(dateAndTags.length() - 2, dateAndTags.length());
+        }
+        subtext.setText(dateAndTags.toString());
 
         return view;
     }
