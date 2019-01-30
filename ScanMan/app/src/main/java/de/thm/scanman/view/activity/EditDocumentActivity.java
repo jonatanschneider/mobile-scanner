@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import de.thm.scanman.R;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         });
 
         gridview = findViewById(R.id.grid_view);
-        ia = new ImageAdapter(this, imagesList.getList());
+        ia = new ImageAdapter(this, imagesList.getList(true));
         gridview.setAdapter(ia);
 
         // onClickListener for editing
@@ -194,8 +196,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                 // implement call for sharing documents here
                 return true;
             case R.id.action_export:
-                // implement call for exporting documents here
-                return true;
+                if (imagesList.size() >= 1) {
+                    sendImage(imagesList.getList(false));       // send one or more photos
+                }
+                else return true;                       // there are no photos to send
         }
         return super.onOptionsItemSelected(item);
     }
@@ -257,4 +261,49 @@ public class EditDocumentActivity extends AppCompatActivity {
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
     }
+
+    /**
+     * Starts intent to send all pictures addressed by uris in list
+     * @param list contains addresses of pictures to send
+     */
+    private void sendImage(List<Uri> list) {
+        Intent i;
+        if (list.size() <= 1) {
+            i = new Intent(Intent.ACTION_SEND);
+            Uri photoURI = convertToContent(list.get(0));
+            String mime_type = context.getContentResolver().getType(photoURI);
+            System.out.println("MIMEType is  " + mime_type);
+            i.putExtra(Intent.EXTRA_STREAM, photoURI);
+            i.setType(mime_type);
+        } else {
+            i = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            ArrayList<Uri> uris = new ArrayList<>();
+            list.forEach(uri -> {
+                Uri photoURI = convertToContent(uri);
+                uris.add(photoURI);
+            });
+            String mime_type = context.getContentResolver().getType(uris.get(0));
+            i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            i.setType(mime_type);
+            i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        }
+        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        if (i.resolveActivity(getPackageManager()) != null) {
+            startActivity(Intent.createChooser(i, getResources().getText(R.string.send_with)));
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Aktion nicht möglich!" + i.getType());
+            builder.setMessage("Auf ihrem Gerät ist keine Applikation zum Ausführen!");
+            builder.setNeutralButton(R.string.cancel, (dialog, which) -> { });
+            builder.show();
+        }
+    }
+
+    private Uri convertToContent(Uri uri) {
+        File f = new File(uri.getPath());
+        String authority = context.getApplicationContext().getPackageName() + ".de.thm.scanman.provider";
+        return FileProvider.getUriForFile(context, authority, f);
+    }
+
 }
