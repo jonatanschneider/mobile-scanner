@@ -19,8 +19,9 @@ public class ImageList<E> {
         list.add(addImage);
     }
 
-    public List<E> getList() {
-        return list;
+    public List<E> getList(boolean withAdd) {
+        if (withAdd) return list;
+        else return list.subList(0, size());
     }
 
     public E get (int index){
@@ -56,7 +57,7 @@ public class ImageList<E> {
     }
 
     private boolean validIndex(int index){
-        return index < 0 || index > size();
+        return index < 0 || index < size();
     }
 
     public void hideAddImage() {
