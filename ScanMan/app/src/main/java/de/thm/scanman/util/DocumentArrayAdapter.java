@@ -47,6 +47,9 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> {
         if(dateAndTags.toString().endsWith(", ")) {
             dateAndTags.delete(dateAndTags.length() - 2, dateAndTags.length());
         }
+        else {
+            dateAndTags.append("-");
+        }
         subtext.setText(dateAndTags.toString());
 
         return view;
