@@ -22,7 +22,7 @@ public class UserDAO {
      * @param user
      * @return user with set id
      */
-    public User add(User user, Context context) {
+    public User add(User user) {
         // Remove documents from user object, will be stored independently in other nodes
         List<Document> createdDocuments = user.getCreatedDocuments();
         List<Document> sharedDocuments = user.getSharedDocuments();
