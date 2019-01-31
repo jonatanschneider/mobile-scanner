@@ -131,6 +131,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                         builder.show();
                         mode.finish();
                         return true;
+                    case R.id.menu_share:
+                        sendImage(selectedImages);
+                        return true;
                     default:
                         return false;
                 }
@@ -264,37 +267,25 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     /**
      * Starts intent to send all pictures addressed by uris in list
-     * @param list contains addresses of pictures to send
+     * @param urisIn contains addresses of pictures to send
      */
-    private void sendImage(List<Uri> list) {
-        Intent i;
-        if (list.size() <= 1) {
-            i = new Intent(Intent.ACTION_SEND);
-            Uri photoURI = convertToContent(list.get(0));
-            String mime_type = context.getContentResolver().getType(photoURI);
-            System.out.println("MIMEType is  " + mime_type);
-            i.putExtra(Intent.EXTRA_STREAM, photoURI);
-            i.setType(mime_type);
-        } else {
-            i = new Intent(Intent.ACTION_SEND_MULTIPLE);
-            ArrayList<Uri> uris = new ArrayList<>();
-            list.forEach(uri -> {
-                Uri photoURI = convertToContent(uri);
-                uris.add(photoURI);
-            });
-            String mime_type = context.getContentResolver().getType(uris.get(0));
-            i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            i.setType(mime_type);
-            i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        }
+    private void sendImage(List<Uri> urisIn) {
+        Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        ArrayList<Uri> urisOut = new ArrayList<>();
+        urisIn.forEach(uri -> {
+            Uri contentUri = convertToContent(uri);
+            urisOut.add(contentUri);
+        });
+        i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisOut);
+        i.setType("image/*");
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         if (i.resolveActivity(getPackageManager()) != null) {
             startActivity(Intent.createChooser(i, getResources().getText(R.string.send_with)));
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Aktion nicht möglich!" + i.getType());
-            builder.setMessage("Auf ihrem Gerät ist keine Applikation zum Ausführen!");
+            builder.setTitle(R.string.action_not_possible + i.getType());
+            builder.setMessage(R.string.no_application);
             builder.setNeutralButton(R.string.cancel, (dialog, which) -> { });
             builder.show();
         }

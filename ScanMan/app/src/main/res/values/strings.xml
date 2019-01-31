@@ -35,4 +35,7 @@
     <string name="delete">Löschen</string>
     <string name="selected">ausgewählt</string>
     <string name="send_with">Senden via</string>
+    <string name="share">Teilen</string>
+    <string name="action_not_possible">Aktion nicht möglich!</string>
+    <string name="no_application">Auf ihrem Gerät ist keine Applikation zum Ausführen!</string>
 </resources>
