@@ -1,6 +1,10 @@
 package de.thm.scanman.view.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
@@ -8,6 +12,7 @@ import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.UserDAO;
 import de.thm.scanman.util.DocumentArrayAdapter;
+import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -124,4 +129,16 @@ public class ViewPagerItemFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        documentsListView.setOnItemClickListener((parent, view, position, id) -> {
+            Document d = adapter.getItem(position);
+
+            Intent i = new Intent(getContext(), EditDocumentActivity.class);
+            i.setData(Uri.parse(String.valueOf(d.getId())));
+            startActivityForResult(i, 1);
+        });
+    }
 }
