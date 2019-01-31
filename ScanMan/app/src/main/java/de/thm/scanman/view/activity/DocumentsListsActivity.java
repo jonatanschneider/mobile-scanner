@@ -37,7 +37,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         addFab = findViewById(R.id.add_fab);
         addFab.setOnClickListener(
-            // implement call for new intent here
             view -> {
                 Intent i = new Intent(this, EditDocumentActivity.class);
                 i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
