@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
@@ -16,6 +16,9 @@ import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -35,9 +38,9 @@ public class ViewPagerItemFragment extends Fragment {
     private TextView documentListEmpty;
     private DocumentArrayAdapter adapter;
     private UserDAO userDAO;
-    List<Document> allDocuments;
-    List<Document> createdDocuments;
-    List<Document> sharedDocuments;
+    private List<Document> allDocuments;
+    private List<Document> createdDocuments;
+    private List<Document> sharedDocuments;
 
     public ViewPagerItemFragment(){}
 
@@ -57,6 +60,31 @@ public class ViewPagerItemFragment extends Fragment {
         } else {
             Log.d("TAG", "Error: no arguments!");
         }
+
+        setHasOptionsMenu(true);
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        //menu.clear();
+        //inflater.inflate(R.menu.documents_lists, menu);
+        MenuItem searchViewMenuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchViewMenuItem.getActionView();
+        searchView.setQueryHint(getString(R.string.search_hint));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // close keyboard
+                searchView.clearFocus();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // adapter has a standard filter, which filters for words in the return from Document::toString() TODO: evtl. toString-Ausgabe anpassen oder eigenen Filter schreiben
+                adapter.getFilter().filter(newText);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -80,12 +108,9 @@ public class ViewPagerItemFragment extends Fragment {
                 user -> {
                     switch (page) {
                         case 0:
-                            allDocuments = new ArrayList<>();   // ohne Neuerzeugung funktioniert es nicht!
+                            allDocuments = new ArrayList<>();   // without new creation here it does not work!
                             allDocuments.addAll(user.getCreatedDocuments());
                             allDocuments.addAll(user.getSharedDocuments());
-                            for (Document d : allDocuments) {
-                                System.out.println("all " + d.getName() + " " + d.getId());
-                            }
                             if (adapter == null) {
                                 adapter = new DocumentArrayAdapter(getContext(), allDocuments);
                                 documentsListView.setAdapter(adapter);
@@ -95,11 +120,8 @@ public class ViewPagerItemFragment extends Fragment {
                             }
                             break;
                         case 1:
-                            createdDocuments = new ArrayList<>();   // ohne Neuerzeugung funktioniert es nicht!
+                            createdDocuments = new ArrayList<>();   // without new creation here it does not work!
                             createdDocuments.addAll(user.getCreatedDocuments());
-                            for (Document d : createdDocuments) {
-                                System.out.println("created " + d.getName() + " " + d.getId());
-                            }
                             if (adapter == null) {
                                 adapter = new DocumentArrayAdapter(getContext(), createdDocuments);
                                 documentsListView.setAdapter(adapter);
@@ -109,11 +131,8 @@ public class ViewPagerItemFragment extends Fragment {
                             }
                             break;
                         case 2:
-                            sharedDocuments = new ArrayList<>();    // ohne Neuerzeugung funktioniert es nicht!
+                            sharedDocuments = new ArrayList<>();    // without new creation here it does not work!
                             sharedDocuments.addAll(user.getSharedDocuments());
-                            for (Document d : sharedDocuments) {
-                                System.out.println("shared " + d.getName() + " " + d.getId());
-                            }
                             if (adapter == null) {
                                 adapter = new DocumentArrayAdapter(getContext(), sharedDocuments);
                                 documentsListView.setAdapter(adapter);
