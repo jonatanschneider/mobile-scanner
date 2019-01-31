@@ -127,8 +127,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             fragment.setArguments(bundle);
 
             return fragment;
-
-            //return ViewPagerItemFragment.getInstance(position);//return ViewPagerItemFragment.getInstance(pageTitles[position]);
         }
 
         @Override

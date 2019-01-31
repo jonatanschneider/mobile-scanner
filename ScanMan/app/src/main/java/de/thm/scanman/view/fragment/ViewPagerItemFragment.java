@@ -44,14 +44,6 @@ public class ViewPagerItemFragment extends Fragment {
 
     public ViewPagerItemFragment(){}
 
-    public static ViewPagerItemFragment getInstance(int page){
-        ViewPagerItemFragment fragment = new ViewPagerItemFragment();
-        Bundle args = new Bundle();
-        args.putInt(PAGE_INDEX, page);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
