@@ -73,7 +73,9 @@ public class ViewPagerItemFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 // adapter has a standard filter, which filters for words in the return from Document::toString() TODO: evtl. toString-Ausgabe anpassen oder eigenen Filter schreiben
-                adapter.getFilter().filter(newText);
+                if (adapter != null) {
+                    adapter.getFilter().filter(newText);
+                }
                 return true;
             }
         });
