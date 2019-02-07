@@ -272,6 +272,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
+                        document.setImages(buildImages());
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
                         document.getImages().get(imageNr).setFile(resultUri.toString());
