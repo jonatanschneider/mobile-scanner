@@ -128,6 +128,7 @@ public class SignUpActivity extends AuthenticationBaseActivity {
                         User user = new User();
                         user.setId(getAuth().getCurrentUser().getUid());
                         user.setName(name);
+                        user.setMail(email);
                         FirebaseDatabase.userDAO.add(user);
 
                         startMainActivity();
