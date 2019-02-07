@@ -201,6 +201,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             case R.id.action_export:
                 if (imagesList.size() >= 1) {
                     sendImage(imagesList.getList(false));       // send one or more photos
+                    return true;
                 }
                 else return true;                       // there are no photos to send
         }
