@@ -1,14 +1,11 @@
 package de.thm.scanman.persistence;
 
-import android.content.Context;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.liveData.UserLiveData;
