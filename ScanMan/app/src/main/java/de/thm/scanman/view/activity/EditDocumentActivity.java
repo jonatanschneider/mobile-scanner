@@ -295,7 +295,6 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private void saveDocument() {
         if(liveData != null) liveData.removeObservers(this);
-        // TODO implement saveDocument / implement liveData
         if (firstVisit) {
             buildDocument();
             documentDAO.addCreatedDocument(document);
