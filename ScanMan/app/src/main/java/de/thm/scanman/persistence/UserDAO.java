@@ -1,10 +1,13 @@
 package de.thm.scanman.persistence;
 
+import com.google.firebase.database.DatabaseReference;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.thm.scanman.model.Document;
@@ -17,8 +20,8 @@ public class UserDAO {
      * Add a single user and all it's created and shared Documents to the database.
      * The owner attribute of all createdDocuments will automatically be set to the
      * corresponding user id.
-     * @param user
-     * @return user with set id
+     * @param user with set id
+     * @return user
      */
     public User add(User user) {
         // Remove documents from user object, will be stored independently in other nodes
@@ -26,6 +29,7 @@ public class UserDAO {
         List<Document> sharedDocuments = user.getSharedDocuments();
         user.setCreatedDocuments(new ArrayList<>());
         user.setSharedDocuments(new ArrayList<>());
+        user.setCreatedAt(new Date().getTime());
 
         FirebaseDatabase.usersRef.child(user.getId()).setValue(user);
 
