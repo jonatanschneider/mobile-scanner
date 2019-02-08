@@ -160,6 +160,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             List<Uri> selectedImages = new ArrayList<>();
+            List<Integer> selectedPositions = new ArrayList<>();
             Integer selectedPictures = 0;
 
             @Override
@@ -185,6 +186,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                         }
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             selectedImages.forEach(image -> imagesList.remove(image));
+                            selectedPositions.stream()
+                                    .map(pos -> document.getImages().get(pos))
+                                    .forEach(image -> document.getImages().remove(image));
                             ia.notifyDataSetChanged();
                         });
                         builder.setNeutralButton(R.string.cancel, null);
@@ -204,11 +208,13 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (checked) {
                         gridview.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
                         selectedImages.add(uri);
+                        selectedPositions.add(position);
                         selectedPictures++;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     } else {
                         gridview.getChildAt(position).setBackground(null);
                         selectedImages.remove(uri);
+                        selectedPositions.add(position);
                         selectedPictures--;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     }
