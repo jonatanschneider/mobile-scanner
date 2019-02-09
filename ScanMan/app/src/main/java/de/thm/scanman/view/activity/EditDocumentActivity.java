@@ -214,7 +214,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                     } else {
                         gridview.getChildAt(position).setBackground(null);
                         selectedImages.remove(uri);
-                        selectedPositions.add(position);
+                        selectedPositions.remove((Object)position); //cast to object to avoid using the position as index
                         selectedPictures--;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     }
