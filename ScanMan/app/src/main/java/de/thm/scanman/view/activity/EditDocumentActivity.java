@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
 import android.widget.GridView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -36,20 +40,10 @@ import de.thm.scanman.persistence.GlideApp;
 import de.thm.scanman.util.ImageAdapter;
 import de.thm.scanman.util.ImageList;
 
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.GridView;
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.addImageRef;
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
@@ -159,8 +153,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         // setMultiChoice Listener
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            List<Uri> selectedImages = new ArrayList<>();
-            List<Integer> selectedPositions = new ArrayList<>();
+            List<Document.Image> selectedImages = new ArrayList<>();
             Integer selectedPictures = 0;
 
             @Override
@@ -185,10 +178,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                             builder.setMessage(selectedImages.size() + " Bilder löschen?");
                         }
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                            selectedImages.forEach(image -> imagesList.remove(image));
-                            selectedPositions.stream()
-                                    .map(pos -> document.getImages().get(pos))
-                                    .forEach(image -> document.getImages().remove(image));
+                            selectedImages.forEach(image -> {
+                                imagesList.remove(Uri.parse(image.getFile()));
+                                document.getImages().remove(image);
+                            });
                             ia.notifyDataSetChanged();
                         });
                         builder.setNeutralButton(R.string.cancel, null);
@@ -204,17 +197,15 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 Object selected = ia.getItem(position);
                 if (selected != null && selected.getClass().toString().contains("Uri")) {
-                    Uri uri = (Uri) selected;
+                    Document.Image selectedImage = document.getImages().get(position);
                     if (checked) {
                         gridview.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
-                        selectedImages.add(uri);
-                        selectedPositions.add(position);
+                        selectedImages.add(selectedImage);
                         selectedPictures++;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     } else {
                         gridview.getChildAt(position).setBackground(null);
-                        selectedImages.remove(uri);
-                        selectedPositions.remove((Object)position); //cast to object to avoid using the position as index
+                        selectedImages.remove(selectedImage);
                         selectedPictures--;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     }
