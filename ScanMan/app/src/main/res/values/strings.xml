@@ -40,4 +40,5 @@
     <string name="share">Teilen</string>
     <string name="action_not_possible">Aktion nicht möglich!</string>
     <string name="no_application">Auf ihrem Gerät ist keine Applikation zum Ausführen!</string>
+    <string name="your_link">Ihr Link</string>
 </resources>

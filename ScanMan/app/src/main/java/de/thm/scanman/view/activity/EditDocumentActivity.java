@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -196,8 +197,11 @@ public class EditDocumentActivity extends AppCompatActivity {
                 exitDocumentActivity();
                 return true;
             case R.id.action_share:
-                // implement call for sharing documents here
-                return true;
+                if (imagesList.size() >= 1) {
+                    shareDocument(FirebaseAuth.getInstance().getUid());       // send one or more photos
+                    return true;
+                }
+                else return true;
             case R.id.action_export:
                 if (imagesList.size() >= 1) {
                     sendImage(imagesList.getList(false));       // send one or more photos
@@ -298,4 +302,22 @@ public class EditDocumentActivity extends AppCompatActivity {
         return FileProvider.getUriForFile(context, authority, f);
     }
 
+    private void shareDocument(String uid) {
+        // TODO ask if document is saved -> save document
+        uid = "F0LLCpoaaXXVROa1DeNzfYUXIpk2";
+        String documentID = "-LVNVfwik49cXLoKESd1";
+        String uri = "scanman://" + uid + "/" + documentID;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.your_link);
+        builder.setMessage(uri);
+        builder.setPositiveButton(R.string.send_with, (dialog, which) -> {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.putExtra(Intent.EXTRA_TEXT, uri);
+            i.setType("text/plain");
+            startActivity(Intent.createChooser(i, getResources().getText(R.string.send_with)));
+        });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
+        builder.show();
+        // TODO solver
+    }
 }
