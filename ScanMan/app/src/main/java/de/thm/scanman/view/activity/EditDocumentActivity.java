@@ -1,22 +1,10 @@
 package de.thm.scanman.view.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import de.thm.scanman.R;
-import de.thm.scanman.util.ImageAdapter;
-import de.thm.scanman.util.ImageList;
-
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,20 +13,51 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.StorageReference;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
+import de.thm.scanman.persistence.FirebaseDatabase;
+import de.thm.scanman.persistence.GlideApp;
+import de.thm.scanman.util.ImageAdapter;
+import de.thm.scanman.util.ImageList;
+
+import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
+import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
+import static de.thm.scanman.persistence.FirebaseDatabase.addImageRef;
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
     private FloatingActionButton saveFab;
     GridView gridview;
     ImageAdapter ia;
-    private Uri addImage = Uri.parse("android.resource://de.thm.scanman/drawable/ic_add_circle_outline_black_24dp");
+    private Uri addImage = Uri.parse(addImageRef.toString());
     private ImageList<Uri> imagesList = new ImageList<>(addImage);
+    private LiveData<Document> liveData;
     private Context context = this;
 
     private int imageNr;
     private boolean firstVisit;
+    private Document document;
 
     public static final String FIRST_VISIT = "FirstVisit";
     private static final int DEFAULT_IMAGE_NR = -1;
@@ -70,15 +89,46 @@ public class EditDocumentActivity extends AppCompatActivity {
                 shootNewImage();
             } else {                        // click on real image
                 imageNr = position;
-                Uri selectedImage = (Uri)ia.getItem(position);
-                CropImage.activity(selectedImage)
-                        .start(this);
+                Uri uri = imagesList.get(position);
+
+                if (uri.getScheme().equals("file")) {
+                    CropImage.activity(uri).start(this);
+                }
+                else {
+                    Activity activity = this;
+                    GlideApp.with(this)
+                            .asFile()
+                            .load(FirebaseDatabase.toStorageReference(uri))
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                            .into(new SimpleTarget<File>() {
+                                @Override
+                                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                                    //TODO Start Activity to View Image
+                                    CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
+                                }
+                            });
+                }
             }
         });
 
         Uri data = getIntent().getData();
         if (data != null && data.toString().equals(FIRST_VISIT)) {
             firstVisit = true;
+        } else if (data != null) { //Data is document id
+            int documentType = getIntent().getIntExtra("documentType", -1);
+            if (documentType == CREATED_DOCUMENT) liveData = documentDAO.getCreatedDocument(data.toString());
+            else if (documentType == SHARED_DOCUMENT) liveData = documentDAO.getSharedDocument(data.toString());
+            else if (documentType == -1) return;
+
+            liveData.observeForever(doc -> {
+                document = doc;
+                document.getImages().forEach(image -> {
+                    StorageReference reference = FirebaseDatabase.toStorageReference(Uri.parse(image.getFile()));
+                    imagesList.add(Uri.parse(reference.toString()));
+                });
+                ia.notifyDataSetChanged();
+
+            });
         }
     }
 
@@ -91,13 +141,19 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        if (liveData != null) liveData.removeObservers(this);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         // setMultiChoice Listener
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            List<Uri> selectedImages = new ArrayList<>();
+            List<Document.Image> selectedImages = new ArrayList<>();
             Integer selectedPictures = 0;
 
             @Override
@@ -122,7 +178,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                             builder.setMessage(selectedImages.size() + " Bilder löschen?");
                         }
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                            selectedImages.forEach(image -> imagesList.remove(image));
+                            selectedImages.forEach(image -> {
+                                imagesList.remove(Uri.parse(image.getFile()));
+                                document.getImages().remove(image);
+                            });
                             ia.notifyDataSetChanged();
                         });
                         builder.setNeutralButton(R.string.cancel, null);
@@ -138,15 +197,15 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 Object selected = ia.getItem(position);
                 if (selected != null && selected.getClass().toString().contains("Uri")) {
-                    Uri uri = (Uri) selected;
+                    Document.Image selectedImage = document.getImages().get(position);
                     if (checked) {
                         gridview.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
-                        selectedImages.add(uri);
+                        selectedImages.add(selectedImage);
                         selectedPictures++;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     } else {
                         gridview.getChildAt(position).setBackground(null);
-                        selectedImages.remove(uri);
+                        selectedImages.remove(selectedImage);
                         selectedPictures--;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     }
@@ -210,10 +269,11 @@ public class EditDocumentActivity extends AppCompatActivity {
 
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
+                        document.setImages(buildImages());
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
+                        document.getImages().get(imageNr).setFile(resultUri.toString());
                     }
-
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     System.out.println(result.getError());
@@ -231,7 +291,38 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void saveDocument() {
-        // TODO implement saveDocument / implement liveData
+        if(liveData != null) liveData.removeObservers(this);
+        if (firstVisit) {
+            buildDocument();
+            documentDAO.addCreatedDocument(document);
+        }
+        else {
+            document.setImages(buildImages());
+            document.setLastUpdateAt(new Date().getTime());
+            documentDAO.update(document);
+        }
+    }
+
+    private void buildDocument() {
+        document.setCreatedAt(new Date().getTime());
+        document.setName("Upload Test");
+        document.setImages(buildImages());
+    }
+
+    private List<Document.Image> buildImages() {
+        List<Document.Image> images = new ArrayList<>();
+        for(int i = 0; i < imagesList.size(); i++) {
+            Uri uri = imagesList.get(i);
+            if (uri.equals(addImage)) continue;
+            if (!uri.getScheme().equals("file")) {
+                images.add(document.getImages().get(i));
+            } else {
+                Document.Image image = new Document.Image(uri.toString(), new Date().getTime());
+                image.setId("" + i);
+                images.add(image);
+            }
+        }
+        return images;
     }
 
     private void exitDocumentActivity() {
