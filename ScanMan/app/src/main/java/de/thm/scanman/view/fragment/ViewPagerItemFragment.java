@@ -29,6 +29,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
+import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
+
 public class ViewPagerItemFragment extends Fragment {
     private static final String PAGE_INDEX = "PAGE_INDEX";
 
@@ -151,6 +154,11 @@ public class ViewPagerItemFragment extends Fragment {
 
             Intent i = new Intent(getContext(), EditDocumentActivity.class);
             i.setData(Uri.parse(String.valueOf(d.getId())));
+            if (d.getOwnerId().equals(FirebaseAuth.getInstance().getUid())) {
+                i.putExtra("documentType", CREATED_DOCUMENT);
+            } else {
+                i.putExtra("documentType", SHARED_DOCUMENT);
+            }
             startActivityForResult(i, 1);
         });
     }
