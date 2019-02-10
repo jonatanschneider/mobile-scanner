@@ -22,6 +22,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -306,8 +307,10 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void buildDocument() {
-        document.setCreatedAt(new Date().getTime());
-        document.setName("Upload Test");
+        Date date = new Date();
+        document.setCreatedAt(date.getTime());
+        String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
+        document.setName(defaultName);
         document.setImages(buildImages());
     }
 
