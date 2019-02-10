@@ -57,6 +57,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private int imageNr;
     private boolean firstVisit;
+    private boolean editDocument = false;
     private Document document;
 
     public static final String FIRST_VISIT = "FirstVisit";
@@ -120,6 +121,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             else if (documentType == SHARED_DOCUMENT) liveData = documentDAO.getSharedDocument(data.toString());
             else if (documentType == -1) return;
 
+            editDocument = true;
             liveData.observeForever(doc -> {
                 document = doc;
                 document.getImages().forEach(image -> {
@@ -127,7 +129,6 @@ public class EditDocumentActivity extends AppCompatActivity {
                     imagesList.add(Uri.parse(reference.toString()));
                 });
                 ia.notifyDataSetChanged();
-
             });
         }
     }
@@ -291,15 +292,16 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void saveDocument() {
-        if(liveData != null) liveData.removeObservers(this);
-        if (firstVisit) {
-            buildDocument();
-            documentDAO.addCreatedDocument(document);
-        }
-        else {
+        if (liveData != null) liveData.removeObservers(this);
+        if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
             documentDAO.update(document);
+        }
+        else {
+            document = new Document();
+            buildDocument();
+            documentDAO.addCreatedDocument(document);
         }
     }
 
