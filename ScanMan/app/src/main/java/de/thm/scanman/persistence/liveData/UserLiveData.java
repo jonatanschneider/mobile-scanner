@@ -22,7 +22,6 @@ public class UserLiveData extends LiveData<User> {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             User user = dataSnapshot.getValue(User.class);
             user.setId(dataSnapshot.getKey());
-            //Auth:to check if user has rights to see documents
             setValue(user);
         }
 

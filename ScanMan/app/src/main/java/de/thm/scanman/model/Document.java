@@ -10,6 +10,7 @@ public class Document {
     private List<String> tags;
     private List<Image> images;
     private long createdAt;
+    private long lastUpdateAt;
     private String ownerId;
     private List<String> userIds;
 
@@ -19,11 +20,12 @@ public class Document {
         userIds = new ArrayList<>();
     }
 
-    public Document(String name, List<String> tags, List<Image> images, long createdAt, String ownerId, List<String> userIds) {
+    public Document(String name, List<String> tags, List<Image> images, long createdAt, long lastUpdateAt, String ownerId, List<String> userIds) {
         this.name = name;
         this.tags = tags;
         this.images = images;
         this.createdAt = createdAt;
+        this.lastUpdateAt = lastUpdateAt;
         this.ownerId = ownerId;
         this.userIds = userIds;
     }
@@ -107,16 +109,26 @@ public class Document {
         return sb.toString();
     }
 
+    public long getLastUpdateAt() {
+        return lastUpdateAt;
+    }
+
+    public void setLastUpdateAt(long lastUpdateAt) {
+        this.lastUpdateAt = lastUpdateAt;
+    }
+
     public static class Image {
         private String id;
         private String file;
         private long createdAt;
+        private long lastUpdateAt;
 
         public Image() { }
 
         public Image(String file, long createdAt) {
             this.file = file;
             this.createdAt = createdAt;
+            this.lastUpdateAt = createdAt;
         }
 
         public String getId() {
@@ -143,10 +155,21 @@ public class Document {
             this.createdAt = createdAt;
         }
 
+        public long getLastUpdateAt() {
+            return lastUpdateAt;
+        }
+
+        public void setLastUpdateAt(long lastUpdateAt) {
+            this.lastUpdateAt = lastUpdateAt;
+        }
+
+
         @Override
         public String toString() {
             return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
         }
+
+
     }
 
 }

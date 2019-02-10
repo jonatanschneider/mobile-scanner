@@ -38,7 +38,7 @@ public class ImageList<E> {
     }
 
     public E update(int index, E updateElement) {
-        if (validIndex(index)) return null;
+        if (!validIndex(index)) return null;
         return list.set(index, updateElement);
     }
 
@@ -57,7 +57,7 @@ public class ImageList<E> {
     }
 
     private boolean validIndex(int index){
-        return index < 0 || index < size();
+        return index >= 0 && index < size();
     }
 
     public void hideAddImage() {
