@@ -40,6 +40,13 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> {
         ImageView image = view.findViewById(R.id.document_image);
         GlideApp.with(view.getContext())
                 .load(FirebaseDatabase.toStorageReference(uri))
+                .error(
+                        GlideApp
+                                .with(view.getContext())
+                                .load(R.drawable.ic_camera_alt_black_24dp)
+                                .override(150)
+                                .centerCrop()
+                )
                 .override(150)
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
