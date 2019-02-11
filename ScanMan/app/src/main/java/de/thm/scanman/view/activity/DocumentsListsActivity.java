@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -13,12 +15,15 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
-import de.thm.scanman.view.activity.EditDocumentActivity;
-import de.thm.scanman.view.activity.SettingsActivity;
+import de.thm.scanman.model.Document;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.List;
+
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
@@ -50,6 +55,32 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     @Override
     protected void onStart() {
         super.onStart();
+        Intent caller = getIntent();
+        if (caller != null && Intent.ACTION_VIEW.equals(caller.getAction())) {
+            // Add document to shared documents
+            Uri data = caller.getData();
+            if (data == null) return;           // stop process when data is null
+
+            List<String> params = data.getPathSegments();
+            if (params.size() != 2) return;     // stop process when data is not valid
+
+            String ownerID = params.get(0);
+            String documentID = params.get(1);
+            if (ownerID.equals(FirebaseAuth.getInstance().getUid())) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Sie sind bereits der Besitzer des Dokumentes");
+                builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
+                builder.show();
+            } else {
+                Document doc = new Document();
+                doc.setOwnerId(ownerID);
+                doc.setId(documentID);
+                // TODO check if document and user exist?
+                // TODO check if user already owns documents in sharedDocuments?
+                documentDAO.addSharedDocument(doc);
+            }
+        }
     }
 
     @Override

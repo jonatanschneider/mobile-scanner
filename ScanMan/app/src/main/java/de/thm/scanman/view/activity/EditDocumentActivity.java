@@ -396,7 +396,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         // TODO ask if document is saved -> save document
         uid = "F0LLCpoaaXXVROa1DeNzfYUXIpk2";
         String documentID = "-LVNVfwik49cXLoKESd1";
-        String uri = "scanman://" + uid + "/" + documentID;
+        String uri = "http://de.thm.scanman/" + uid + "/" + documentID;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.your_link);
         builder.setMessage(uri);
@@ -408,6 +408,5 @@ public class EditDocumentActivity extends AppCompatActivity {
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
         builder.show();
-        // TODO solver
     }
 }
