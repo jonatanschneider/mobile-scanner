@@ -300,18 +300,19 @@ public class EditDocumentActivity extends AppCompatActivity {
             documentDAO.update(document);
         }
         else {
-            document = new Document();
-            buildDocument();
+            document = buildDocument();
             documentDAO.addCreatedDocument(document);
         }
     }
 
-    private void buildDocument() {
+    private Document buildDocument() {
+        Document document = new Document();
         Date date = new Date();
         document.setCreatedAt(date.getTime());
         String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
         document.setName(defaultName);
         document.setImages(buildImages());
+        return document;
     }
 
     private List<Document.Image> buildImages() {
