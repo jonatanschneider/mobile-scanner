@@ -268,7 +268,9 @@ public class EditDocumentActivity extends AppCompatActivity {
             if (result != null){
                 if (resultCode == RESULT_OK) {
                     Uri resultUri = result.getUri();
-
+                    if (document == null) {
+                        document = buildDocument();
+                    }
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
