@@ -123,11 +123,14 @@ public class EditDocumentActivity extends AppCompatActivity {
             else if (documentType == -1) return;
 
             liveData.observeForever(doc -> {
+                imagesList = new ImageList<>(addImage);
                 document = doc;
                 document.getImages().forEach(image -> {
                     StorageReference reference = FirebaseDatabase.toStorageReference(Uri.parse(image.getFile()));
                     imagesList.add(Uri.parse(reference.toString()));
                 });
+                ia = new ImageAdapter(this, imagesList.getList(true));
+                gridview.setAdapter(ia);
                 ia.notifyDataSetChanged();
 
             });
@@ -302,7 +305,6 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void saveDocument() {
-        if(liveData != null) liveData.removeObservers(this);
         if (firstVisit) {
             buildDocument();
             documentDAO.addCreatedDocument(document);
