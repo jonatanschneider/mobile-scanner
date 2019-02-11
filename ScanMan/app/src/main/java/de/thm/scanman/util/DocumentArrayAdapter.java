@@ -36,7 +36,8 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> {
         }
 
         Document d = getItem(pos);
-        Uri uri = Uri.parse(d.getImages().get(0).getFile());
+        Uri uri = Uri.parse("");
+        if (d.getImages().size() > 0) uri = Uri.parse(d.getImages().get(0).getFile());
         ImageView image = view.findViewById(R.id.document_image);
         GlideApp.with(view.getContext())
                 .load(FirebaseDatabase.toStorageReference(uri))
