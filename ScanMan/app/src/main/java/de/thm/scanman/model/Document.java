@@ -3,6 +3,8 @@ package de.thm.scanman.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Document {
     private String id;
@@ -84,6 +86,12 @@ public class Document {
 
     public void setUserIds(List<String> userIds) {
         this.userIds = userIds;
+    }
+
+    public long getSize() {
+        return images.stream()
+                .mapToLong(Image::getFileSize)
+                .sum();
     }
 
     @Override
