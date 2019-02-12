@@ -70,7 +70,7 @@ public class DocumentDAO {
     private Predicate<Document.Image> isLocalFile = image -> Uri.parse(image.getFile()).getScheme().equals("file");
 
     private long calculateFileSize(Uri uri) {
-        File file = new File(uri.toString());
+        File file = new File(uri.getPath());
         return file.length();
     }
 
