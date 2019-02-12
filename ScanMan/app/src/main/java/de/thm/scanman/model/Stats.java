@@ -36,7 +36,7 @@ public class Stats {
 
     public int countOfDocumentsSharedWithOthers() {
         return (int) user.getCreatedDocuments().stream()
-                .filter(Objects::nonNull)
+                .filter(doc -> doc.getUserIds() != null)
                 .filter(doc -> doc.getUserIds().size() > 0)
                 .count();
     }
