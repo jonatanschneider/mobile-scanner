@@ -174,9 +174,14 @@ public class Document {
 
         @Override
         public String toString() {
-            return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
+            return "Image{" +
+                    "id='" + id + '\'' +
+                    ", file='" + file + '\'' +
+                    ", createdAt=" + createdAt +
+                    ", lastUpdateAt=" + lastUpdateAt +
+                    ", fileSize=" + fileSize +
+                    '}';
         }
-        
     }
 
 }
