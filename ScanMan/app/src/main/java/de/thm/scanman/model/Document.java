@@ -122,6 +122,7 @@ public class Document {
         private String file;
         private long createdAt;
         private long lastUpdateAt;
+        private long fileSize;
 
         public Image() { }
 
@@ -163,13 +164,19 @@ public class Document {
             this.lastUpdateAt = lastUpdateAt;
         }
 
+        public long getFileSize() {
+            return fileSize;
+        }
+
+        public void setFileSize(long fileSize) {
+            this.fileSize = fileSize;
+        }
 
         @Override
         public String toString() {
             return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
         }
-
-
+        
     }
 
 }
