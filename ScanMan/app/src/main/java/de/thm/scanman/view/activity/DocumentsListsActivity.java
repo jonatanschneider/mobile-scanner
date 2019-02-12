@@ -163,9 +163,9 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         @Override
         protected void onPostExecute(String stats) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Title"); // TODO R
+            builder.setTitle(R.string.stats_title);
             builder.setMessage(stats);
-            builder.setNeutralButton("close", null); // TODO R
+            builder.setNeutralButton(R.string.stats_close, null);
             builder.show();
         }
     }

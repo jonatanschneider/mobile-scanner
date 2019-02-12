@@ -36,4 +36,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="delete">Löschen</string>
     <string name="selected">ausgewählt</string>
+    <!-- Stats -->
+    <string name="stats_title">Statistik</string>
+    <string name="stats_close">Schließen</string>
 </resources>
