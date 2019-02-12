@@ -1,30 +1,37 @@
 package de.thm.scanman.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
-import de.thm.scanman.view.activity.EditDocumentActivity;
-import de.thm.scanman.view.activity.SettingsActivity;
+import de.thm.scanman.model.Stats;
+import de.thm.scanman.model.User;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
-import android.view.Menu;
-import android.view.MenuItem;
+import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private TabLayout tabBar;
     private ViewPager viewPager;
     private FloatingActionButton addFab;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
                 startActivity(i);
             });
+
+        userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> user = u);
     }
 
     @Override
@@ -64,8 +73,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_stats:
-                // implement call for statistics here
-                //new StatsTask(this).execute(documents);
+                new StatsTask(this).execute(user);
                 return true;
             case R.id.action_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
@@ -135,6 +143,30 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         @Override
         public CharSequence getPageTitle(int position){
             return pageTitles[position];
+        }
+    }
+
+    private class StatsTask extends AsyncTask<User, Void, String> {
+        private Context context;
+
+        public StatsTask(Context context) {
+            super();
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(User... users) {
+
+            return new Stats(users[0]).toString();
+        }
+
+        @Override
+        protected void onPostExecute(String stats) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Title"); // TODO R
+            builder.setMessage(stats);
+            builder.setNeutralButton("close", null); // TODO R
+            builder.show();
         }
     }
 
