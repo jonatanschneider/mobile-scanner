@@ -95,7 +95,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                 imageNr = position;
                 Uri uri = imagesList.get(position);
 
-                if (uri.getScheme().equals("file")) {
+                if (uri.getScheme() != null && uri.getScheme().equals("file")) {
                     CropImage.activity(uri).start(this);
                 }
                 else {
@@ -266,7 +266,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                 return true;
             case R.id.action_share:
                 if (imagesList.size() >= 1) {
-                    shareDocument(FirebaseAuth.getInstance().getUid());
+                    shareDocument();
                     return true;
                 }
                 else return true;   // no
@@ -313,7 +313,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         exitDocumentActivity();
     }
 
-    private void saveDocument() {
+    private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
         if (editDocument) {
             document.setImages(buildImages());
@@ -324,6 +324,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             document = buildDocument();
             documentDAO.addCreatedDocument(document);
         }
+        return document;
     }
 
     private Document buildDocument() {
@@ -341,7 +342,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         for(int i = 0; i < imagesList.size(); i++) {
             Uri uri = imagesList.get(i);
             if (uri.equals(addImage)) continue;
-            if (!uri.getScheme().equals("file")) {
+            if (uri.getScheme() != null && !uri.getScheme().equals("file")) {
                 images.add(document.getImages().get(i));
             } else {
                 Document.Image image = new Document.Image(uri.toString(), new Date().getTime());
@@ -408,10 +409,10 @@ public class EditDocumentActivity extends AppCompatActivity {
         return FileProvider.getUriForFile(context, authority, f);
     }
 
-    private void shareDocument(String uid) {
-        // TODO ask if document is saved -> save document
-        uid = "F0LLCpoaaXXVROa1DeNzfYUXIpk2";
-        String documentID = "-LVNVfwik49cXLoKESd1";
+    private void shareDocument() {
+        Document doc = saveDocument();
+        String uid = FirebaseAuth.getInstance().getUid();
+        String documentID = doc.getId();
         String uri = "http://de.thm.scanman/" + uid + "/" + documentID;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.your_link);

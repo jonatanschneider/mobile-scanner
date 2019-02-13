@@ -80,6 +80,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 // TODO check if user already owns documents in sharedDocuments?
                 documentDAO.addSharedDocument(doc);
             }
+        } else {
+            System.out.println("Intent comes from "  + caller);
         }
     }
 
