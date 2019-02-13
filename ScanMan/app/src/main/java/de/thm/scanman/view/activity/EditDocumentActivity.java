@@ -23,6 +23,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +60,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private int imageNr;
     private boolean firstVisit;
+    private boolean editDocument = false;
     private Document document;
 
     public static final String FIRST_VISIT = "FirstVisit";
@@ -122,6 +124,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             else if (documentType == SHARED_DOCUMENT) liveData = documentDAO.getSharedDocument(data.toString());
             else if (documentType == -1) return;
 
+            editDocument = true;
             liveData.observeForever(doc -> {
                 imagesList = new ImageList<>(addImage);
                 document = doc;
@@ -132,7 +135,6 @@ public class EditDocumentActivity extends AppCompatActivity {
                 ia = new ImageAdapter(this, imagesList.getList(true));
                 gridview.setAdapter(ia);
                 ia.notifyDataSetChanged();
-
             });
         }
     }
@@ -285,7 +287,9 @@ public class EditDocumentActivity extends AppCompatActivity {
             if (result != null){
                 if (resultCode == RESULT_OK) {
                     Uri resultUri = result.getUri();
-
+                    if (document == null) {
+                        document = buildDocument();
+                    }
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
@@ -310,21 +314,26 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void saveDocument() {
-        if (firstVisit) {
-            buildDocument();
-            documentDAO.addCreatedDocument(document);
-        }
-        else {
+        if (liveData != null) liveData.removeObservers(this);
+        if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
             documentDAO.update(document);
         }
+        else {
+            document = buildDocument();
+            documentDAO.addCreatedDocument(document);
+        }
     }
 
-    private void buildDocument() {
-        document.setCreatedAt(new Date().getTime());
-        document.setName("Upload Test");
+    private Document buildDocument() {
+        Document document = new Document();
+        Date date = new Date();
+        document.setCreatedAt(date.getTime());
+        String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
+        document.setName(defaultName);
         document.setImages(buildImages());
+        return document;
     }
 
     private List<Document.Image> buildImages() {
