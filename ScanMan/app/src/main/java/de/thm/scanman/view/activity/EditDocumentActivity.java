@@ -158,6 +158,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         // setMultiChoice Listener
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            List<Uri> selectedImagesUris = new ArrayList<>();
             List<Document.Image> selectedImages = new ArrayList<>();
             Integer selectedPictures = 0;
 
@@ -166,6 +167,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.delete_menu, menu);
                 imagesList.hideAddImage();
+                selectedImagesUris.clear();
                 selectedImages.clear();
                 saveFab.setVisibility(View.INVISIBLE);
                 return true;
@@ -194,7 +196,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                         mode.finish();
                         return true;
                     case R.id.menu_share:
-                        //sendImage(selectedImages);
+                        sendImage(selectedImagesUris);
                         return true;
                     default:
                         return false;
@@ -205,14 +207,17 @@ public class EditDocumentActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 Object selected = ia.getItem(position);
                 if (selected != null && selected.getClass().toString().contains("Uri")) {
+                    Uri selectedImageUri = (Uri) selected;
                     Document.Image selectedImage = document.getImages().get(position);
                     if (checked) {
                         gridview.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+                        selectedImagesUris.add(selectedImageUri);
                         selectedImages.add(selectedImage);
                         selectedPictures++;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
                     } else {
                         gridview.getChildAt(position).setBackground(null);
+                        selectedImagesUris.remove(selectedImageUri);
                         selectedImages.remove(selectedImage);
                         selectedPictures--;
                         mode.setTitle(selectedPictures + " " + getResources().getString(R.string.selected));
@@ -259,10 +264,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                 return true;
             case R.id.action_share:
                 if (imagesList.size() >= 1) {
-                    shareDocument(FirebaseAuth.getInstance().getUid());       // send one or more photos
+                    shareDocument(FirebaseAuth.getInstance().getUid());
                     return true;
                 }
-                else return true;
+                else return true;   // no
             case R.id.action_export:
                 if (imagesList.size() >= 1) {
                     sendImage(imagesList.getList(false));       // send one or more photos
