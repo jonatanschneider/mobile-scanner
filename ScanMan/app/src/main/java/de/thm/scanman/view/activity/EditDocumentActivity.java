@@ -61,6 +61,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     private int imageNr;
     private boolean firstVisit;
     private boolean editDocument = false;
+    private boolean madeChanges = false;
     private Document document;
 
     public static final String FIRST_VISIT = "FirstVisit";
@@ -297,6 +298,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                         imagesList.update(imageNr, resultUri);
                         document.getImages().get(imageNr).setFile(resultUri.toString());
                     }
+                    madeChanges = true;
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     System.out.println(result.getError());
@@ -315,6 +317,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
+        if (!madeChanges) return document;
         if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
@@ -354,7 +357,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void exitDocumentActivity() {
-        if (imagesList.isEmpty()) {
+        if (imagesList.isEmpty() || !madeChanges) {
             finish();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
