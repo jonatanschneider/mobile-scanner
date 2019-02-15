@@ -16,6 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
+import de.thm.scanman.model.User;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
 import android.view.Menu;
@@ -24,12 +25,14 @@ import android.view.MenuItem;
 import java.util.List;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
+import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private TabLayout tabBar;
     private ViewPager viewPager;
     private FloatingActionButton addFab;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
                 startActivity(i);
             });
+
+        userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> user = u);
     }
 
     @Override
@@ -76,9 +81,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 Document doc = new Document();
                 doc.setOwnerId(ownerID);
                 doc.setId(documentID);
-                // TODO check if document and user exist?
-                // TODO check if user already owns documents in sharedDocuments?
-                documentDAO.addSharedDocument(doc);
+                if (user == null || user.getSharedDocuments().stream()
+                        .noneMatch(d -> d.getId().equals(documentID))) {
+                    documentDAO.addSharedDocument(doc);
+                }
             }
         } else {
             System.out.println("Intent comes from "  + caller);
