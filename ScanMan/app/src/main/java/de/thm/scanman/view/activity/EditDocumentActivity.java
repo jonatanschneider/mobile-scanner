@@ -192,6 +192,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                                 imagesList.remove(Uri.parse(image.getFile()));
                                 document.getImages().remove(image);
                             });
+                            madeChanges = true;
                             ia.notifyDataSetChanged();
                         });
                         builder.setNeutralButton(R.string.cancel, null);
