@@ -1,6 +1,8 @@
 package de.thm.scanman.view.activity;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -57,6 +59,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     private ImageList<Uri> imagesList = new ImageList<>(addImage);
     private LiveData<Document> liveData;
     private Context context = this;
+    private final String uriStart = "http://de.thm.scanman/";
 
     private int imageNr;
     private boolean firstVisit;
@@ -421,6 +424,12 @@ public class EditDocumentActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.your_link);
         builder.setMessage(uri);
+        builder.setNeutralButton(R.string.copy_to_clipboard, (dialog, which) -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            Uri copyUri = Uri.parse(uriStart + uid + "/" + documentID);
+            ClipData clip = ClipData.newUri(getContentResolver(), "URI", copyUri);
+            clipboard.setPrimaryClip(clip);
+        });
         builder.setPositiveButton(R.string.send_with, (dialog, which) -> {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.putExtra(Intent.EXTRA_TEXT, uri);
