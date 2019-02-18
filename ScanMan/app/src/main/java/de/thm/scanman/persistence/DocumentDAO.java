@@ -2,10 +2,14 @@ package de.thm.scanman.persistence;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -76,7 +80,19 @@ public class DocumentDAO {
     public void addSharedDocument(Document document) {
         if (userId.equals(document.getOwnerId())) return;
         if (document.getId() == null || document.getId().equals("")) return;
-        FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
+        DatabaseReference reference = FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) return;
+                reference.setValue(document);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("Database Error on adding shared Document: " + databaseError.getMessage());
+            }
+        });
     }
 
     /**
