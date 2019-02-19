@@ -170,6 +170,7 @@ public class ViewPagerItemFragment extends Fragment {
     private AbsListView.MultiChoiceModeListener longPressActions() {
         return new AbsListView.MultiChoiceModeListener() {
             private int counter = 0;
+            private Document selectedDocument;
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
@@ -194,7 +195,7 @@ public class ViewPagerItemFragment extends Fragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_info:
-                        //TODO
+                        new DocumentStatsTask(getContext()).execute(selectedDocument);
                         mode.finish();
                         return true;
                     default:
