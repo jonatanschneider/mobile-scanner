@@ -15,12 +15,14 @@ import de.thm.scanman.util.DocumentArrayAdapter;
 import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -149,6 +151,8 @@ public class ViewPagerItemFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        documentsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        documentsListView.setMultiChoiceModeListener(longPressActions());
         documentsListView.setOnItemClickListener((parent, view, position, id) -> {
             Document d = adapter.getItem(position);
 
@@ -161,5 +165,47 @@ public class ViewPagerItemFragment extends Fragment {
             }
             startActivityForResult(i, 1);
         });
+    }
+
+    private AbsListView.MultiChoiceModeListener longPressActions() {
+        return new AbsListView.MultiChoiceModeListener() {
+            private int counter = 0;
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) counter++;
+                else counter--;
+                mode.setTitle("" + counter + getResources().getString(R.string.selected));
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.documents_lists_contextual, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_info:
+                        //TODO
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                counter = 0;
+            }
+        };
     }
 }
