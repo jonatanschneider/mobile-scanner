@@ -208,4 +208,28 @@ public class ViewPagerItemFragment extends Fragment {
             }
         };
     }
+
+    private class DocumentStatsTask extends AsyncTask<Document, Void, String> {
+        private Context context;
+
+        public DocumentStatsTask(Context context) {
+            super();
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(Document... documents) {
+
+            return new DocumentStats(documents[0]).toString();
+        }
+
+        @Override
+        protected void onPostExecute(String stats) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.stats_title);
+            builder.setMessage(stats);
+            builder.setNeutralButton(R.string.stats_close, null);
+            builder.show();
+        }
+    }
 }
