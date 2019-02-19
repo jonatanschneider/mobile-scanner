@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.GridView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -274,6 +276,15 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle(R.string.title);
+                        builder.setMessage(R.string.enter_title);
+                        EditText titleField = new EditText(this);
+                        builder.setView(titleField);
+                        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                            document.setName(titleField.getText().toString());
+                        });
+                        builder.show();
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
                         document.getImages().get(imageNr).setFile(resultUri.toString());
