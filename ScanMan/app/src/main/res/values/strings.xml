@@ -42,4 +42,5 @@
     <!-- Stats -->
     <string name="stats_title">Statistik</string>
     <string name="stats_close">Schließen</string>
+    <string name="info">Informationen</string>
 </resources>
