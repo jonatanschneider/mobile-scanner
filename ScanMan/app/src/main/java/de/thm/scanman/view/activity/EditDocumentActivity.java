@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +13,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -26,6 +26,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -269,6 +270,15 @@ public class EditDocumentActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (result != null){
                 if (resultCode == RESULT_OK) {
+                    EditText titleField = new EditText(this);
+                    titleField.setSingleLine();
+                    titleField.setHint(R.string.title);
+                    EditText tagsField = new EditText(this);
+                    tagsField.setHint(R.string.tags);
+                    LinearLayout layout = new LinearLayout(this);
+                    layout.setOrientation(LinearLayout.VERTICAL);
+                    layout.addView(titleField);
+                    layout.addView(tagsField);
                     Uri resultUri = result.getUri();
                     if (document == null) {
                         document = buildDocument();
@@ -277,14 +287,12 @@ public class EditDocumentActivity extends AppCompatActivity {
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle(R.string.title);
-                        builder.setMessage(R.string.enter_title);
-                        EditText titleField = new EditText(this);
-                        titleField.setSingleLine();
-                        titleField.setHint(R.string.title);
-                        builder.setView(titleField);
+                        builder.setTitle(R.string.title_tags);
+                        builder.setMessage(R.string.enter_title_tags);
+                        builder.setView(layout);
                         builder.setPositiveButton(R.string.save, (dialog, which) -> {
                             document.setName(titleField.getText().toString());
+                            document.setTags(Arrays.asList(tagsField.getText().toString().split("\\s")));
                         });
                         builder.show();
                     } else {                                        // update existing image
