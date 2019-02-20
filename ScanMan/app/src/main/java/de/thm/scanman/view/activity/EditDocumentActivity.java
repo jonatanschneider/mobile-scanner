@@ -280,8 +280,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                         builder.setTitle(R.string.title);
                         builder.setMessage(R.string.enter_title);
                         EditText titleField = new EditText(this);
+                        titleField.setSingleLine();
+                        titleField.setHint(R.string.title);
                         builder.setView(titleField);
-                        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                        builder.setPositiveButton(R.string.save, (dialog, which) -> {
                             document.setName(titleField.getText().toString());
                         });
                         builder.show();
