@@ -270,6 +270,8 @@ public class EditDocumentActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (result != null){
                 if (resultCode == RESULT_OK) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(R.string.title_tags);
                     EditText titleField = new EditText(this);
                     titleField.setSingleLine();
                     titleField.setHint(R.string.title);
@@ -279,6 +281,11 @@ public class EditDocumentActivity extends AppCompatActivity {
                     layout.setOrientation(LinearLayout.VERTICAL);
                     layout.addView(titleField);
                     layout.addView(tagsField);
+                    builder.setView(layout);
+                    builder.setPositiveButton(R.string.save, (dialog, which) -> {
+                        document.setName(titleField.getText().toString());
+                        document.setTags(Arrays.asList(tagsField.getText().toString().split("\\s")));
+                    });
                     Uri resultUri = result.getUri();
                     if (document == null) {
                         document = buildDocument();
@@ -286,18 +293,14 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle(R.string.title_tags);
                         builder.setMessage(R.string.enter_title_tags);
-                        builder.setView(layout);
-                        builder.setPositiveButton(R.string.save, (dialog, which) -> {
-                            document.setName(titleField.getText().toString());
-                            document.setTags(Arrays.asList(tagsField.getText().toString().split("\\s")));
-                        });
                         builder.show();
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
                         document.getImages().get(imageNr).setFile(resultUri.toString());
+                        titleField.setText(document.getName());
+                        tagsField.setText(document.getTags().stream().reduce((a, b) -> a + " " + b).orElse(""));
+                        builder.show();
                     }
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
