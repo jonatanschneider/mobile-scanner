@@ -1,5 +1,6 @@
 package de.thm.scanman.view.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,13 +27,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
@@ -233,7 +240,7 @@ public class ViewPagerItemFragment extends Fragment {
         };
     }
 
-    private class DocumentStatsTask extends AsyncTask<Document, Void, String> {
+    private class DocumentStatsTask extends AsyncTask<Document, Void, DocumentStats> {
         private Context context;
 
         public DocumentStatsTask(Context context) {
@@ -242,18 +249,35 @@ public class ViewPagerItemFragment extends Fragment {
         }
 
         @Override
-        protected String doInBackground(Document... documents) {
-
-            return new DocumentStats(documents[0]).toString();
+        protected DocumentStats doInBackground(Document... documents) {
+            return new DocumentStats(documents[0]);
         }
 
         @Override
-        protected void onPostExecute(String stats) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(R.string.stats_title);
-            builder.setMessage(stats);
-            builder.setNeutralButton(R.string.stats_close, null);
-            builder.show();
+        protected void onPostExecute(DocumentStats stats) {
+
+            final Dialog dialog = new Dialog(context);
+            dialog.setContentView(R.layout.dialog_document_stats);
+            dialog.setTitle("Title");
+            TextView title = dialog.findViewById(R.id.title);
+            TextView creationDate = dialog.findViewById(R.id.created_at);
+            TextView lastUpdateDate = dialog.findViewById(R.id.last_update_at);
+            TextView numberOfUsers = dialog.findViewById(R.id.number_of_users);
+            TextView numberOfImages = dialog.findViewById(R.id.number_of_images);
+            Button button = dialog.findViewById(R.id.ok_button);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+
+            title.setText(stats.getDocument().getName());
+            creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
+            lastUpdateDate.setText(dateFormat.format(new Date(stats.getDocument().getLastUpdateAt())));
+            numberOfUsers.setText("" + stats.numberOfUsers());
+            numberOfImages.setText("" + stats.numberOfImages());
+
+            button.setOnClickListener(v -> dialog.cancel());
+
+            dialog.show();
+
         }
     }
 }

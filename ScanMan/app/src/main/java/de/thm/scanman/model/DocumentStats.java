@@ -9,6 +9,8 @@ public class DocumentStats {
         this.document = document;
     }
 
+    public Document getDocument() { return document; }
+
     public int numberOfUsers() {
         return document.getUserIds().size();
     }
