@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">ScanMan</string>
     <string name="no_documents">Keine Dokumente</string>
+    <string name="no_created_documents">Keine eigenen Dokumente</string>
+    <string name="no_shared_documents">Keine geteilten Dokumente</string>
     <string name="search">Dokument suchen</string>
+    <string name="search_hint">Dokument suchen…</string>
     <string name="stats">Statistik</string>
     <string name="settings">Einstellungen</string>
     <string name="sort">Dokumente sortieren</string>
