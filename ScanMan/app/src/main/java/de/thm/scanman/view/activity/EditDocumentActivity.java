@@ -410,7 +410,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                                 .load(FirebaseDatabase.toStorageReference(uri))
                                 .submit()
                                 .get();
-                        uriList.add(FileProvider.getUriForFile(context, authority, file));
+                        uriList.add(FileProvider.getUriForFile(context, authority, changeExtension(file)));
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -439,6 +439,14 @@ public class EditDocumentActivity extends AppCompatActivity {
                 builder.show();
             }
         }
+    }
+
+    private File changeExtension(File file) {
+        int index = file.getName().lastIndexOf(".");
+        String name = file.getName().substring(0,index);
+        File renamedFile = new File(file.getParent() + "/" + name + ".jpeg");
+        file.renameTo(renamedFile);
+        return renamedFile;
     }
 
     private void shareDocument() {
