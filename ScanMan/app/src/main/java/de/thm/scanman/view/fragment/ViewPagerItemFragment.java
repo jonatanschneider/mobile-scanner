@@ -1,14 +1,18 @@
 package de.thm.scanman.view.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
+import de.thm.scanman.model.DocumentStats;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.UserDAO;
 import de.thm.scanman.util.DocumentArrayAdapter;
@@ -170,12 +174,30 @@ public class ViewPagerItemFragment extends Fragment {
     private AbsListView.MultiChoiceModeListener longPressActions() {
         return new AbsListView.MultiChoiceModeListener() {
             private int counter = 0;
-            private Document selectedDocument;
+            private List<Document> selectedDocuments = new ArrayList<>();
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if (checked) counter++;
-                else counter--;
+                Document selected = null;
+                switch (page) {
+                    case 0:
+                        selected = allDocuments.get(position);
+                        break;
+                    case 1:
+                        selected = createdDocuments.get(position);
+                        break;
+                    case 2:
+                        selected = sharedDocuments.get(position);
+                        break;
+                }
+                if (checked) {
+                    counter++;
+                    selectedDocuments.add(selected);
+                }
+                else {
+                    counter--;
+                    selectedDocuments.remove(selected);
+                }
                 mode.setTitle("" + counter + getResources().getString(R.string.selected));
             }
 
@@ -195,7 +217,7 @@ public class ViewPagerItemFragment extends Fragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_info:
-                        new DocumentStatsTask(getContext()).execute(selectedDocument);
+                        new DocumentStatsTask(getContext()).execute(selectedDocuments.get(0));
                         mode.finish();
                         return true;
                     default:
