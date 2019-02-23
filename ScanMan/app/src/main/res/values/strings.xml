@@ -43,4 +43,9 @@
     <string name="stats_title">Statistik</string>
     <string name="stats_close">Schließen</string>
     <string name="info">Informationen</string>
+    <string name="created_at">Erstellt am</string>
+    <string name="last_update_at">Zuletzt geändert am</string>
+    <string name="number_of_users">Anzahl an Nutzern</string>
+    <string name="number_of_images">Anzahl an Aufnahmen</string>
+    <string name="ok">OK</string>
 </resources>
