@@ -1,7 +1,5 @@
 package de.thm.scanman.model;
 
-import org.apache.commons.io.FileUtils;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -90,10 +88,10 @@ public class Document {
         this.userIds = userIds;
     }
 
-    public String getSize() {
-        return FileUtils.byteCountToDisplaySize(images.stream()
+    public long getSize() {
+        return images.stream()
                 .mapToLong(Image::getFileSize)
-                .sum());
+                .sum();
     }
 
     @Override
