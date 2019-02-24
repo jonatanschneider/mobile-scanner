@@ -12,7 +12,7 @@ public class DocumentStats {
     public Document getDocument() { return document; }
 
     public int numberOfUsers() {
-        return document.getUserIds().size();
+        return (document.getUserIds() == null) ? 0 : document.getUserIds().size();
     }
 
     public int numberOfImages() {
