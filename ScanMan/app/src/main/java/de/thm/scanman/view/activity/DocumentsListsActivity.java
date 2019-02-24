@@ -1,5 +1,7 @@
 package de.thm.scanman.view.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,12 +9,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
-import androidx.appcompat.app.AlertDialog;
+import org.apache.commons.io.FileUtils;
+
+import java.util.Date;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -145,7 +152,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         }
     }
 
-    private class StatsTask extends AsyncTask<User, Void, String> {
+    private class StatsTask extends AsyncTask<User, Void, Stats> {
         private Context context;
 
         public StatsTask(Context context) {
@@ -154,18 +161,38 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         }
 
         @Override
-        protected String doInBackground(User... users) {
+        protected Stats doInBackground(User... users) {
 
-            return new Stats(users[0]).toString();
+            return new Stats(users[0]);
         }
 
         @Override
-        protected void onPostExecute(String stats) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(R.string.stats_title);
-            builder.setMessage(stats);
-            builder.setNeutralButton(R.string.stats_close, null);
-            builder.show();
+        protected void onPostExecute(Stats stats) {
+            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
+            dialogB.setView(R.layout.dialog_document_stats);
+            dialogB.setTitle(R.string.stats_title);
+            dialogB.setNeutralButton(R.string.stats_close, null);
+
+            AlertDialog dialog = dialogB.create();
+            dialog.show();
+
+            TextView numberOfCreatedDocuments = dialog.findViewById(R.id.number_of_created_documents);
+            TextView numberOfSharedDocuments = dialog.findViewById(R.id.number_of_shared_documents);
+            TextView numberOfDocumentsSharedWithUser = dialog.findViewById(R.id.number_of_documents_shared_with_user);
+            TextView numberOfAllDocuments = dialog.findViewById(R.id.number_of_all_documents);
+
+            //TODO inconsistency sharedDocuments / sharedWithUser / sharedWithOthers
+            numberOfCreatedDocuments.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfCreatedDocuments(), stats.createdDocumentsFileSize()));
+
+            numberOfSharedDocuments.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfDocumentsSharedWithOthers(), stats.documentsSharedWithOthersFileSize()));
+
+            numberOfDocumentsSharedWithUser.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfSharedDocuments(), stats.sharedDocumentsFileSize()));
+
+            numberOfAllDocuments.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfAllDocuments(), stats.allDocumentsFileSize()));
         }
     }
 
