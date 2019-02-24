@@ -1,5 +1,6 @@
 package de.thm.scanman.view.fragment;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -27,7 +27,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -36,7 +35,6 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -258,29 +256,28 @@ public class ViewPagerItemFragment extends Fragment {
         @Override
         protected void onPostExecute(DocumentStats stats) {
 
-            final Dialog dialog = new Dialog(context);
-            dialog.setContentView(R.layout.dialog_document_stats);
-            dialog.setTitle("Title");
-            TextView title = dialog.findViewById(R.id.title);
+            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
+            dialogB.setView(R.layout.dialog_document_stats);
+            dialogB.setTitle(stats.getDocument().getName());
+            dialogB.setNeutralButton(R.string.stats_close, null);
+
+            AlertDialog dialog = dialogB.create();
+            dialog.show();
+
             TextView creationDate = dialog.findViewById(R.id.created_at);
             TextView lastUpdateDate = dialog.findViewById(R.id.last_update_at);
             TextView numberOfUsers = dialog.findViewById(R.id.number_of_users);
             TextView numberOfImages = dialog.findViewById(R.id.number_of_images);
-            Button button = dialog.findViewById(R.id.ok_button);
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
-            title.setText(stats.getDocument().getName());
             creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
             lastUpdateDate.setText(dateFormat.format(new Date(stats.getDocument().getLastUpdateAt())));
             numberOfUsers.setText("" + stats.numberOfUsers());
             String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
 
-            numberOfImages.setText(getResources().getString(R.string.number_of_images_with_bytes, stats.numberOfImages(), size));
+            numberOfImages.setText(getResources().getString(R.string.count_with_bytes, stats.numberOfImages(), size));
 
-            button.setOnClickListener(v -> dialog.cancel());
-
-            dialog.show();
 
         }
     }

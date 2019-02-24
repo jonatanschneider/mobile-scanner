@@ -2,18 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="30dp"
-    android:paddingLeft="30dp"
+    android:paddingLeft="25dp"
     android:paddingRight="30dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/title"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:paddingBottom="18dp"
-        android:layout_alignParentTop="true"/>
 
     <!-- Creation Date -->
     <TextView
@@ -23,8 +13,7 @@
         android:text="@string/created_at"
         android:layout_marginTop="18dp"
         android:textColor="#80000000"
-        android:textSize="14sp"
-        android:layout_below="@+id/title"/>
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/created_at"
@@ -98,16 +87,6 @@
         android:textColor="#000000"
         android:textSize="18sp"
         android:layout_below="@+id/number_of_images_title"/>
-
-
-    <Button
-        android:id="@+id/ok_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:text="@string/ok"
-        android:textColor="@color/colorAccent"
-        android:layout_below="@+id/number_of_images" />
 
 
 </RelativeLayout>
