@@ -237,6 +237,7 @@ public class ViewPagerItemFragment extends Fragment {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 counter = 0;
+                selectedDocuments.clear();
             }
         };
     }
