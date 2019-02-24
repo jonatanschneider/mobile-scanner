@@ -275,7 +275,7 @@ public class ViewPagerItemFragment extends Fragment {
             numberOfUsers.setText("" + stats.numberOfUsers());
             String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
 
-            numberOfImages.setText(getResources().getString(R.string.number_of_images_with_bytes, stats.numberOfUsers(), size));
+            numberOfImages.setText(getResources().getString(R.string.number_of_images_with_bytes, stats.numberOfImages(), size));
 
             button.setOnClickListener(v -> dialog.cancel());
 
