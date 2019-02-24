@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -203,7 +205,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                         mode.finish();
                         return true;
                     case R.id.menu_share:
-                        sendImage(selectedImagesUris);
+                        new SendImageTask(context).execute(selectedImagesUris.toArray(new Uri[selectedImagesUris.size()]));
                         return true;
                     default:
                         return false;
@@ -273,14 +275,14 @@ public class EditDocumentActivity extends AppCompatActivity {
                 if (imagesList.size() >= 1) {
                     shareDocument();
                     return true;
-                }
-                else return true;   // no
+                } else return true;   // no
             case R.id.action_export:
                 if (imagesList.size() >= 1) {
-                    sendImage(imagesList.getList(false));       // send one or more photos
+                    // send one or more photos
+                    new SendImageTask(this)
+                            .execute(imagesList.getList(false).toArray(new Uri[imagesList.size()]));
                     return true;
-                }
-                else return true;                       // there are no photos to send
+                } else return true;                       // there are no photos to send
         }
         return super.onOptionsItemSelected(item);
     }
@@ -384,36 +386,66 @@ public class EditDocumentActivity extends AppCompatActivity {
                 .start(this);
     }
 
-    /**
-     * Starts intent to send all pictures addressed by uris in list
-     * @param urisIn contains addresses of pictures to send
-     */
-    private void sendImage(List<Uri> urisIn) {
-        Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        ArrayList<Uri> urisOut = new ArrayList<>();
-        urisIn.forEach(uri -> {
-            Uri contentUri = convertToContent(uri);
-            urisOut.add(contentUri);
-        });
-        i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisOut);
-        i.setType("image/*");
-        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    private class SendImageTask extends AsyncTask<Uri, Void, List<Uri>> {
+        private Context context;
+        private ArrayList<Uri> uriList = new ArrayList<>();
+        private Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        private String authority;
 
-        if (i.resolveActivity(getPackageManager()) != null) {
-            startActivity(Intent.createChooser(i, getResources().getText(R.string.send_with)));
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(R.string.action_not_possible + i.getType());
-            builder.setMessage(R.string.no_application);
-            builder.setNeutralButton(R.string.cancel, (dialog, which) -> { });
-            builder.show();
+        SendImageTask(Context context) {
+            super();
+            this.context = context;
+            this.authority = context.getApplicationContext().getPackageName() + ".de.thm.scanman.provider";
+        }
+
+        @Override
+        protected List<Uri> doInBackground(Uri... uris) {
+            if(android.os.Debug.isDebuggerConnected())
+                android.os.Debug.waitForDebugger();
+            int nr = 1;
+            for (Uri uri : uris) {
+                if (!uri.getScheme().equals("file")) {
+                    try {
+                        File file = GlideApp.with(context)
+                                .asFile()
+                                .load(FirebaseDatabase.toStorageReference(uri))
+                                .submit()
+                                .get();
+                        uriList.add(FileProvider.getUriForFile(context, authority, changeExtension(file, nr)));
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        nr++;
+                    }
+                } else {
+                    uriList.add(FileProvider.getUriForFile(context, authority, new File(uri.getPath())));
+                }
+            }
+            return uriList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Uri> uris) {
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
+            intent.setType("image/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(Intent.createChooser(intent, getResources().getText(R.string.send_with)));
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.action_not_possible + intent.getType());
+                builder.setMessage(R.string.no_application);
+                builder.setNeutralButton(R.string.cancel, (dialog, which) -> { });
+                builder.show();
+            }
         }
     }
 
-    private Uri convertToContent(Uri uri) {
-        File f = new File(uri.getPath());
-        String authority = context.getApplicationContext().getPackageName() + ".de.thm.scanman.provider";
-        return FileProvider.getUriForFile(context, authority, f);
+    private File changeExtension(File file, int nr) {
+        File renamedFile = new File(file.getParent() + "/" + document.getName() + nr + ".jpeg");
+        file.renameTo(renamedFile);
+        return renamedFile;
     }
 
     private void shareDocument() {
