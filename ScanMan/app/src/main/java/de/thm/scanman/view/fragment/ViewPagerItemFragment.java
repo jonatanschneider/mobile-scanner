@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
@@ -272,7 +273,9 @@ public class ViewPagerItemFragment extends Fragment {
             creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
             lastUpdateDate.setText(dateFormat.format(new Date(stats.getDocument().getLastUpdateAt())));
             numberOfUsers.setText("" + stats.numberOfUsers());
-            numberOfImages.setText("" + stats.numberOfImages());
+            String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
+
+            numberOfImages.setText(getResources().getString(R.string.number_of_images_with_bytes, stats.numberOfUsers(), size));
 
             button.setOnClickListener(v -> dialog.cancel());
 
