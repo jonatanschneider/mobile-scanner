@@ -402,6 +402,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         protected List<Uri> doInBackground(Uri... uris) {
             if(android.os.Debug.isDebuggerConnected())
                 android.os.Debug.waitForDebugger();
+            int nr = 1;
             for (Uri uri : uris) {
                 if (!uri.getScheme().equals("file")) {
                     try {
@@ -410,11 +411,11 @@ public class EditDocumentActivity extends AppCompatActivity {
                                 .load(FirebaseDatabase.toStorageReference(uri))
                                 .submit()
                                 .get();
-                        uriList.add(FileProvider.getUriForFile(context, authority, changeExtension(file)));
-                    } catch (ExecutionException e) {
+                        uriList.add(FileProvider.getUriForFile(context, authority, changeExtension(file, nr)));
+                    } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } finally {
+                        nr++;
                     }
                 } else {
                     uriList.add(FileProvider.getUriForFile(context, authority, new File(uri.getPath())));
@@ -441,10 +442,8 @@ public class EditDocumentActivity extends AppCompatActivity {
         }
     }
 
-    private File changeExtension(File file) {
-        int index = file.getName().lastIndexOf(".");
-        String name = file.getName().substring(0,index);
-        File renamedFile = new File(file.getParent() + "/" + name + ".jpeg");
+    private File changeExtension(File file, int nr) {
+        File renamedFile = new File(file.getParent() + "/" + document.getName() + nr + ".jpeg");
         file.renameTo(renamedFile);
         return renamedFile;
     }
