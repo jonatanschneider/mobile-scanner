@@ -274,9 +274,8 @@ public class ViewPagerItemFragment extends Fragment {
             creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
             lastUpdateDate.setText(dateFormat.format(new Date(stats.getDocument().getLastUpdateAt())));
             numberOfUsers.setText("" + stats.numberOfUsers());
-            String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
 
-            numberOfImages.setText(getResources().getString(R.string.count_with_bytes, stats.numberOfImages(), size));
+            numberOfImages.setText(getResources().getString(R.string.count_with_bytes, stats.numberOfImages(), stats.getDocument().getSize()));
 
 
         }
