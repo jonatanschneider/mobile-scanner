@@ -1,5 +1,7 @@
 package de.thm.scanman.model;
 
+import org.apache.commons.io.FileUtils;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,20 +14,24 @@ public class Stats {
         this.user = user;
     }
 
-    public long createdDocumentsFileSize() {
-        return documentsFileSize(user.getCreatedDocuments());
+    public String createdDocumentsFileSize() {
+        return FileUtils.byteCountToDisplaySize(documentsFileSize(user.getCreatedDocuments()));
     }
 
-    public long sharedDocumentsFileSize() {
-        return documentsFileSize(user.getSharedDocuments());
+    public String sharedDocumentsFileSize() {
+        return FileUtils.byteCountToDisplaySize(documentsFileSize(user.getSharedDocuments()));
     }
 
-    public long documentsSharedWithOthersFileSize() {
+    public String allDocumentsFileSize() {
+        return FileUtils.byteCountToDisplaySize(documentsFileSize(user.getCreatedDocuments()) + documentsFileSize(user.getSharedDocuments()));
+    }
+
+    public String documentsSharedWithOthersFileSize() {
         List<Document> documents = user.getCreatedDocuments().stream()
                 .filter(doc -> doc.getUserIds() != null)
                 .filter(doc -> doc.getUserIds().size() > 0)
                 .collect(Collectors.toList());
-        return documentsFileSize(documents);
+        return FileUtils.byteCountToDisplaySize(documentsFileSize(documents));
     }
 
     private long documentsFileSize(List<Document> list) {
@@ -40,6 +46,10 @@ public class Stats {
 
     public int countOfSharedDocuments() {
         return user.getSharedDocuments().size();
+    }
+
+    public int countOfAllDocuments() {
+        return countOfCreatedDocuments() + countOfSharedDocuments();
     }
 
     public int countOfDocumentsSharedWithOthers() {
