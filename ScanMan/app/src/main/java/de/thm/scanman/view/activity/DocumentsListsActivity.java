@@ -169,7 +169,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         @Override
         protected void onPostExecute(Stats stats) {
             AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
-            dialogB.setView(R.layout.dialog_document_stats);
+            dialogB.setView(R.layout.dialog_stats);
             dialogB.setTitle(R.string.stats_title);
             dialogB.setNeutralButton(R.string.stats_close, null);
 
