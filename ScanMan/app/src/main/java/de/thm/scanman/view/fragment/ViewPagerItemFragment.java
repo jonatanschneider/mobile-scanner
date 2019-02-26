@@ -272,7 +272,9 @@ public class ViewPagerItemFragment extends Fragment {
 
 
             creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
-            lastUpdateDate.setText(dateFormat.format(new Date(stats.getDocument().getLastUpdateAt())));
+            long lastUpdate = stats.getDocument().getLastUpdateAt();
+            if (lastUpdate == 0) lastUpdateDate.setText("-");
+            else lastUpdateDate.setText(dateFormat.format(new Date(lastUpdate)));
             numberOfUsers.setText("" + stats.numberOfUsers());
             String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
 
