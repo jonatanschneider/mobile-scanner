@@ -12,9 +12,12 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.FirebaseDatabase;
@@ -74,5 +77,25 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> {
         subtext.setText(dateAndTags.toString());
 
         return view;
+    }
+
+    @Override
+    public void sort(@NonNull Comparator<? super Document> comparator){
+        int i = this.getCount();
+        for (int j = 0; j < i; j++) {
+            System.out.println("lolol" + getItem(j));
+        }
+
+        List<Document> list = new ArrayList<>();
+        for (int j = 0; j < i; j++) {
+            list.add(getItem(j));
+        }
+        list.sort(comparator);
+        clear();
+        addAll(list);
+
+        for (int j = 0; j < i; j++) {
+            System.out.println("lolol" + getItem(j));
+        }
     }
 }

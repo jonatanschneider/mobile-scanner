@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
@@ -139,6 +140,7 @@ public class ViewPagerItemFragment extends Fragment {
                             }
                             break;
                     }
+                    System.out.println("LOLOLRESET");
                 });
         documentsListView.setEmptyView(documentListEmpty);
 
@@ -161,5 +163,15 @@ public class ViewPagerItemFragment extends Fragment {
             }
             startActivityForResult(i, 1);
         });
+    }
+
+    /**
+     * This method is used to sort the the lists allDocuments, createdDocuments and sharedDocuments.
+     * @param comparator is the comparator for sorting
+     */
+    public void sort(Comparator<Document> comparator){
+        // if (adapter == null) adapter = new DocumentArrayAdapter(getContext(), allDocuments);
+        adapter.sort(comparator);
+        adapter.notifyDataSetChanged();
     }
 }

@@ -39,4 +39,11 @@
     <string name="cancel">Abbrechen</string>
     <string name="delete">Löschen</string>
     <string name="selected">ausgewählt</string>
+    <string name="sortedBy">Sortieren nach</string>
+    <!-- Sorting -->
+    <string name="alphabet">Alphabet</string>
+    <string name="size">Größe</string>
+    <string name="createdAt">Anlegedatum</string>
+    <string name="lastUpdate">Änderungsdatum</string>
+    <string name="onwer">Besitzerb</string>
 </resources>

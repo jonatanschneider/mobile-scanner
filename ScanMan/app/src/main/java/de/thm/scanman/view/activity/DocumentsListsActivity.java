@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -13,16 +14,32 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
+import de.thm.scanman.util.DocumentComparators;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.Spinner;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private TabLayout tabBar;
     private ViewPager viewPager;
     private FloatingActionButton addFab;
+    private final List<String> sortedByList = Arrays.asList(
+            getResources().getString(R.string.alphabet), getResources().getString(R.string.size),
+            getResources().getString(R.string.createdAt), getResources().getString(R.string.lastUpdate),
+            getResources().getString(R.string.onwer));
+    private ViewPagerItemFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +85,36 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
+            case R.id.action_sort:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setView(R.layout.sort_dialog);
+                builder.setTitle(R.string.sortedBy);
+                Boolean[] ascending = {false};
+                String[] compareAfter = {""};
+                builder.setNeutralButton(R.string.cancel, (q,w) -> sort(compareAfter[0], ascending[0]));
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                // configure spinner
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item, sortedByList);
+                Spinner sp = dialog.findViewById(R.id.sortedBy);
+                CheckBox cb = dialog.findViewById(R.id.ascending);
+                cb.setOnCheckedChangeListener((buttonView, isChecked) -> ascending[0] = isChecked);
+                sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                        compareAfter[0] = parent.getItemAtPosition(pos).toString();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+
+                sp.setAdapter(adapter);
+                dialog.setView(sp);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -78,7 +125,9 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 ContextCompat.getColor(this, R.color.colorAccent));
         tabBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTab));
 
-        viewPager.setAdapter(new TabPagerAdapter(getSupportFragmentManager()));
+        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(tabPagerAdapter);
+        tabPagerAdapter.getItem(0);
         viewPager.setCurrentItem(0);
 
         tabBar.addOnTabSelectedListener(this);
@@ -120,7 +169,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         @Override
         public Fragment getItem(int position) {
 
-            Fragment fragment = new ViewPagerItemFragment();
+            fragment = new ViewPagerItemFragment();
 
             Bundle bundle = new Bundle();
             bundle.putInt("idx", position);
@@ -135,4 +184,40 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         }
     }
 
+
+    /**
+     * This method is used to sort the the lists allDocuments, createdDocuments and sharedDocuments.
+     * @param comparatorString contains the name of comparator for sorting
+     */
+    private void sort(String comparatorString, boolean ascending){
+        Comparator<Document> comparator;
+        // TODO use if else instead of switch
+        switch (comparatorString){
+            case "Größe":
+                System.out.println("LOL1");
+                if (ascending) comparator = DocumentComparators.bySize;
+                else comparator = DocumentComparators.byDescendingSize;
+                break;
+            case "Anlegedatum":
+                System.out.println("LOL2");
+                if (ascending) comparator = DocumentComparators.byCreateDate;
+                else comparator = DocumentComparators.byDescendingCreateDate;
+                break;
+            case "Änderungsdatum":
+                System.out.println("LOL3");
+                if (ascending) comparator = DocumentComparators.byLastUpdate;
+                else comparator = DocumentComparators.byDescendingLastUpdate;
+                break;
+            case "Besitzern":System.out.println("LOL4");
+                if (ascending) comparator = DocumentComparators.byOwner;
+                else comparator = DocumentComparators.byDescendingOwner;
+                break;
+            default:    //"Alphabet"
+                System.out.println("LOL5");
+                if (ascending) comparator = DocumentComparators.alphabetically;
+                else comparator = DocumentComparators.descendingAlphabetically;
+        }
+        System.out.println(comparatorString + "lolol"+ ascending);
+        fragment.sort(comparator);
+    }
 }
