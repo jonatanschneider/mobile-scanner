@@ -35,10 +35,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private TabLayout tabBar;
     private ViewPager viewPager;
     private FloatingActionButton addFab;
-    private final List<String> sortedByList = Arrays.asList(
-            getResources().getString(R.string.alphabet), getResources().getString(R.string.size),
-            getResources().getString(R.string.createdAt), getResources().getString(R.string.lastUpdate),
-            getResources().getString(R.string.onwer));
     private ViewPagerItemFragment fragment;
 
     @Override
@@ -86,6 +82,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 startActivity(i);
                 return true;
             case R.id.action_sort:
+                List<String> sortedByList = Arrays.asList(
+                        getResources().getString(R.string.alphabet), getResources().getString(R.string.size),
+                        getResources().getString(R.string.createdAt), getResources().getString(R.string.lastUpdate),
+                        getResources().getString(R.string.onwer));
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setView(R.layout.sort_dialog);
                 builder.setTitle(R.string.sortedBy);

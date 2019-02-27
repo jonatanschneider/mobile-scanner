@@ -12,6 +12,7 @@ import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.UserDAO;
 import de.thm.scanman.util.DocumentArrayAdapter;
+import de.thm.scanman.util.DocumentComparators;
 import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import android.util.Log;
@@ -45,6 +46,7 @@ public class ViewPagerItemFragment extends Fragment {
     private List<Document> allDocuments;
     private List<Document> createdDocuments;
     private List<Document> sharedDocuments;
+    private Comparator<Document> comparator;
 
     public ViewPagerItemFragment(){}
 
@@ -56,7 +58,7 @@ public class ViewPagerItemFragment extends Fragment {
         } else {
             Log.d("TAG", "Error: no arguments!");
         }
-
+        comparator = DocumentComparators.descendingAlphabetically;
         setHasOptionsMenu(true);
     }
 
@@ -109,6 +111,7 @@ public class ViewPagerItemFragment extends Fragment {
                             allDocuments = new ArrayList<>();   // without new creation here it does not work!
                             allDocuments.addAll(user.getCreatedDocuments());
                             allDocuments.addAll(user.getSharedDocuments());
+                            allDocuments.sort(comparator);
                             if (adapter == null) {
                                 adapter = new DocumentArrayAdapter(getContext(), allDocuments);
                                 documentsListView.setAdapter(adapter);
@@ -120,6 +123,7 @@ public class ViewPagerItemFragment extends Fragment {
                         case 1:
                             createdDocuments = new ArrayList<>();   // without new creation here it does not work!
                             createdDocuments.addAll(user.getCreatedDocuments());
+                            createdDocuments.sort(comparator);
                             if (adapter == null) {
                                 adapter = new DocumentArrayAdapter(getContext(), createdDocuments);
                                 documentsListView.setAdapter(adapter);
@@ -131,6 +135,7 @@ public class ViewPagerItemFragment extends Fragment {
                         case 2:
                             sharedDocuments = new ArrayList<>();    // without new creation here it does not work!
                             sharedDocuments.addAll(user.getSharedDocuments());
+                            sharedDocuments.sort(comparator);
                             if (adapter == null) {
                                 adapter = new DocumentArrayAdapter(getContext(), sharedDocuments);
                                 documentsListView.setAdapter(adapter);
@@ -170,8 +175,11 @@ public class ViewPagerItemFragment extends Fragment {
      * @param comparator is the comparator for sorting
      */
     public void sort(Comparator<Document> comparator){
-        // if (adapter == null) adapter = new DocumentArrayAdapter(getContext(), allDocuments);
-        adapter.sort(comparator);
+        this.comparator = comparator;
+        int i = adapter.getCount();
+        for (int j = 0; j < i; j++) {
+            System.out.println("lolol" + adapter.getItem(j));
+        }
         adapter.notifyDataSetChanged();
     }
 }
