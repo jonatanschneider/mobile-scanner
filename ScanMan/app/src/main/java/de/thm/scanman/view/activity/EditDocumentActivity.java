@@ -275,14 +275,20 @@ public class EditDocumentActivity extends AppCompatActivity {
                 if (imagesList.size() >= 1) {
                     shareDocument();
                     return true;
-                } else return true;   // no
+                } else {
+                    noPicturesMessage(getResources().getString(R.string.shareDocument));
+                    return true;
+                }
             case R.id.action_export:
                 if (imagesList.size() >= 1) {
                     // send one or more photos
                     new SendImageTask(this)
                             .execute(imagesList.getList(false).toArray(new Uri[imagesList.size()]));
                     return true;
-                } else return true;                       // there are no photos to send
+                } else {
+                    noPicturesMessage(getResources().getString(R.string.exportDocument));
+                    return true;
+                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -323,7 +329,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
-        if (!madeChanges) return document;
+        if (madeChanges) return document;
         if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
@@ -468,6 +474,14 @@ public class EditDocumentActivity extends AppCompatActivity {
             i.setType("text/plain");
             startActivity(Intent.createChooser(i, getResources().getText(R.string.send_with)));
         });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
+        builder.show();
+    }
+
+    private void noPicturesMessage(String location) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(location);
+        builder.setMessage("nicht möglich, da sie noch keine Bilder hinzugefügt haben.");
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
         builder.show();
     }
