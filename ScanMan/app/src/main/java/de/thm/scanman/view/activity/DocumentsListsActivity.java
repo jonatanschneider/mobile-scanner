@@ -82,26 +82,22 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 startActivity(i);
                 return true;
             case R.id.action_sort:
-                List<String> sortedByList = Arrays.asList(
-                        getResources().getString(R.string.alphabet), getResources().getString(R.string.size),
-                        getResources().getString(R.string.createdAt), getResources().getString(R.string.lastUpdate),
-                        getResources().getString(R.string.onwer));
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setView(R.layout.sort_dialog);
                 builder.setTitle(R.string.sortedBy);
-                Boolean[] ascending = {false};
+                Boolean[] descending = {false};
                 String[] compareAfter = {""};
-                builder.setNeutralButton(R.string.cancel, (q,w) -> sort(compareAfter[0], ascending[0]));
+                builder.setNeutralButton(R.string.cancel, (q,w) -> sort(compareAfter[0], descending[0]));
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
                 // configure spinner
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_dropdown_item, sortedByList);
+                    android.R.layout.simple_spinner_dropdown_item, sortedByList());
                 Spinner sp = dialog.findViewById(R.id.sortedBy);
-                CheckBox cb = dialog.findViewById(R.id.ascending);
-                cb.setOnCheckedChangeListener((buttonView, isChecked) -> ascending[0] = isChecked);
+                CheckBox cb = dialog.findViewById(R.id.descending);
+                cb.setOnCheckedChangeListener((buttonView, isChecked) -> descending[0] = isChecked);
                 sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -189,35 +185,41 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
      * This method is used to sort the the lists allDocuments, createdDocuments and sharedDocuments.
      * @param comparatorString contains the name of comparator for sorting
      */
-    private void sort(String comparatorString, boolean ascending){
+    private void sort(String comparatorString, boolean descending){
         Comparator<Document> comparator;
-        // TODO use if else instead of switch
-        switch (comparatorString){
-            case "Größe":
-                System.out.println("LOL1");
-                if (ascending) comparator = DocumentComparators.bySize;
-                else comparator = DocumentComparators.byDescendingSize;
+        int pos = sortedByList().indexOf(comparatorString);
+        switch (pos){
+            case 0:
+                if (descending) comparator = DocumentComparators.descendingAlphabetically;
+                else comparator = DocumentComparators.alphabetically;
                 break;
-            case "Anlegedatum":
-                System.out.println("LOL2");
-                if (ascending) comparator = DocumentComparators.byCreateDate;
-                else comparator = DocumentComparators.byDescendingCreateDate;
+            case 1:
+                if (descending) comparator = DocumentComparators.byDescendingSize;
+                else comparator = DocumentComparators.bySize;
                 break;
-            case "Änderungsdatum":
-                System.out.println("LOL3");
-                if (ascending) comparator = DocumentComparators.byLastUpdate;
-                else comparator = DocumentComparators.byDescendingLastUpdate;
+            case 2:
+                if (descending) comparator = DocumentComparators.byCreateDate;
+                else comparator = DocumentComparators.byCreateDate;
                 break;
-            case "Besitzern":System.out.println("LOL4");
-                if (ascending) comparator = DocumentComparators.byOwner;
-                else comparator = DocumentComparators.byDescendingOwner;
+            case 3:
+                if (descending) comparator = DocumentComparators.byLastUpdate;
+                else comparator = DocumentComparators.byLastUpdate;
                 break;
-            default:    //"Alphabet"
-                System.out.println("LOL5");
-                if (ascending) comparator = DocumentComparators.alphabetically;
-                else comparator = DocumentComparators.descendingAlphabetically;
+            case 4:
+                if (descending) comparator = DocumentComparators.byDescendingOwner;
+                else comparator = DocumentComparators.byOwner;
+                break;
+            default:
+                if (descending) comparator = DocumentComparators.descendingAlphabetically;
+                else comparator = DocumentComparators.alphabetically;
         }
-        System.out.println(comparatorString + "lolol"+ ascending);
         fragment.sort(comparator);
+    }
+
+    private List<String> sortedByList() {
+        return Arrays.asList(
+                getResources().getString(R.string.alphabet), getResources().getString(R.string.size),
+                getResources().getString(R.string.createdAt), getResources().getString(R.string.lastUpdate),
+                getResources().getString(R.string.owner));
     }
 }

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -176,10 +177,15 @@ public class ViewPagerItemFragment extends Fragment {
      */
     public void sort(Comparator<Document> comparator){
         this.comparator = comparator;
+        List<Document> curDocs = new ArrayList<>();
         int i = adapter.getCount();
         for (int j = 0; j < i; j++) {
-            System.out.println("lolol" + adapter.getItem(j));
+            System.out.println("Doc is"  + adapter.getItem(j));
+            curDocs.add(adapter.getItem(j));
         }
+        curDocs.sort(comparator);
+        adapter.clear();
+        adapter.addAll(curDocs);
         adapter.notifyDataSetChanged();
     }
 }

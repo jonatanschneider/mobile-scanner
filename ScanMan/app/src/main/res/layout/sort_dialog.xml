@@ -5,10 +5,26 @@
 
     <Spinner
         android:id="@+id/sortedBy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <CheckBox
-        android:id="@+id/ascending"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/descending"
+            android:textColor="#000000"
+            android:textSize="18sp"/>
+        <CheckBox
+            android:id="@+id/descending"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
 </LinearLayout>

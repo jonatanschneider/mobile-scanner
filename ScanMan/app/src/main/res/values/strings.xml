@@ -45,5 +45,6 @@
     <string name="size">Größe</string>
     <string name="createdAt">Anlegedatum</string>
     <string name="lastUpdate">Änderungsdatum</string>
-    <string name="onwer">Besitzerb</string>
+    <string name="owner">Besitzer</string>
+    <string name="descending">Absteigend</string>
 </resources>
