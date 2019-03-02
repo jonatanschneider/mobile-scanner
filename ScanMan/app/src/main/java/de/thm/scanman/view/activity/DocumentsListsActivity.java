@@ -33,6 +33,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private ViewPager viewPager;
     private FloatingActionButton addFab;
     private User user;
+    private boolean ownerAlertWasShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     protected void onStart() {
         super.onStart();
         Intent caller = getIntent();
-        if (caller != null && Intent.ACTION_VIEW.equals(caller.getAction())) {
+        if (!ownerAlertWasShown && caller != null &&Intent.ACTION_VIEW.equals(caller.getAction())) {
             // Add document to shared documents
             Uri data = caller.getData();
             if (data == null) return;           // stop process when data is null
@@ -71,6 +72,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             String ownerID = params.get(0);
             String documentID = params.get(1);
             if (ownerID.equals(FirebaseAuth.getInstance().getUid())) {
+                ownerAlertWasShown = true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage("Sie sind bereits der Besitzer des Dokumentes");
