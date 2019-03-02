@@ -71,6 +71,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     public static final String FIRST_VISIT = "FirstVisit";
     private static final int DEFAULT_IMAGE_NR = -1;
+    private boolean newDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +125,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         Uri data = getIntent().getData();
         if (data != null && data.toString().equals(FIRST_VISIT)) {
             firstVisit = true;
+            newDocument = true;
         } else if (data != null) { //Data is document id
             int documentType = getIntent().getIntExtra("documentType", -1);
             if (documentType == CREATED_DOCUMENT) liveData = documentDAO.getCreatedDocument(data.toString());
@@ -329,7 +331,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
-        if (madeChanges) return document;
+        if (!madeChanges) return document;
         if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
@@ -369,7 +371,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void exitDocumentActivity() {
-        if (imagesList.isEmpty() || !madeChanges) {
+        if (firstVisit || !madeChanges) {
             finish();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
