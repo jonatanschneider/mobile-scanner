@@ -371,7 +371,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void exitDocumentActivity() {
-        if (firstVisit || !madeChanges) {
+        if ((firstVisit && imagesList.size() < 1) || !madeChanges) {
             finish();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
