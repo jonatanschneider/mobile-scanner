@@ -45,7 +45,7 @@
     <string name="info">Informationen</string>
     <string name="created_at">Erstellt am</string>
     <string name="last_update_at">Zuletzt geändert am</string>
-    <string name="number_of_users">Anzahl an Nutzern</string>
+    <string name="number_of_users">Anzahl an berechtigten Zweitnutzern</string>
     <string name="number_of_images">Anzahl an Aufnahmen</string>
     <string name="ok">OK</string>
     <string name="count_with_bytes">%1$d (%2$s)</string>
