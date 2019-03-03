@@ -39,4 +39,19 @@
     <string name="cancel">Abbrechen</string>
     <string name="delete">Löschen</string>
     <string name="selected">ausgewählt</string>
+    <!-- Stats -->
+    <string name="stats_title">Statistik</string>
+    <string name="stats_close">Schließen</string>
+    <string name="info">Informationen</string>
+    <string name="created_at">Erstellt am</string>
+    <string name="last_update_at">Zuletzt geändert am</string>
+    <string name="number_of_users">Anzahl an berechtigten Zweitnutzern</string>
+    <string name="number_of_images">Anzahl an Aufnahmen</string>
+    <string name="ok">OK</string>
+    <string name="count_with_bytes">%1$d (%2$s)</string>
+    <string name="number_of_created_documents">Anzahl erstellter Dokumente</string>
+    <string name="number_of_shared_documents">Anzahl geteilter Dokumente</string>
+    <string name="number_of_documents_shared_with_user">Anzahl mit mir geteilter Dokumente</string>
+    <string name="number_of_all_documents">Gesamtzahl an Dokumenten</string>
+
 </resources>

@@ -3,6 +3,8 @@ package de.thm.scanman.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Document {
     private String id;
@@ -86,6 +88,12 @@ public class Document {
         this.userIds = userIds;
     }
 
+    public long getSize() {
+        return images.stream()
+                .mapToLong(Image::getFileSize)
+                .sum();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -122,6 +130,7 @@ public class Document {
         private String file;
         private long createdAt;
         private long lastUpdateAt;
+        private long fileSize;
 
         public Image() { }
 
@@ -163,13 +172,24 @@ public class Document {
             this.lastUpdateAt = lastUpdateAt;
         }
 
+        public long getFileSize() {
+            return fileSize;
+        }
+
+        public void setFileSize(long fileSize) {
+            this.fileSize = fileSize;
+        }
 
         @Override
         public String toString() {
-            return "File: " + id + " - " + file + " - " + "Created At: " + new Date(createdAt).toString();
+            return "Image{" +
+                    "id='" + id + '\'' +
+                    ", file='" + file + '\'' +
+                    ", createdAt=" + createdAt +
+                    ", lastUpdateAt=" + lastUpdateAt +
+                    ", fileSize=" + fileSize +
+                    '}';
         }
-
-
     }
 
 }
