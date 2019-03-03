@@ -205,7 +205,7 @@ public class ViewPagerItemFragment extends Fragment {
                     selectedDocuments.remove(selected);
                 }
                 mode.getMenu().findItem(R.id.action_info).setVisible(counter == 1);
-                mode.setTitle("" + counter + getResources().getString(R.string.selected));
+                mode.setTitle(counter + " " + getResources().getString(R.string.selected));
             }
 
             @Override
