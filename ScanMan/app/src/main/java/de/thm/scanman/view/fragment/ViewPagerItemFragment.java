@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -152,7 +151,6 @@ public class ViewPagerItemFragment extends Fragment {
                             }
                             break;
                     }
-                    System.out.println("LOLOLRESET");
                 });
         documentsListView.setEmptyView(documentListEmpty);
 
