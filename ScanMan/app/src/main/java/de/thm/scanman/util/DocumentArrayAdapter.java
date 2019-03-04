@@ -97,14 +97,14 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             final FilterResults results = new FilterResults();
-            final String constraintString = constraint.toString().toUpperCase();
 
-            if (constraintString == null || constraint.length() == 0) {
+            if (constraint == null || constraint.length() == 0) {
                 List<Document> list = new ArrayList<>(originalList);
                 results.values = list;
                 results.count = list.size();
             }
             else {
+                final String constraintString = constraint.toString().toUpperCase();
                 final ArrayList<Document> list = new ArrayList<>(originalList);
                 final ArrayList<Document> newValues = new ArrayList<>();
                 boolean tagContainsConstraint;
