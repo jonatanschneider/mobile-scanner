@@ -30,7 +30,9 @@ import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
@@ -41,6 +43,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private ViewPager viewPager;
     private FloatingActionButton addFab;
     private User user;
+    private Set<String> documentIDs = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
             String ownerID = params.get(0);
             String documentID = params.get(1);
+
+            // stop process when document is already added this session
+            if (documentIDs.contains(documentID)) return;
+            documentIDs.add(documentID);
             if (ownerID.equals(FirebaseAuth.getInstance().getUid())) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.app_name);
@@ -89,7 +96,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             Document doc = new Document();
             doc.setOwnerId(ownerID);
             doc.setId(documentID);
-            if ((user == null || user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID)))
+            if (    user != null
+                    && user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))
                     && documentDAO.addSharedDocument(doc)) {
                 Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT).show();
                 return;
