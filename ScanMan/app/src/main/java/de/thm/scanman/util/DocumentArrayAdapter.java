@@ -26,6 +26,7 @@ import de.thm.scanman.persistence.GlideApp;
 public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filterable {
     private final static int VIEW_RESOURCE = R.layout.document_list_item;
     private CustomFilter filter;
+    private List<Document> originalValues;
     private List<Document> originalList;
     private List<Document> filteredList;
 
@@ -93,19 +94,33 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         return filter;
     }
 
+    private final Object mLock = new Object();
+
     private class CustomFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             final FilterResults results = new FilterResults();
 
+            if (originalList == null) {
+                synchronized (mLock) {
+                    originalValues = new ArrayList<>(originalList);
+                }
+            }
+
             if (constraint == null || constraint.length() == 0) {
-                List<Document> list = new ArrayList<>(originalList);
+                final List<Document> list;
+                synchronized (mLock) {
+                    list = new ArrayList<>(originalValues);
+                }
                 results.values = list;
                 results.count = list.size();
             }
             else {
                 final String constraintString = constraint.toString().toUpperCase();
-                final ArrayList<Document> list = new ArrayList<>(originalList);
+                final List<Document> list;
+                synchronized (mLock) {
+                    list = new ArrayList<>(originalValues);
+                }
                 final ArrayList<Document> newValues = new ArrayList<>();
                 boolean tagContainsConstraint;
 
