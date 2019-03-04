@@ -133,6 +133,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
+        if (fragment != null) fragment.sort();
     }
 
     @Override
