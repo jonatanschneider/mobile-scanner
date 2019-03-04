@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -55,6 +56,7 @@ public class DocumentDAO {
                             .child(uri.getLastPathSegment());
 
                     image.setFile(reference.toString());
+                    image.setFileSize(calculateFileSize(uri));
 
                     UploadTask uploadTask = reference.putFile(uri);
                     uploadTask.addOnSuccessListener(taskSnapshot -> {
@@ -66,6 +68,11 @@ public class DocumentDAO {
     }
 
     private Predicate<Document.Image> isLocalFile = image -> Uri.parse(image.getFile()).getScheme().equals("file");
+
+    private long calculateFileSize(Uri uri) {
+        File file = new File(uri.getPath());
+        return file.length();
+    }
 
 
     /**
