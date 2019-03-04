@@ -1,26 +1,33 @@
 package de.thm.scanman.view.activity;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import org.apache.commons.io.FileUtils;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
+import de.thm.scanman.model.Stats;
 import de.thm.scanman.model.User;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
-import android.view.Menu;
-import android.view.MenuItem;
+import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 import java.util.List;
 
@@ -104,8 +111,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_stats:
-                // implement call for statistics here
-                //new StatsTask(this).execute(documents);
+                new StatsTask(this).execute(user);
                 return true;
             case R.id.action_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
@@ -175,6 +181,50 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         @Override
         public CharSequence getPageTitle(int position) {
             return pageTitles[position];
+        }
+    }
+
+    private class StatsTask extends AsyncTask<User, Void, Stats> {
+        private Context context;
+
+        public StatsTask(Context context) {
+            super();
+            this.context = context;
+        }
+
+        @Override
+        protected Stats doInBackground(User... users) {
+
+            return new Stats(users[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Stats stats) {
+            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
+            dialogB.setView(R.layout.dialog_stats);
+            dialogB.setTitle(R.string.stats_title);
+            dialogB.setNeutralButton(R.string.stats_close, null);
+
+            AlertDialog dialog = dialogB.create();
+            dialog.show();
+
+            TextView numberOfCreatedDocuments = dialog.findViewById(R.id.number_of_created_documents);
+            TextView numberOfSharedDocuments = dialog.findViewById(R.id.number_of_shared_documents);
+            TextView numberOfDocumentsSharedWithUser = dialog.findViewById(R.id.number_of_documents_shared_with_user);
+            TextView numberOfAllDocuments = dialog.findViewById(R.id.number_of_all_documents);
+
+            //TODO inconsistency sharedDocuments / sharedWithUser / sharedWithOthers
+            numberOfCreatedDocuments.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfCreatedDocuments(), stats.createdDocumentsFileSize()));
+
+            numberOfSharedDocuments.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfDocumentsSharedWithOthers(), stats.documentsSharedWithOthersFileSize()));
+
+            numberOfDocumentsSharedWithUser.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfSharedDocuments(), stats.sharedDocumentsFileSize()));
+
+            numberOfAllDocuments.setText(getResources().getString(R.string.count_with_bytes,
+                    stats.countOfAllDocuments(), stats.allDocumentsFileSize()));
         }
     }
 

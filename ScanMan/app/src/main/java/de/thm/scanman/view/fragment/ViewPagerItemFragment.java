@@ -1,7 +1,11 @@
 package de.thm.scanman.view.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
@@ -9,24 +13,32 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
+import de.thm.scanman.model.DocumentStats;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.UserDAO;
 import de.thm.scanman.util.DocumentArrayAdapter;
 import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.apache.commons.io.FileUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
@@ -149,6 +161,8 @@ public class ViewPagerItemFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        documentsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        documentsListView.setMultiChoiceModeListener(longPressActions());
         documentsListView.setOnItemClickListener((parent, view, position, id) -> {
             Document d = adapter.getItem(position);
 
@@ -161,5 +175,112 @@ public class ViewPagerItemFragment extends Fragment {
             }
             startActivityForResult(i, 1);
         });
+    }
+
+    private AbsListView.MultiChoiceModeListener longPressActions() {
+        return new AbsListView.MultiChoiceModeListener() {
+            private int counter = 0;
+            private List<Document> selectedDocuments = new ArrayList<>();
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                Document selected = null;
+                switch (page) {
+                    case 0:
+                        selected = allDocuments.get(position);
+                        break;
+                    case 1:
+                        selected = createdDocuments.get(position);
+                        break;
+                    case 2:
+                        selected = sharedDocuments.get(position);
+                        break;
+                }
+                if (checked) {
+                    counter++;
+                    selectedDocuments.add(selected);
+                }
+                else {
+                    counter--;
+                    selectedDocuments.remove(selected);
+                }
+                mode.getMenu().findItem(R.id.action_info).setVisible(counter == 1);
+                mode.setTitle(counter + " " + getResources().getString(R.string.selected));
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.documents_lists_contextual, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_info:
+                        new DocumentStatsTask(getContext()).execute(selectedDocuments.get(0));
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                counter = 0;
+                selectedDocuments.clear();
+            }
+        };
+    }
+
+    private class DocumentStatsTask extends AsyncTask<Document, Void, DocumentStats> {
+        private Context context;
+
+        public DocumentStatsTask(Context context) {
+            super();
+            this.context = context;
+        }
+
+        @Override
+        protected DocumentStats doInBackground(Document... documents) {
+            return new DocumentStats(documents[0]);
+        }
+
+        @Override
+        protected void onPostExecute(DocumentStats stats) {
+
+            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
+            dialogB.setView(R.layout.dialog_document_stats);
+            dialogB.setTitle(stats.getDocument().getName());
+            dialogB.setNeutralButton(R.string.stats_close, null);
+
+            AlertDialog dialog = dialogB.create();
+            dialog.show();
+
+            TextView creationDate = dialog.findViewById(R.id.created_at);
+            TextView lastUpdateDate = dialog.findViewById(R.id.last_update_at);
+            TextView numberOfUsers = dialog.findViewById(R.id.number_of_users);
+            TextView numberOfImages = dialog.findViewById(R.id.number_of_images);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+
+            creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
+            long lastUpdate = stats.getDocument().getLastUpdateAt();
+            if (lastUpdate == 0) lastUpdateDate.setText("-");
+            else lastUpdateDate.setText(dateFormat.format(new Date(lastUpdate)));
+            numberOfUsers.setText("" + stats.numberOfUsers());
+            String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
+
+            numberOfImages.setText(getResources().getString(R.string.count_with_bytes, stats.numberOfImages(), size));
+
+
+        }
     }
 }
