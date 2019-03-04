@@ -6,25 +6,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.FirebaseDatabase;
 import de.thm.scanman.persistence.GlideApp;
 
-public class DocumentArrayAdapter extends ArrayAdapter<Document> {
+public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filterable {
     private final static int VIEW_RESOURCE = R.layout.document_list_item;
+    private CustomFilter filter;
+    private List<Document> originalList;
+    private List<Document> filteredList;
 
     public DocumentArrayAdapter(Context ctx, List<Document> documents) {
         super(ctx, VIEW_RESOURCE, documents);
+        this.originalList = new ArrayList<>(documents);
+        this.filteredList = new ArrayList<>(documents);
     }
 
     @Override
@@ -74,5 +82,62 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> {
         subtext.setText(dateAndTags.toString());
 
         return view;
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        if (filter == null) {
+            filter = new CustomFilter();
+        }
+        return filter;
+    }
+
+    private class CustomFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            final FilterResults results = new FilterResults();
+            final String constraintString = constraint.toString().toUpperCase();
+
+            if (constraintString == null || constraint.length() == 0) {
+                List<Document> list = new ArrayList<>(originalList);
+                results.values = list;
+                results.count = list.size();
+            }
+            else {
+                final ArrayList<Document> list = new ArrayList<>(originalList);
+                final ArrayList<Document> newValues = new ArrayList<>();
+                boolean tagContainsConstraint;
+
+                // get specific items
+                for(int i = 0; i < list.size(); i++) {
+                    final Document doc = list.get(i);
+                    final String documentName = doc.getName().toUpperCase();
+                    tagContainsConstraint = false;
+
+                    for(String tag : doc.getTags()) {
+                        final String documentTag = tag;
+                        if (documentTag.toUpperCase().contains(constraintString)) {
+                            tagContainsConstraint = true;
+                            break;
+                        }
+                    }
+                    if(documentName.toUpperCase().contains(constraintString) || tagContainsConstraint) {
+                        newValues.add(doc);
+                    }
+                }
+                results.values = newValues;
+                results.count = newValues.size();
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            filteredList = (List<Document>) results.values;
+            clear();
+            addAll(filteredList);
+        }
     }
 }
