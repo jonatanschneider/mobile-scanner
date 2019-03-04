@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -40,7 +41,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private ViewPager viewPager;
     private FloatingActionButton addFab;
     private User user;
-    private boolean ownerAlertWasShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +65,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         Intent caller = getIntent();
-        if (!ownerAlertWasShown && caller != null &&Intent.ACTION_VIEW.equals(caller.getAction())) {
+        if (caller != null &&Intent.ACTION_VIEW.equals(caller.getAction())) {
             // Add document to shared documents
             Uri data = caller.getData();
             if (data == null) return;           // stop process when data is null
@@ -79,21 +79,26 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             String ownerID = params.get(0);
             String documentID = params.get(1);
             if (ownerID.equals(FirebaseAuth.getInstance().getUid())) {
-                ownerAlertWasShown = true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage("Sie sind bereits der Besitzer des Dokumentes");
                 builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
                 builder.show();
-            } else {
-                Document doc = new Document();
-                doc.setOwnerId(ownerID);
-                doc.setId(documentID);
-                if (user == null || user.getSharedDocuments().stream()
-                        .noneMatch(d -> d.getId().equals(documentID))) {
-                    documentDAO.addSharedDocument(doc);
-                }
+                return;
             }
+            Document doc = new Document();
+            doc.setOwnerId(ownerID);
+            doc.setId(documentID);
+            if ((user == null || user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID)))
+                    && documentDAO.addSharedDocument(doc)) {
+                Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.app_name);
+            builder.setMessage("Sie sind dem Dokument bereits beigetreten");
+            builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
+            builder.show();
         } else {
             System.out.println("Intent comes from "  + caller);
         }
