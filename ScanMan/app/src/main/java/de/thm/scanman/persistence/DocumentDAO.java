@@ -80,10 +80,12 @@ public class DocumentDAO {
      *
      * @param document
      */
-    public void addSharedDocument(Document document) {
-        if (userId.equals(document.getOwnerId())) return;
-        if (document.getId() == null || document.getId().equals("")) return;
+    public boolean addSharedDocument(Document document) {
+        System.out.println("Document ownerID: " + document.getOwnerId() + "\nuserID: " + userId + "\n" + document);
+        if (userId.equals(document.getOwnerId())) return false;
+        if (document.getId() == null || document.getId().equals("")) return false;
         FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
+        return true;
     }
 
     /**
