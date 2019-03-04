@@ -87,7 +87,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 builder.setTitle(R.string.sortedBy);
                 Boolean[] descending = {false};
                 String[] compareAfter = {""};
-                builder.setNeutralButton(R.string.cancel, (q,w) -> sort(compareAfter[0], descending[0]));
+                builder.setPositiveButton(R.string.sort, (q, w) -> sort (compareAfter[0], descending[0]));
+                builder.setNeutralButton(R.string.cancel, (q,w) -> {});
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
