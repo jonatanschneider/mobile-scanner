@@ -11,9 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -26,7 +24,6 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -270,22 +267,6 @@ public class EditDocumentActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (result != null){
                 if (resultCode == RESULT_OK) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle(R.string.title_tags);
-                    EditText titleField = new EditText(this);
-                    titleField.setSingleLine();
-                    titleField.setHint(R.string.title);
-                    EditText tagsField = new EditText(this);
-                    tagsField.setHint(R.string.tags);
-                    LinearLayout layout = new LinearLayout(this);
-                    layout.setOrientation(LinearLayout.VERTICAL);
-                    layout.addView(titleField);
-                    layout.addView(tagsField);
-                    builder.setView(layout);
-                    builder.setPositiveButton(R.string.save, (dialog, which) -> {
-                        document.setName(titleField.getText().toString());
-                        document.setTags(Arrays.asList(tagsField.getText().toString().split("\\s")));
-                    });
                     Uri resultUri = result.getUri();
                     if (document == null) {
                         document = buildDocument();
@@ -293,14 +274,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
-                        builder.setMessage(R.string.enter_title_tags);
-                        builder.show();
                     } else {                                        // update existing image
                         imagesList.update(imageNr, resultUri);
                         document.getImages().get(imageNr).setFile(resultUri.toString());
-                        titleField.setText(document.getName());
-                        tagsField.setText(document.getTags().stream().reduce((a, b) -> a + " " + b).orElse(""));
-                        builder.show();
                     }
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
