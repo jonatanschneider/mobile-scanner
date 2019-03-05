@@ -27,13 +27,11 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
     private final static int VIEW_RESOURCE = R.layout.document_list_item;
     private CustomFilter filter;
     private List<Document> originalValues;
-    private List<Document> originalList;
-    private List<Document> filteredList;
+    private List<Document> documents;
 
     public DocumentArrayAdapter(Context ctx, List<Document> documents) {
         super(ctx, VIEW_RESOURCE, documents);
-        this.originalList = new ArrayList<>(documents);
-        this.filteredList = new ArrayList<>(documents);
+        this.documents = new ArrayList<>(documents);
     }
 
     @Override
@@ -101,9 +99,9 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         protected FilterResults performFiltering(CharSequence constraint) {
             final FilterResults results = new FilterResults();
 
-            if (originalList == null) {
+            if (originalValues == null) {
                 synchronized (mLock) {
-                    originalValues = new ArrayList<>(originalList);
+                    originalValues = new ArrayList<>(documents);
                 }
             }
 
@@ -131,8 +129,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
                     tagContainsConstraint = false;
 
                     for(String tag : doc.getTags()) {
-                        final String documentTag = tag;
-                        if (documentTag.toUpperCase().contains(constraintString)) {
+                        if (tag.toUpperCase().contains(constraintString)) {
                             tagContainsConstraint = true;
                             break;
                         }
@@ -150,9 +147,9 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredList = (List<Document>) results.values;
+            documents = (List<Document>) results.values;
             clear();
-            addAll(filteredList);
+            addAll(documents);
         }
     }
 }
