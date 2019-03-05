@@ -41,7 +41,7 @@
     <string name="delete">Löschen</string>
     <string name="selected">ausgewählt</string>
     <string name="title">Titel</string>
-    <string name="title_tags">Titel &amp; Tags</string>
     <string name="tags">Tags</string>
-    <string name="enter_title_tags">Bitte Titel und Tags für das neue Dokument angeben!</string>
+    <string name="title_hint">Titel für das Dokument</string>
+    <string name="tags_hint">Durch Leerzeichen getrennte Schlagworte</string>
 </resources>
