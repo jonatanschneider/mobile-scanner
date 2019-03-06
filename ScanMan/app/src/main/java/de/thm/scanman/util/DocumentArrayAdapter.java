@@ -28,47 +28,53 @@ import de.thm.scanman.persistence.GlideApp;
 public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filterable {
     private final static int VIEW_RESOURCE = R.layout.document_list_item;
 
+    /**
+     * Lock used to modify the content of {@link #docObjects}. Any write operation
+     * performed on the array should be synchronized on this lock. This lock is also
+     * used by the filter (see {@link #getFilter()} to make a synchronized copy of
+     * the original array of data.
+     */
     private final Object mLock = new Object();
-    private final LayoutInflater mInflater;
+
+    private final LayoutInflater inflater;
 
     /**
      * Contains the list of objects that represent the data of this ArrayAdapter.
-     * The content of this list is referred to as "the array" in the documentation.
      */
-    private List<Document> mObjects;
+    private List<Document> docObjects;
 
     /**
      * Indicates whether or not {@link #notifyDataSetChanged()} must be called whenever
-     * {@link #mObjects} is modified.
+     * {@link #docObjects} is modified.
      */
-    private boolean mNotifyOnChange = true;
+    private boolean notifyOnChange = true;
 
-    // A copy of the original mObjects array, initialized from and then used instead as soon as
-    // the mFilter ArrayFilter is used. mObjects will then only contain the filtered values.
-    private ArrayList<Document> mOriginalValues;
-    private CustomFilter mFilter;
+    // A copy of the original docObjects array, initialized from and then used instead as soon as
+    // the filter CustomFilter is used. docObjects will then only contain the filtered values.
+    private ArrayList<Document> originalValues;
+    private CustomFilter filter;
 
     public DocumentArrayAdapter(Context ctx, List<Document> documents) {
         super(ctx, VIEW_RESOURCE, documents);
-        this.mObjects = new ArrayList<>(documents);
-        mInflater = LayoutInflater.from(ctx);
+        this.docObjects = new ArrayList<>(documents);
+        inflater = LayoutInflater.from(ctx);
     }
 
     /**
-     * Adds the specified object at the end of the array.
+     * Adds the specified document at the end of the array.
      *
-     * @param object The object to add at the end of the array.
+     * @param document The document to add at the end of the array.
      * @throws UnsupportedOperationException if the underlying data collection is immutable
      */
-    public void add(Document object) {
+    public void add(Document document) {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                mOriginalValues.add(object);
+            if (originalValues != null) {
+                originalValues.add(document);
             } else {
-                mObjects.add(object);
+                docObjects.add(document);
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     /**
@@ -87,65 +93,65 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
      */
     public void addAll(List<Document> collection) {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                mOriginalValues.addAll(collection);
+            if (originalValues != null) {
+                originalValues.addAll(collection);
             } else {
-                mObjects.addAll(collection);
+                docObjects.addAll(collection);
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     /**
-     * Adds the specified items at the end of the array.
+     * Adds the specified documents at the end of the array.
      *
-     * @param items The items to add at the end of the array.
+     * @param documents The documents to add at the end of the array.
      * @throws UnsupportedOperationException if the underlying data collection is immutable
      */
-    public void addAll(Document ... items) {
+    public void addAll(Document ... documents) {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                Collections.addAll(mOriginalValues, items);
+            if (originalValues != null) {
+                Collections.addAll(originalValues, documents);
             } else {
-                Collections.addAll(mObjects, items);
+                Collections.addAll(docObjects, documents);
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     /**
-     * Inserts the specified object at the specified index in the array.
+     * Inserts the specified document at the specified index in the array.
      *
-     * @param object The object to insert into the array.
-     * @param index The index at which the object must be inserted.
+     * @param document The document to insert into the array.
+     * @param index The index at which the document must be inserted.
      * @throws UnsupportedOperationException if the underlying data collection is immutable
      */
-    public void insert(Document object, int index) {
+    public void insert(Document document, int index) {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                mOriginalValues.add(index, object);
+            if (originalValues != null) {
+                originalValues.add(index, document);
             } else {
-                mObjects.add(index, object);
+                docObjects.add(index, document);
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     /**
-     * Removes the specified object from the array.
+     * Removes the specified document from the array.
      *
-     * @param object The object to remove.
+     * @param document The document to remove.
      * @throws UnsupportedOperationException if the underlying data collection is immutable
      */
-    public void remove(Document object) {
+    public void remove(Document document) {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                mOriginalValues.remove(object);
+            if (originalValues != null) {
+                originalValues.remove(document);
             } else {
-                mObjects.remove(object);
+                docObjects.remove(document);
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     /**
@@ -155,13 +161,13 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
      */
     public void clear() {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                mOriginalValues.clear();
+            if (originalValues != null) {
+                originalValues.clear();
             } else {
-                mObjects.clear();
+                docObjects.clear();
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     /**
@@ -172,34 +178,34 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
      */
     public void sort(Comparator<? super Document> comparator) {
         synchronized (mLock) {
-            if (mOriginalValues != null) {
-                Collections.sort(mOriginalValues, comparator);
+            if (originalValues != null) {
+                Collections.sort(originalValues, comparator);
             } else {
-                Collections.sort(mObjects, comparator);
+                Collections.sort(docObjects, comparator);
             }
         }
-        if (mNotifyOnChange) notifyDataSetChanged();
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mObjects.size();
+        return docObjects.size();
     }
 
     @Override
     public Document getItem(int position) {
-        return mObjects.get(position);
+        return docObjects.get(position);
     }
 
     /**
-     * Returns the position of the specified item in the array.
+     * Returns the position of the specified document in the array.
      *
-     * @param item The item to retrieve the position of.
+     * @param document The document to retrieve the position of.
      *
-     * @return The position of the specified item.
+     * @return The position of the specified document.
      */
-    public int getPosition(Document item) {
-        return mObjects.indexOf(item);
+    public int getPosition(Document document) {
+        return docObjects.indexOf(document);
     }
 
     @Override
@@ -207,7 +213,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         final View view;
 
         if (convertView == null) {
-            view = mInflater.inflate(VIEW_RESOURCE, null);
+            view = inflater.inflate(VIEW_RESOURCE, null);
         } else {
             view = convertView;
         }
@@ -255,10 +261,10 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
 
     @Override
     public @NonNull Filter getFilter() {
-        if (mFilter == null) {
-            mFilter = new CustomFilter();
+        if (filter == null) {
+            filter = new CustomFilter();
         }
-        return mFilter;
+        return filter;
     }
 
     private class CustomFilter extends Filter {
@@ -266,16 +272,16 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         protected FilterResults performFiltering(CharSequence constraint) {
             final FilterResults results = new FilterResults();
 
-            if (mOriginalValues == null) {
+            if (originalValues == null) {
                 synchronized (mLock) {
-                    mOriginalValues = new ArrayList<>(mObjects);
+                    originalValues = new ArrayList<>(docObjects);
                 }
             }
 
             if (constraint == null || constraint.length() == 0) {
                 final List<Document> list;
                 synchronized (mLock) {
-                    list = new ArrayList<>(mOriginalValues);
+                    list = new ArrayList<>(originalValues);
                 }
                 results.values = list;
                 results.count = list.size();
@@ -284,7 +290,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
                 final String constraintString = constraint.toString().toLowerCase();
                 final List<Document> list;
                 synchronized (mLock) {
-                    list = new ArrayList<>(mOriginalValues);
+                    list = new ArrayList<>(originalValues);
                 }
                 final ArrayList<Document> newValues = new ArrayList<>();
                 boolean tagContainsConstraint;
@@ -315,7 +321,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            mObjects = (List<Document>) results.values;
+            docObjects = (List<Document>) results.values;
             if (results.count > 0) {
                 notifyDataSetChanged();
             } else {
