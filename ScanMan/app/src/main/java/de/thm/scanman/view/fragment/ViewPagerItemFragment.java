@@ -1,7 +1,6 @@
 package de.thm.scanman.view.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -94,7 +92,6 @@ public class ViewPagerItemFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                // adapter has a standard filter, which filters for words in the return from Document::toString() TODO: evtl. toString-Ausgabe anpassen oder eigenen Filter schreiben
                 if (adapter != null) {
                     adapter.getFilter().filter(newText);
                     adapter.notifyDataSetChanged();
