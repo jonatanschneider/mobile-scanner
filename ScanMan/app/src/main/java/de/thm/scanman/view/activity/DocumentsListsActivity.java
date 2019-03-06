@@ -26,8 +26,6 @@ import de.thm.scanman.model.Document;
 import de.thm.scanman.util.DocumentComparators;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,7 +37,6 @@ import java.util.Comparator;
 import java.util.List;
 import de.thm.scanman.model.Stats;
 import de.thm.scanman.model.User;
-import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
@@ -50,6 +47,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private FloatingActionButton addFab;
     private ViewPagerItemFragment fragment;
     private User user;
+    private int comparator = 0;
+    private boolean descending = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +185,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
             Bundle bundle = new Bundle();
             bundle.putInt("idx", position);
+            bundle.putInt("comparator", comparator);
+            bundle.putBoolean("descending", descending);
             fragment.setArguments(bundle);
 
             return fragment;
@@ -245,33 +246,9 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
      * @param comparatorString contains the name of comparator for sorting
      */
     private void sort(String comparatorString, boolean descending){
-        Comparator<Document> comparator;
-        int pos = sortedByList().indexOf(comparatorString);
-        switch (pos){
-            case 0:
-                if (descending) comparator = DocumentComparators.descendingAlphabetically;
-                else comparator = DocumentComparators.alphabetically;
-                break;
-            case 1:
-                if (descending) comparator = DocumentComparators.byDescendingSize;
-                else comparator = DocumentComparators.bySize;
-                break;
-            case 2:
-                if (descending) comparator = DocumentComparators.byCreateDate;
-                else comparator = DocumentComparators.byCreateDate;
-                break;
-            case 3:
-                if (descending) comparator = DocumentComparators.byLastUpdate;
-                else comparator = DocumentComparators.byLastUpdate;
-                break;
-            case 4:
-                if (descending) comparator = DocumentComparators.byDescendingOwner;
-                else comparator = DocumentComparators.byOwner;
-                break;
-            default:
-                if (descending) comparator = DocumentComparators.descendingAlphabetically;
-                else comparator = DocumentComparators.alphabetically;
-        }
+        this.comparator = sortedByList().indexOf(comparatorString);
+        this.descending = descending;
+        Comparator<Document> comparator = DocumentComparators.getComparator(this.comparator, descending);
         fragment.sort(comparator);
     }
 
