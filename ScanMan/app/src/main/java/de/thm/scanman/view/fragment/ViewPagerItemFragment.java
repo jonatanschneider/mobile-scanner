@@ -219,9 +219,9 @@ public class ViewPagerItemFragment extends Fragment {
                         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
                         builder.setTitle(R.string.delete);
                         if (selectedDocuments.size() == 1) {
-                            builder.setMessage("Dokument löschen?");
+                            builder.setMessage(R.string.delete_document);
                         } else {
-                            builder.setMessage(selectedDocuments.size() + " Dokumente löschen?");
+                            builder.setMessage(getResources().getString(R.string.delete_documents, selectedDocuments.size()));
                         }
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             selectedDocuments.forEach(documentDAO::remove);
