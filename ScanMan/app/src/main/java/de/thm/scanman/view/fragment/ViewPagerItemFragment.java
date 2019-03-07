@@ -1,7 +1,6 @@
 package de.thm.scanman.view.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,6 +41,7 @@ import java.util.List;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
 public class ViewPagerItemFragment extends Fragment {
     private static final String PAGE_INDEX = "PAGE_INDEX";
@@ -223,6 +222,12 @@ public class ViewPagerItemFragment extends Fragment {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        for(Document d : selectedDocuments) {
+                            documentDAO.remove(d);
+                        }
+                        mode.finish();
+                        return true;
                     case R.id.action_info:
                         new DocumentStatsTask(getContext()).execute(selectedDocuments.get(0));
                         mode.finish();
