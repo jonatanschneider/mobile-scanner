@@ -2,6 +2,7 @@ package de.thm.scanman.util;
 
 import java.util.Comparator;
 import java.util.Date;
+import static java.lang.Math.toIntExact;
 
 import de.thm.scanman.model.Document;
 
@@ -17,7 +18,7 @@ public class DocumentComparators {
         if (o1 == o2) return 0;
         if (o1 == null || o1.getName() == null) return 1;
         if (o2 == null || o2.getName() == null) return -1;
-        return o1.getName().length() - o2.getName().length();
+        return toIntExact(o1.getSize() - o2.getSize());
     };
 
     private static Comparator<Document> byCreateDate = (o1, o2) -> {
@@ -52,8 +53,7 @@ public class DocumentComparators {
         if (o1 == o2) return 0;
         if (o1 == null || o1.getName() == null) return -1;
         if (o2 == null || o2.getName() == null) return 1;
-        return o2.getName().length() - o1.getName().length();
-    };
+        return toIntExact(o2.getSize() - o1.getSize());    };
 
     private static Comparator<Document> byDescendingCreateDate = (o1, o2) -> {
         if (o1 == o2) return 0;
