@@ -70,9 +70,9 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     @Override
     protected void onResume() {
         super.onResume();
+        System.out.println("LOLOL HALOOOOOO");
         Intent caller = getIntent();
         if (caller != null) {
-            System.out.println("LOLoL" + Intent.ACTION_VIEW.equals(caller.getAction()));
             // Add document to shared documents
             Uri data = caller.getParcelableExtra("data");
             if (data == null) return;           // stop process when data is null
@@ -97,11 +97,19 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             Document doc = new Document();
             doc.setOwnerId(ownerID);
             doc.setId(documentID);
-            if (    user != null
-                    && user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))
-                    && documentDAO.addSharedDocument(doc)) {
-                Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT).show();
-                return;
+            if (    user != null) {
+                if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
+                    if (documentDAO.addSharedDocument(doc)) {
+                        Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        System.out.println("LOLoL couldNotAdd");
+                    }
+                } else {
+                    System.out.println("LOLoL A Matsch");
+                }
+            } else {
+                System.out.println("LOLoL user is null");
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.app_name);
