@@ -59,4 +59,5 @@
     <string name="number_of_documents_shared_with_user">Anzahl mit mir geteilter Dokumente</string>
     <string name="number_of_all_documents">Gesamtzahl an Dokumenten</string>
     <string name="added_new_document">Dokument hinzugefügt</string>
+    <string name="please_log_in">Bitte einloggen</string>
 </resources>

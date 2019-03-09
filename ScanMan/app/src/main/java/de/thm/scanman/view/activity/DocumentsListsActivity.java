@@ -71,9 +71,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     protected void onResume() {
         super.onResume();
         Intent caller = getIntent();
-        if (caller != null &&Intent.ACTION_VIEW.equals(caller.getAction())) {
+        if (caller != null) {
+            System.out.println("LOLoL" + Intent.ACTION_VIEW.equals(caller.getAction()));
             // Add document to shared documents
-            Uri data = caller.getData();
+            Uri data = caller.getParcelableExtra("data");
             if (data == null) return;           // stop process when data is null
 
             List<String> params = data.getPathSegments();
@@ -108,7 +109,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
             builder.show();
         } else {
-            System.out.println("Intent comes from "  + caller);
+            System.out.println("Intent is null");
         }
     }
 

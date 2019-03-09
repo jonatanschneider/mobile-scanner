@@ -3,6 +3,7 @@ package de.thm.scanman.view.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,6 +28,7 @@ public class LoginActivity extends AuthenticationBaseActivity {
     private View loginFormView;
 
     private View signUpLink;
+    private Uri data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,12 @@ public class LoginActivity extends AuthenticationBaseActivity {
         setContentView(R.layout.activity_login);
 
         startMainActivityIfAlreadyLoggedIn();
-
+        Intent caller = getIntent();
+        if (caller != null) {
+            data = caller.getData();
+        } else {
+            data = null;
+        }
         setupView();
     }
 
@@ -147,6 +154,7 @@ public class LoginActivity extends AuthenticationBaseActivity {
         // Create no backstack history so a logged in user doesn't get back to the login screen
         // when trying to close the app
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("data", data);
         startActivity(intent);
     }
 

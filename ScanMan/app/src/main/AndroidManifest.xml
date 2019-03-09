@@ -33,9 +33,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="http" android:host="de.thm.scanman"/>
+
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+            </intent-filter>
         </activity>
         <activity android:name=".view.activity.SettingsActivity"/>
-        <activity android:name=".view.activity.SignUpActivity"></activity>
+        <activity android:name=".view.activity.SignUpActivity" />
         <activity android:name=".view.activity.EditDocumentActivity" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
         <provider
