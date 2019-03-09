@@ -192,16 +192,13 @@ public class ViewPagerItemFragment extends Fragment {
 
     public void sort() {
         List<Document> curDocs = new ArrayList<>();
+        System.out.println("Adapter is " + adapter + " | page is" + page);
         if (adapter == null) return;
         int i = adapter.getCount();
         for (int j = 0; j < i; j++) {
-            System.out.println("AHSDJASDLOLOLOL");
             curDocs.add(adapter.getItem(j));
         }
         curDocs.sort(comparator);
-        for (int j = 0; j < i; j++) {
-            System.out.println(curDocs.get(j) + "LOLOL");
-        }
         adapter.clear();
         adapter.addAll(curDocs);
         adapter.notifyDataSetChanged();
