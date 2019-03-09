@@ -43,7 +43,7 @@
     <!-- Sorting -->
     <string name="alphabet">Alphabet</string>
     <string name="size">Größe</string>
-    <string name="createdAt">Anlegedatum</string>
+    <string name="createdAt">Erstelldatum</string>
     <string name="lastUpdate">Änderungsdatum</string>
     <string name="owner">Besitzer</string>
     <string name="descending">Absteigend</string>

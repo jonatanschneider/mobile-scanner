@@ -63,17 +63,13 @@ public class ViewPagerItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        updatePage();
-        comparator = DocumentComparators.descendingAlphabetically;
-        setHasOptionsMenu(true);
-    }
-
-    private void updatePage() {
         if (getArguments() != null) {
             this.page = getArguments().getInt("idx");
+            comparator = DocumentComparators.getComparator(getArguments().getInt("comparator"), getArguments().getBoolean("descending"));
         } else {
             Log.d("TAG", "Error: no arguments!");
         }
+        setHasOptionsMenu(true);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -120,7 +116,6 @@ public class ViewPagerItemFragment extends Fragment {
 
         userLiveData.observe(this,
                 user -> {
-                    updatePage();
                     switch (page) {
                         case 0:
                             allDocuments = new ArrayList<>();   // without new creation here it does not work!
@@ -196,8 +191,8 @@ public class ViewPagerItemFragment extends Fragment {
     }
 
     public void sort() {
-        updatePage();
         List<Document> curDocs = new ArrayList<>();
+        System.out.println("Adapter is " + adapter + " | page is" + page);
         if (adapter == null) return;
         int i = adapter.getCount();
         for (int j = 0; j < i; j++) {
