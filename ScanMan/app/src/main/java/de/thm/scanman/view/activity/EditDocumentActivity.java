@@ -97,7 +97,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                     CropImage.activity(uri).start(this);
                 }
                 else {
-                    Activity activity = this;
+                    Intent i = new Intent(this, ViewImageActivity.class);
+                    i.setData(uri);
+                    startActivity(i);
+                    /*Activity activity = this;
                     GlideApp.with(this)
                             .asFile()
                             .load(FirebaseDatabase.toStorageReference(uri))
@@ -108,7 +111,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                                     //TODO Start Activity to View Image
                                     CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
                                 }
-                            });
+                            });*/
                 }
             }
         });
