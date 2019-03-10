@@ -1,10 +1,7 @@
 package de.thm.scanman.view.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -17,7 +14,6 @@ import de.thm.scanman.R;
 /**
  * A login screen that offers login via email/password
  */
-// TODO: Check whether additional logic can be moved to the superclass.
 public class LoginActivity extends AuthenticationBaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -134,46 +130,6 @@ public class LoginActivity extends AuthenticationBaseActivity {
                 });
     }
 
-    protected boolean isEmailValid(String email) {
-        return !TextUtils.isEmpty(email) && email.contains("@");
-    }
-
-    protected boolean isPasswordValid(String password) {
-        return !TextUtils.isEmpty(password);
-    }
-
-    protected void startMainActivity() {
-        Intent intent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
-        // Create no backstack history so a logged in user doesn't get back to the login screen
-        // when trying to close the app
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    private void showProgress(final boolean show) {
-        int shortAnimationTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        loginFormView.animate().setDuration(shortAnimationTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        progressView.animate().setDuration(shortAnimationTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
-    }
     private void startSignUpActivity() {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
