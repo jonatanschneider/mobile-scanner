@@ -12,7 +12,16 @@ import android.widget.Toast;
 import de.thm.scanman.R;
 
 /**
- * A login screen that offers login via email/password
+ * Activity allowing the user to login
+ * <br>
+ * Asks for
+ * <ul>
+ *     <li>email</li>
+ *     <li>password</li>
+ * </ul>
+ * Uses validation and view utilities of the {@link AuthenticationBaseActivity}.
+ *
+ * @see AuthenticationBaseActivity
  */
 public class LoginActivity extends AuthenticationBaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -34,10 +43,14 @@ public class LoginActivity extends AuthenticationBaseActivity {
         setupView();
     }
 
+    /**
+     * Init the content view by referencing views and setting up interaction listeners
+     */
     private void setupView() {
         emailView = findViewById(R.id.email);
 
         passwordView = findViewById(R.id.password);
+        // Attempt login when the user triggers the next / done keyboard event in the last input
         passwordView.setOnEditorActionListener((textView, id, keyEvent) -> {
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                 attemptLogin();
@@ -68,7 +81,7 @@ public class LoginActivity extends AuthenticationBaseActivity {
     }
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
+     * Attempts to login the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
@@ -106,8 +119,10 @@ public class LoginActivity extends AuthenticationBaseActivity {
     }
 
     /**
-     * Actually make the login request based on the credentials validated before and adjust the ui
+     * Actually makes the login request based on the credentials validated before and adjust the ui
      * accordingly
+     * @param email
+     * @param password
      */
     private void makeLogin(String email, String password) {
         // Show a progress spinner, and kick off a background task to
@@ -130,6 +145,9 @@ public class LoginActivity extends AuthenticationBaseActivity {
                 });
     }
 
+    /**
+     * Shows the sign up activity
+     */
     private void startSignUpActivity() {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
