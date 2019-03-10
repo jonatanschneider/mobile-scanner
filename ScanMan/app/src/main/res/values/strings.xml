@@ -57,5 +57,7 @@
     <string name="number_of_shared_documents">Anzahl geteilter Dokumente</string>
     <string name="number_of_documents_shared_with_user">Anzahl mit mir geteilter Dokumente</string>
     <string name="number_of_all_documents">Gesamtzahl an Dokumenten</string>
+    <!-- ViewImage -->
+    <string name="editImage">Bild bearbeiten</string>
 
 </resources>

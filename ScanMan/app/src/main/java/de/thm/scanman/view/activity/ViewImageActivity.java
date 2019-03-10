@@ -1,17 +1,27 @@
 package de.thm.scanman.view.activity;
 
+import android.app.Activity;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.File;
+import java.util.Optional;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import de.thm.scanman.R;
@@ -20,30 +30,37 @@ import de.thm.scanman.persistence.GlideApp;
 
 public class ViewImageActivity extends AppCompatActivity implements View.OnTouchListener {
     private ImageView image;
+    private Uri uri;
 
     private static final String TAG = "Touch";
     // These matrices will be used to move and zoom image
     Matrix matrix = new Matrix();
     Matrix savedMatrix = new Matrix();
     PointF start = new PointF();
-    public static PointF mid = new PointF();
+    private static PointF mid = new PointF();
 
     // We can be in one of these 3 states
-    public static final int NONE = 0;
-    public static final int DRAG = 1;
-    public static final int ZOOM = 2;
-    public static int mode = NONE;
+    private static final int NONE = 0;
+    private static final int DRAG = 1;
+    private static final int ZOOM = 2;
+    private static int mode = NONE;
 
-    float oldDist;
+    private float oldDist;
 
-    boolean firstTouch;
+    private boolean firstTouch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
 
-        Uri uri = getIntent().getData();
+        // Show up button in action bar
+        Optional.ofNullable(getSupportActionBar())
+                .ifPresent(
+                        actionBar -> actionBar.setDisplayHomeAsUpEnabled(true)
+                );
+
+        uri = getIntent().getData();
         image = findViewById(R.id.image);
         GlideApp.with(this)
                 .load(FirebaseDatabase.toStorageReference(uri))
@@ -53,6 +70,37 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         firstTouch = true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu
+        // This adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.view_image, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_edit:
+                Activity activity = this;
+                GlideApp.with(this)
+                        .asFile()
+                        .load(FirebaseDatabase.toStorageReference(uri))
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(new SimpleTarget<File>() {
+                            @Override
+                            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                                CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
+                            }
+                        });
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
