@@ -103,6 +103,13 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method for zooming in and out and moving an image.
+     *
+     * @param v The ImageView which contains the image.
+     * @param event Object used to report movement (mouse, pen, finger, trackball) events.
+     * @return true if event was handled.
+     */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         ImageView view = (ImageView) v;
@@ -166,12 +173,24 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
         return true; // indicate event was handled
     }
 
+    /**
+     * Calculates the distance between two fingers on the screen.
+     *
+     * @param event Object used to report movement (mouse, pen, finger, trackball) events.
+     * @return The distance between two fingers.
+     */
     private float spacing(MotionEvent event) {
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
         return (float) Math.sqrt(x * x + y * y);
     }
 
+    /**
+     * Calculates the midpoint (two coordinates) between two points.
+     *
+     * @param point The variable in which the resultant point is written.
+     * @param event Object used to report movement (mouse, pen, finger, trackball) events.
+     */
     private void midPoint(PointF point, MotionEvent event) {
         float x = event.getX(0) + event.getX(1);
         float y = event.getY(0) + event.getY(1);
