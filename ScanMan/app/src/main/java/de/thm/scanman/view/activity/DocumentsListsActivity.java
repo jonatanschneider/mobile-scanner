@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Set;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
-import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
@@ -70,19 +69,13 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("LOLOL HALOOOOOO");
         Intent caller = getIntent();
-        if (caller != null) {
+        if (caller != null && caller.getStringExtra("ownerID") != null) {
             // Add document to shared documents
-            Uri data = caller.getParcelableExtra("data");
-            if (data == null) return;           // stop process when data is null
-
-            List<String> params = data.getPathSegments();
-            if (params.size() != 2) return;     // stop process when data is not valid
-
-            String ownerID = params.get(0);
-            String documentID = params.get(1);
-
+            // Uri data = caller.getParcelableExtra("data");
+            String ownerID = caller.getStringExtra("ownerID");
+            String documentID = caller.getStringExtra("documentID");
+            System.out.println(ownerID + "LOLOL" + documentID + FirebaseAuth.getInstance().getUid());
             // stop process when document is already added this session
             if (documentIDs.contains(documentID)) return;
             documentIDs.add(documentID);
@@ -92,11 +85,13 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 builder.setMessage("Sie sind bereits der Besitzer des Dokumentes");
                 builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
                 builder.show();
+                System.out.println("LOLOL Besitzer");
                 return;
             }
             Document doc = new Document();
             doc.setOwnerId(ownerID);
             doc.setId(documentID);
+            System.out.println("LOLOL im here");
             if (    user != null) {
                 if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
                     if (documentDAO.addSharedDocument(doc)) {
@@ -119,6 +114,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         } else {
             System.out.println("Intent is null");
         }
+        System.out.println("LOLOL ENDE");
     }
 
     @Override

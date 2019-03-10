@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.List;
+
 import de.thm.scanman.R;
 
 /**
@@ -28,7 +30,6 @@ public class LoginActivity extends AuthenticationBaseActivity {
     private View loginFormView;
 
     private View signUpLink;
-    private Uri data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +37,30 @@ public class LoginActivity extends AuthenticationBaseActivity {
         setContentView(R.layout.activity_login);
 
         startMainActivityIfAlreadyLoggedIn();
+        setupView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         Intent caller = getIntent();
         if (caller != null) {
-            data = caller.getData();
-        } else {
-            data = null;
+            Uri data = caller.getData();
+            if (data != null && data.toString().contains("http://de.thm.scanman")) {
+                List<String> params = data.getPathSegments();
+                if (params.size() != 2) return;     // stop process when data is not valid
+
+                String ownerID = params.get(0);
+                String documentID = params.get(1);
+                System.out.println(ownerID + "SHIT" + documentID);
+                Intent intent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("ownerID", ownerID);
+                intent.putExtra("documentID", documentID);
+                startActivity(intent);
+            }
         }
-        setupView();
     }
 
     private void setupView() {
@@ -154,7 +172,6 @@ public class LoginActivity extends AuthenticationBaseActivity {
         // Create no backstack history so a logged in user doesn't get back to the login screen
         // when trying to close the app
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("data", data);
         startActivity(intent);
     }
 
