@@ -1,11 +1,10 @@
 package de.thm.scanman.view.activity;
 
-import android.app.Activity;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +19,7 @@ import de.thm.scanman.persistence.FirebaseDatabase;
 import de.thm.scanman.persistence.GlideApp;
 
 public class ViewImageActivity extends AppCompatActivity implements View.OnTouchListener {
+    private ImageView image;
 
     private static final String TAG = "Touch";
     // These matrices will be used to move and zoom image
@@ -36,38 +36,51 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
 
     float oldDist;
 
+    boolean firstTouch;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
 
         Uri uri = getIntent().getData();
-        ImageView image = findViewById(R.id.image);
+        image = findViewById(R.id.image);
         GlideApp.with(this)
-                //.asFile()
                 .load(FirebaseDatabase.toStorageReference(uri))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(image);
-
         image.setOnTouchListener(this);
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        firstTouch = true;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         ImageView view = (ImageView) v;
 
+        if (firstTouch) {
+            view.setScaleType(ImageView.ScaleType.MATRIX);
+            float imageWidth = image.getDrawable().getIntrinsicWidth();
+            float imageHeight = image.getDrawable().getIntrinsicHeight();
+            RectF drawableRect = new RectF(0, 0, imageWidth, imageHeight);
+            RectF viewRect = new RectF(0, 0, image.getWidth(),
+                    image.getHeight());
+            matrix.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+            savedMatrix.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+
+            view.setImageMatrix(savedMatrix);
+            firstTouch = false;
+        }
+
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
-
             case MotionEvent.ACTION_DOWN:
-
                 savedMatrix.set(matrix);
                 start.set(event.getX(), event.getY());
                 Log.d(TAG, "mode=DRAG");
                 mode = DRAG;
                 break;
-
             case MotionEvent.ACTION_POINTER_DOWN:
-
                 oldDist = spacing(event);
                 Log.d(TAG, "oldDist=" + oldDist);
                 if (oldDist > 10f) {
@@ -78,34 +91,27 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
                     Log.d(TAG, "mode=ZOOM");
                 }
                 break;
-
             case MotionEvent.ACTION_MOVE:
-
                 if (mode == DRAG) {
-
                     matrix.set(savedMatrix);
                     matrix.postTranslate(event.getX() - start.x, event.getY() - start.y);
-                } else if (mode == ZOOM) {
-
+                }
+                else if (mode == ZOOM) {
                     float newDist = spacing(event);
                     Log.d(TAG, "newDist=" + newDist);
                     if (newDist > 10f) {
-
                         matrix.set(savedMatrix);
                         float scale = newDist / oldDist;
                         matrix.postScale(scale, scale, mid.x, mid.y);
                     }
                 }
                 break;
-
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
-
                 mode = NONE;
                 Log.d(TAG, "mode=NONE");
                 break;
         }
-
         // Perform the transformation
         view.setImageMatrix(matrix);
 
@@ -119,7 +125,6 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
     }
 
     private void midPoint(PointF point, MotionEvent event) {
-
         float x = event.getX(0) + event.getX(1);
         float y = event.getY(0) + event.getY(1);
         point.set(x / 2, y / 2);
