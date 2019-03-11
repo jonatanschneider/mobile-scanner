@@ -149,7 +149,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private class UserStatsTask extends AsyncTask<User, Void, UserStats> {
         private Context context;
 
-        public UserStatsTask(Context context) {
+        UserStatsTask(Context context) {
             super();
             this.context = context;
         }
@@ -175,7 +175,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             TextView sharedDocumentsCount = dialog.findViewById(R.id.count_of_shared_documents);
             TextView allDocumentsCount = dialog.findViewById(R.id.count_of_all_documents);
 
-            //TODO inconsistency sharedDocuments / sharedWithUser / sharedWithOthers
             createdDocumentsCount.setText(getResources().getString(R.string.count_with_bytes,
                     userStats.countOfCreatedDocuments(), userStats.createdDocumentsFileSize()));
 
