@@ -9,6 +9,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.User;
+import de.thm.scanman.persistence.liveData.DocumentListLiveData;
 import de.thm.scanman.persistence.liveData.UserLiveData;
 
 public class UserDAO {
@@ -41,9 +42,10 @@ public class UserDAO {
      */
     public LiveData<User> get(String userId) {
         DocumentDAO documentDAO = new DocumentDAO();
-        LiveData<List<Document>> createdDocuments = documentDAO.getCreatedDocuments();
-        LiveData<List<Document>> sharedDocuments = documentDAO.getSharedDocuments();
+        LiveData<List<Document>> createdDocuments = createdDocumentsLiveData(userId);
+        LiveData<List<Document>> sharedDocuments = sharedDocumentsLiveData(userId);
 
+        // Build a LiveData Object with LiveDatas from all documents
         return Transformations.switchMap(getInfo(userId), user -> {
             MediatorLiveData<User> mediator = new MediatorLiveData<>();
             mediator.addSource(createdDocuments, created -> {
@@ -60,6 +62,14 @@ public class UserDAO {
             });
             return mediator;
         });
+    }
+
+    private LiveData<List<Document>> createdDocumentsLiveData(String userId) {
+        return new DocumentListLiveData(FirebaseDatabase.createdDocsRef.child(userId));
+    }
+
+    private LiveData<List<Document>> sharedDocumentsLiveData(String userId) {
+        return new DocumentListLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
     /**

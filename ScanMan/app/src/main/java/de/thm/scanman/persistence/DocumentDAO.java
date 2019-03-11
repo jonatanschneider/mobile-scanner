@@ -105,10 +105,6 @@ public class DocumentDAO {
         return new DocumentLiveData(FirebaseDatabase.createdDocsRef.child(userId).child(documentId));
     }
 
-    LiveData<List<Document>> getCreatedDocuments() {
-        return new DocumentListLiveData(FirebaseDatabase.createdDocsRef.child(userId));
-    }
-
     /**
      * LiveData for a single shared document
      *
@@ -117,10 +113,6 @@ public class DocumentDAO {
      */
     public LiveData<Document> getSharedDocument(String documentId) {
         return new DocumentLiveData(FirebaseDatabase.sharedDocsRef.child(userId).child(documentId));
-    }
-
-    LiveData<List<Document>> getSharedDocuments() {
-        return new DocumentListLiveData(FirebaseDatabase.sharedDocsRef.child(userId));
     }
 
     /**
