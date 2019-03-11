@@ -95,17 +95,13 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             System.out.println("LOLOL im here");
             if (user != null) {
                 if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
-                    Toast t = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT);
-                    documentDAO.addSharedDocument( doc, Optional.of(t));
+                    Toast success = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT);
+                    Toast fail = Toast.makeText(this, R.string.already_joined_document, Toast.LENGTH_SHORT);
+                    documentDAO.addSharedDocument( doc, Optional.of(success), Optional.of(fail));
                 }
             } else {
                 System.out.println("LOLoL user is null");
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.app_name);
-            builder.setMessage("Sie sind dem Dokument bereits beigetreten");
-            builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
-            builder.show();
         } else {
             System.out.println("Intent is null");
         }

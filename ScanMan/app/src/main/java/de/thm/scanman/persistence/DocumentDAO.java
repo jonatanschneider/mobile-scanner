@@ -84,9 +84,10 @@ public class DocumentDAO {
      * Add document into the sharedDocuments node and shows success toast if set
      *
      * @param document
-     * @param toast Show toast on success
+     * @param successToast Show toast on success
+     * @param failToast Show toast on fail
      */
-    public void addSharedDocument(Document document, Optional<Toast> toast) {
+    public void addSharedDocument(Document document, Optional<Toast> successToast, Optional<Toast> failToast) {
         if (userId.equals(document.getOwnerId())) return;
         if (document.getId() == null || document.getId().equals("")) return;
         DatabaseReference reference = FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId());
@@ -95,12 +96,12 @@ public class DocumentDAO {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) return;
                 reference.setValue(document);
-                toast.ifPresent(Toast::show);
+                successToast.ifPresent(Toast::show);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("Database Error on adding shared Document: " + databaseError.getMessage());
+                failToast.ifPresent(Toast::show);
             }
         });
     }
@@ -110,7 +111,7 @@ public class DocumentDAO {
      * @param document
      */
     public void addSharedDocument(Document document) {
-        addSharedDocument(document, Optional.empty());
+        addSharedDocument(document, Optional.empty(), Optional.empty());
     }
 
     /**
