@@ -76,7 +76,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             // Uri data = caller.getParcelableExtra("data");
             String ownerID = intent.getStringExtra("ownerID");
             String documentID = intent.getStringExtra("documentID");
-            System.out.println(ownerID + "LOLOL" + documentID + FirebaseAuth.getInstance().getUid());
             // stop process when document is already added this session
             if (documentIDs.contains(documentID)) return;
             documentIDs.add(documentID);
@@ -86,26 +85,19 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 builder.setMessage("Sie sind bereits der Besitzer des Dokumentes");
                 builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
                 builder.show();
-                System.out.println("LOLOL Besitzer");
                 return;
             }
             Document doc = new Document();
             doc.setOwnerId(ownerID);
             doc.setId(documentID);
-            System.out.println("LOLOL im here");
             if (user != null) {
                 if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
                     Toast success = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT);
                     Toast fail = Toast.makeText(this, R.string.already_joined_document, Toast.LENGTH_SHORT);
                     documentDAO.addSharedDocument( doc, Optional.of(success), Optional.of(fail));
                 }
-            } else {
-                System.out.println("LOLoL user is null");
             }
-        } else {
-            System.out.println("Intent is null");
         }
-        System.out.println("LOLOL ENDE");
     }
 
     @Override

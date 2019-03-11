@@ -53,7 +53,6 @@ public class LoginActivity extends AuthenticationBaseActivity {
 
                 String ownerID = params.get(0);
                 String documentID = params.get(1);
-                System.out.println(ownerID + "SHIT" + documentID);
                 Intent intent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("ownerID", ownerID);
