@@ -170,22 +170,22 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             AlertDialog dialog = dialogB.create();
             dialog.show();
 
-            TextView numberOfCreatedDocuments = dialog.findViewById(R.id.number_of_created_documents);
-            TextView numberOfSharedDocuments = dialog.findViewById(R.id.number_of_shared_documents);
-            TextView numberOfDocumentsSharedWithUser = dialog.findViewById(R.id.number_of_documents_shared_with_user);
-            TextView numberOfAllDocuments = dialog.findViewById(R.id.number_of_all_documents);
+            TextView createdDocumentsCount = dialog.findViewById(R.id.count_of_created_documents);
+            TextView documentsSharedWithOthersCount = dialog.findViewById(R.id.count_of_documents_shared_with_others);
+            TextView sharedDocumentsCount = dialog.findViewById(R.id.count_of_shared_documents);
+            TextView allDocumentsCount = dialog.findViewById(R.id.count_of_all_documents);
 
             //TODO inconsistency sharedDocuments / sharedWithUser / sharedWithOthers
-            numberOfCreatedDocuments.setText(getResources().getString(R.string.count_with_bytes,
+            createdDocumentsCount.setText(getResources().getString(R.string.count_with_bytes,
                     userStats.countOfCreatedDocuments(), userStats.createdDocumentsFileSize()));
 
-            numberOfSharedDocuments.setText(getResources().getString(R.string.count_with_bytes,
+            documentsSharedWithOthersCount.setText(getResources().getString(R.string.count_with_bytes,
                     userStats.countOfDocumentsSharedWithOthers(), userStats.documentsSharedWithOthersFileSize()));
 
-            numberOfDocumentsSharedWithUser.setText(getResources().getString(R.string.count_with_bytes,
+            sharedDocumentsCount.setText(getResources().getString(R.string.count_with_bytes,
                     userStats.countOfSharedDocuments(), userStats.sharedDocumentsFileSize()));
 
-            numberOfAllDocuments.setText(getResources().getString(R.string.count_with_bytes,
+            allDocumentsCount.setText(getResources().getString(R.string.count_with_bytes,
                     userStats.countOfAllDocuments(), userStats.allDocumentsFileSize()));
         }
     }
