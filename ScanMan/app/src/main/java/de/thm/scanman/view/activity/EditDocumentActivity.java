@@ -458,6 +458,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private void shareDocument() {
         Document doc = saveDocument();
+        madeChanges = false;
         String uid = FirebaseAuth.getInstance().getUid();
         String documentID = doc.getId();
         String uri = "http://de.thm.scanman/" + uid + "/" + documentID;
