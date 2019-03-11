@@ -146,6 +146,9 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         }
     }
 
+    /**
+     * Shows a dialog with user related stats
+     */
     private class UserStatsTask extends AsyncTask<User, Void, UserStats> {
         private Context context;
 
