@@ -63,18 +63,18 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 startActivity(i);
             });
 
-        userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> user = u);
+        userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> {
+            user = u;
+            handleIntent(getIntent());
+        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Intent caller = getIntent();
-        if (caller != null && caller.getStringExtra("ownerID") != null) {
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.getStringExtra("ownerID") != null) {
             // Add document to shared documents
             // Uri data = caller.getParcelableExtra("data");
-            String ownerID = caller.getStringExtra("ownerID");
-            String documentID = caller.getStringExtra("documentID");
+            String ownerID = intent.getStringExtra("ownerID");
+            String documentID = intent.getStringExtra("documentID");
             System.out.println(ownerID + "LOLOL" + documentID + FirebaseAuth.getInstance().getUid());
             // stop process when document is already added this session
             if (documentIDs.contains(documentID)) return;
