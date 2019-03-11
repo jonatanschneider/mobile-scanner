@@ -86,7 +86,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         saveFab = findViewById(R.id.check_fab);
 
         saveFab.setOnClickListener(v -> {
-            saveDocument(true);
+            saveDocument();
             finish();
         });
 
@@ -329,17 +329,17 @@ public class EditDocumentActivity extends AppCompatActivity {
         exitDocumentActivity();
     }
 
-    private Document saveDocument(boolean upload) {
+    private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
         if (!madeChanges) return document;
         if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
-            if (upload) documentDAO.update(document);
+            documentDAO.update(document);
         }
         else {
             document = buildDocument();
-            if (upload) documentDAO.addCreatedDocument(document);
+            documentDAO.addCreatedDocument(document);
         }
         return document;
     }
@@ -379,7 +379,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             builder.setMessage(R.string.saveDocuments);
             builder.setNeutralButton(R.string.cancel, null);
             builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                saveDocument(true);
+                saveDocument();
                 finish();
             });
             builder.setNegativeButton(R.string.no, (e, r) -> finish());
@@ -457,7 +457,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void shareDocument() {
-        Document doc = saveDocument(false);
+        Document doc = saveDocument();
         String uid = FirebaseAuth.getInstance().getUid();
         String documentID = doc.getId();
         String uri = "http://de.thm.scanman/" + uid + "/" + documentID;
