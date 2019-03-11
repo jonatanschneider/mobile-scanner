@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Stats {
+public class UserStats {
 
     private User user;
 
-    public Stats(User user) {
+    public UserStats(User user) {
         this.user = user;
     }
 

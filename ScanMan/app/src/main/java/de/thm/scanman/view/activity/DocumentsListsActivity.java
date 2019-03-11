@@ -1,7 +1,6 @@
 package de.thm.scanman.view.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,16 +8,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-
-import org.apache.commons.io.FileUtils;
-
-import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -27,7 +21,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import de.thm.scanman.R;
-import de.thm.scanman.model.Stats;
+import de.thm.scanman.model.UserStats;
 import de.thm.scanman.model.User;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
@@ -79,7 +73,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_stats:
-                new StatsTask(this).execute(user);
+                new UserStatsTask(this).execute(user);
                 return true;
             case R.id.action_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
@@ -152,22 +146,22 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         }
     }
 
-    private class StatsTask extends AsyncTask<User, Void, Stats> {
+    private class UserStatsTask extends AsyncTask<User, Void, UserStats> {
         private Context context;
 
-        public StatsTask(Context context) {
+        public UserStatsTask(Context context) {
             super();
             this.context = context;
         }
 
         @Override
-        protected Stats doInBackground(User... users) {
+        protected UserStats doInBackground(User... users) {
 
-            return new Stats(users[0]);
+            return new UserStats(users[0]);
         }
 
         @Override
-        protected void onPostExecute(Stats stats) {
+        protected void onPostExecute(UserStats userStats) {
             AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
             dialogB.setView(R.layout.dialog_stats);
             dialogB.setTitle(R.string.stats_title);
@@ -183,16 +177,16 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
             //TODO inconsistency sharedDocuments / sharedWithUser / sharedWithOthers
             numberOfCreatedDocuments.setText(getResources().getString(R.string.count_with_bytes,
-                    stats.countOfCreatedDocuments(), stats.createdDocumentsFileSize()));
+                    userStats.countOfCreatedDocuments(), userStats.createdDocumentsFileSize()));
 
             numberOfSharedDocuments.setText(getResources().getString(R.string.count_with_bytes,
-                    stats.countOfDocumentsSharedWithOthers(), stats.documentsSharedWithOthersFileSize()));
+                    userStats.countOfDocumentsSharedWithOthers(), userStats.documentsSharedWithOthersFileSize()));
 
             numberOfDocumentsSharedWithUser.setText(getResources().getString(R.string.count_with_bytes,
-                    stats.countOfSharedDocuments(), stats.sharedDocumentsFileSize()));
+                    userStats.countOfSharedDocuments(), userStats.sharedDocumentsFileSize()));
 
             numberOfAllDocuments.setText(getResources().getString(R.string.count_with_bytes,
-                    stats.countOfAllDocuments(), stats.allDocumentsFileSize()));
+                    userStats.countOfAllDocuments(), userStats.allDocumentsFileSize()));
         }
     }
 
