@@ -162,12 +162,12 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         @Override
         protected void onPostExecute(UserStats userStats) {
-            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
-            dialogB.setView(R.layout.dialog_stats);
-            dialogB.setTitle(R.string.stats_title);
-            dialogB.setNeutralButton(R.string.stats_close, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(R.layout.dialog_stats);
+            builder.setTitle(R.string.stats_title);
+            builder.setNeutralButton(R.string.stats_close, null);
 
-            AlertDialog dialog = dialogB.create();
+            AlertDialog dialog = builder.create();
             dialog.show();
 
             TextView createdDocumentsCount = dialog.findViewById(R.id.count_of_created_documents);
