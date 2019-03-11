@@ -17,7 +17,10 @@ public class DocumentStats {
         this.document = document;
     }
 
-    public Document getDocument() { return document; }
+    public Document getDocument() {
+        return document;
+    }
+
 
     public int numberOfUsers() {
         return (document.getUserIds() == null) ? 0 : document.getUserIds().size();
