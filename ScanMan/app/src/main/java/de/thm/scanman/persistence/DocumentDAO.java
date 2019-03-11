@@ -2,8 +2,6 @@ package de.thm.scanman.persistence;
 
 import android.net.Uri;
 
-import androidx.lifecycle.LiveData;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
@@ -14,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import androidx.lifecycle.LiveData;
 import de.thm.scanman.model.Document;
-import de.thm.scanman.persistence.liveData.DocumentListLiveData;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
 
 public class DocumentDAO {

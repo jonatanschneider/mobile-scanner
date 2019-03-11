@@ -18,6 +18,7 @@ public class UserDAO {
      * Add a single user and all it's created and shared Documents to the database.
      * The owner attribute of all createdDocuments will automatically be set to the
      * corresponding user id.
+     *
      * @param user with set id
      * @return user
      */
@@ -81,6 +82,7 @@ public class UserDAO {
 
     /**
      * Update the user and all it's documents
+     *
      * @param user
      */
     public void update(User user) {
@@ -91,6 +93,7 @@ public class UserDAO {
 
     /**
      * Update the users info (name, email, createdAt)
+     *
      * @param user
      */
     public void updateInfo(User user) {
@@ -99,6 +102,7 @@ public class UserDAO {
 
     /**
      * Removes a user and all it's entries in createdDocuments and sharedDocuments
+     *
      * @param userId
      */
     public void remove(String userId) {
