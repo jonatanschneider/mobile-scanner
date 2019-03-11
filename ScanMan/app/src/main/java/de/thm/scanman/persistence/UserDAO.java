@@ -41,7 +41,6 @@ public class UserDAO {
      * @return LiveData of a user object with all it's documents
      */
     public LiveData<User> get(String userId) {
-        DocumentDAO documentDAO = new DocumentDAO();
         LiveData<List<Document>> createdDocuments = createdDocumentsLiveData(userId);
         LiveData<List<Document>> sharedDocuments = sharedDocumentsLiveData(userId);
 
