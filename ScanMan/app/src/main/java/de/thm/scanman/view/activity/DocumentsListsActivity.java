@@ -32,6 +32,7 @@ import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
@@ -92,16 +93,10 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             doc.setOwnerId(ownerID);
             doc.setId(documentID);
             System.out.println("LOLOL im here");
-            if (    user != null) {
+            if (user != null) {
                 if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
-                    if (documentDAO.addSharedDocument(doc)) {
-                        Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT).show();
-                        return;
-                    } else {
-                        System.out.println("LOLoL couldNotAdd");
-                    }
-                } else {
-                    System.out.println("LOLoL A Matsch");
+                    Toast t = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT);
+                    documentDAO.addSharedDocument( doc, Optional.of(t));
                 }
             } else {
                 System.out.println("LOLoL user is null");

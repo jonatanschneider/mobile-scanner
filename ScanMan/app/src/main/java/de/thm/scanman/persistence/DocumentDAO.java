@@ -1,9 +1,7 @@
 package de.thm.scanman.persistence;
 
 import android.net.Uri;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -16,8 +14,11 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentListLiveData;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
@@ -80,11 +81,12 @@ public class DocumentDAO {
 
 
     /**
-     * Add document into the sharedDocuments node
+     * Add document into the sharedDocuments node and shows success toast if set
      *
      * @param document
+     * @param toast Show toast on success
      */
-    public void addSharedDocument(Document document) {
+    public void addSharedDocument(Document document, Optional<Toast> toast) {
         if (userId.equals(document.getOwnerId())) return;
         if (document.getId() == null || document.getId().equals("")) return;
         DatabaseReference reference = FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId());
@@ -93,6 +95,7 @@ public class DocumentDAO {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) return;
                 reference.setValue(document);
+                toast.ifPresent(Toast::show);
             }
 
             @Override
@@ -100,6 +103,14 @@ public class DocumentDAO {
                 System.out.println("Database Error on adding shared Document: " + databaseError.getMessage());
             }
         });
+    }
+
+    /**
+     * Add document into the sharedDocuments node
+     * @param document
+     */
+    public void addSharedDocument(Document document) {
+        addSharedDocument(document, Optional.empty());
     }
 
     /**
