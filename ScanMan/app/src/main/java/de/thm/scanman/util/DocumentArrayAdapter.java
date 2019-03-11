@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -257,7 +258,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         // set create date and tags of the document into TextView subtext
         TextView subtext = view.findViewById(R.id.subtext);
         StringBuilder dateAndTags = new StringBuilder();
-        dateAndTags.append(new Date(d.getCreatedAt()).toString());
+        dateAndTags.append(SimpleDateFormat.getDateInstance().format(new Date(d.getCreatedAt())));
         dateAndTags.append("\n");
         for(String s : d.getTags()) {
             dateAndTags.append(s);
