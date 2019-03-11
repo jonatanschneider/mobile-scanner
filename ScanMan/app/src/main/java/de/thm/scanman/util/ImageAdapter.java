@@ -1,9 +1,12 @@
 package de.thm.scanman.util;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.net.Uri;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -50,7 +53,14 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
-        int SQUARE_SIZE = 480;
+
+        // get the display size of the device
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point displaySize = new Point();
+        display.getSize(displaySize);
+
+        int SQUARE_SIZE = displaySize.x / 2 - 32;
 
         if (convertView == null) {
             imageView = new ImageView(mContext);
