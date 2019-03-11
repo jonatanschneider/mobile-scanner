@@ -5,7 +5,7 @@
     android:paddingLeft="25dp"
     android:paddingRight="25dp">
 
-    <!-- Number of Created Documents -->
+    <!-- Count of Created Documents -->
     <TextView
         android:id="@+id/count_of_created_documents_title"
         android:layout_width="match_parent"
@@ -67,7 +67,7 @@
         android:layout_below="@+id/count_of_shared_documents_title"/>
 
 
-    <!-- Number of all Documents -->
+    <!-- Count of all Documents -->
     <TextView
         android:id="@+id/count_of_all_documents_title"
         android:layout_width="match_parent"
