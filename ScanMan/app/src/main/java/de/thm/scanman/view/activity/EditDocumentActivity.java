@@ -190,9 +190,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle(R.string.delete);
                         if (selectedImages.size() == 1) {
-                            builder.setMessage("Bild löschen?");
+                            builder.setMessage(R.string.delete_image);
                         } else {
-                            builder.setMessage(selectedImages.size() + " Bilder löschen?");
+                            builder.setMessage(getResources().getString(R.string.delete_images, selectedImages.size()));
                         }
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             selectedImages.forEach(image -> {

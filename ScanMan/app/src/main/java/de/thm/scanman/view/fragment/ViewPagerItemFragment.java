@@ -1,7 +1,6 @@
 package de.thm.scanman.view.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +14,8 @@ import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.DocumentStats;
 import de.thm.scanman.model.User;
+import de.thm.scanman.persistence.DocumentDAO;
+import de.thm.scanman.persistence.FirebaseDatabase;
 import de.thm.scanman.persistence.UserDAO;
 import de.thm.scanman.util.DocumentArrayAdapter;
 import de.thm.scanman.view.activity.EditDocumentActivity;
@@ -28,7 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,6 +43,7 @@ import java.util.List;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
 public class ViewPagerItemFragment extends Fragment {
     private static final String PAGE_INDEX = "PAGE_INDEX";
@@ -87,7 +88,6 @@ public class ViewPagerItemFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                // adapter has a standard filter, which filters for words in the return from Document::toString() TODO: evtl. toString-Ausgabe anpassen oder eigenen Filter schreiben
                 if (adapter != null) {
                     adapter.getFilter().filter(newText);
                 }
@@ -184,18 +184,7 @@ public class ViewPagerItemFragment extends Fragment {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                Document selected = null;
-                switch (page) {
-                    case 0:
-                        selected = allDocuments.get(position);
-                        break;
-                    case 1:
-                        selected = createdDocuments.get(position);
-                        break;
-                    case 2:
-                        selected = sharedDocuments.get(position);
-                        break;
-                }
+                Document selected = adapter.getItem(position);
                 if (checked) {
                     counter++;
                     selectedDocuments.add(selected);
@@ -212,6 +201,8 @@ public class ViewPagerItemFragment extends Fragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.documents_lists_contextual, menu);
+                counter = 0;
+                selectedDocuments.clear();
                 return true;
             }
 
@@ -223,6 +214,22 @@ public class ViewPagerItemFragment extends Fragment {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+                        builder.setTitle(R.string.delete);
+                        if (selectedDocuments.size() == 1) {
+                            builder.setMessage(R.string.delete_document);
+                        } else {
+                            builder.setMessage(getResources().getString(R.string.delete_documents, selectedDocuments.size()));
+                        }
+                        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                            selectedDocuments.forEach(documentDAO::remove);
+                            adapter.notifyDataSetChanged();
+                        });
+                        builder.setNeutralButton(R.string.cancel, null);
+                        builder.show();
+                        mode.finish();
+                        return true;
                     case R.id.action_info:
                         new DocumentStatsTask(getContext()).execute(selectedDocuments.get(0));
                         mode.finish();
@@ -234,8 +241,6 @@ public class ViewPagerItemFragment extends Fragment {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                counter = 0;
-                selectedDocuments.clear();
             }
         };
     }
