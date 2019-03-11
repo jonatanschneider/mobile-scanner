@@ -73,13 +73,4 @@ public class UserStats {
                 .filter(doc -> doc.getUserIds().size() > 0)
                 .count();
     }
-
-    @Override
-    public String toString() {
-        return "Anzahl erstellter Dokumente: " + countOfCreatedDocuments() + " insgesamt " + createdDocumentsFileSize() + " Bytes" +
-                "\nAnzahl geteilter Dokumente: " + countOfDocumentsSharedWithOthers() + " insgesamt " + documentsSharedWithOthersFileSize() + " Bytes" +
-                "\nAnzahl mit mir geteilter Dokumente: " + countOfSharedDocuments() + " insgesamt " + sharedDocumentsFileSize() + " Bytes" +
-                "\nGesamtzahl an Dokumenten: " + (user.getCreatedDocuments().size() + user.getSharedDocuments().size()) + " insgesamt " + (createdDocumentsFileSize() + sharedDocumentsFileSize()) + " Bytes";
-
-    }
 }
