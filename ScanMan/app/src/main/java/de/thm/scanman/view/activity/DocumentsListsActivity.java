@@ -44,6 +44,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private FloatingActionButton addFab;
     private User user;
     private Set<String> documentIDs = new HashSet<>();
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +59,20 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         addFab = findViewById(R.id.add_fab);
         addFab.setOnClickListener(
-            view -> {
-                Intent i = new Intent(this, EditDocumentActivity.class);
-                i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
-                startActivity(i);
-            });
+                view -> {
+                    Intent i = new Intent(this, EditDocumentActivity.class);
+                    i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
+                    startActivity(i);
+                });
 
+        intent = getIntent();
         userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> {
             user = u;
-            handleIntent(getIntent());
+            handleIntent();
         });
     }
 
-    private void handleIntent(Intent intent) {
+    private void handleIntent() {
         if (intent != null && intent.getStringExtra("ownerID") != null) {
             // Add document to shared documents
             // Uri data = caller.getParcelableExtra("data");
