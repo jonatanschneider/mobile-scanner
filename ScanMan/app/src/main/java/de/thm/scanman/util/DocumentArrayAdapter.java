@@ -25,6 +25,12 @@ import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.FirebaseDatabase;
 import de.thm.scanman.persistence.GlideApp;
 
+/**
+ * This class is used to display documents in a ListView with title, date,
+ * tags and the first image and to perform a custom filtering. Several methods of
+ * ArrayAdapter are overwritten here to can do that.
+ * It is specified for DocumentsListsActivity.
+ */
 public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filterable {
     private final static int VIEW_RESOURCE = R.layout.document_list_item;
 
@@ -39,7 +45,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
     private final LayoutInflater inflater;
 
     /**
-     * Contains the list of objects that represent the data of this ArrayAdapter.
+     * Contains the list of objects that represent the data of this DocumentArrayAdapter.
      */
     private List<Document> docObjects;
 
@@ -54,6 +60,12 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
     private ArrayList<Document> originalValues;
     private CustomFilter filter;
 
+    /**
+     * Constructor
+     *
+     * @param ctx The current context.
+     * @param documents The documents to represent in the ListView.
+     */
     public DocumentArrayAdapter(Context ctx, List<Document> documents) {
         super(ctx, VIEW_RESOURCE, documents);
         this.docObjects = new ArrayList<>(documents);
@@ -222,6 +234,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         Uri uri = Uri.parse("");
         if (d.getImages().size() > 0) uri = Uri.parse(d.getImages().get(0).getFile());
         ImageView image = view.findViewById(R.id.document_image);
+        // load image into ImageView view
         GlideApp.with(view.getContext())
                 .load(FirebaseDatabase.toStorageReference(uri))
                 .placeholder(R.drawable.ic_camera_alt_black_24dp)
@@ -237,9 +250,11 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(image);
 
+        // set name of the document into TextView name
         TextView name = view.findViewById(R.id.name);
         name.setText(d.getName());
 
+        // set create date and tags of the document into TextView subtext
         TextView subtext = view.findViewById(R.id.subtext);
         StringBuilder dateAndTags = new StringBuilder();
         dateAndTags.append(new Date(d.getCreatedAt()).toString());
@@ -267,6 +282,11 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
         return filter;
     }
 
+    /**
+     * <p>This custom filter constrains the content of the document array adapter
+     * with a substring. Each item that does not contains the supplied substring
+     * is removed from the list.</p>
+     */
     private class CustomFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -295,18 +315,20 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document> implements Filt
                 final ArrayList<Document> newValues = new ArrayList<>();
                 boolean tagContainsConstraint;
 
-                // get specific items
+                // get specific items from the document list
                 for(int i = 0; i < list.size(); i++) {
                     final Document doc = list.get(i);
                     final String documentName = doc.getName().toLowerCase();
                     tagContainsConstraint = false;
 
+                    // search constraint in the tags of the document ...
                     for(String tag : doc.getTags()) {
                         if (tag.toLowerCase().contains(constraintString)) {
                             tagContainsConstraint = true;
                             break;
                         }
                     }
+                    // ... and search constraint in the name of the document
                     if(documentName.toLowerCase().contains(constraintString) || tagContainsConstraint) {
                         newValues.add(doc);
                     }

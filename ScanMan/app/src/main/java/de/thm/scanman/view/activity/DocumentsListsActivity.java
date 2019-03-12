@@ -14,7 +14,10 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import org.apache.commons.io.FileUtils;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -28,15 +31,12 @@ import de.thm.scanman.model.Stats;
 import de.thm.scanman.model.User;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
-
+/**
+ * Main Activity of the Application.
+ */
 public class DocumentsListsActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private TabLayout tabBar;
@@ -124,16 +124,21 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         return super.onOptionsItemSelected(item);
     }
 
-    // setup and style tab bar
-    private void setUpPagerAndTabs() {
+    /**
+     * Method to style and setup the TabLayout tabBar
+     */
+    private void setUpPagerAndTabs(){
+        // set colors of the tabs
         tabBar.setTabTextColors(ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, R.color.colorAccent));
         tabBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTab));
 
+        // set an adapter onto viewPager
         viewPager.setAdapter(new TabPagerAdapter(getSupportFragmentManager()));
         viewPager.setCurrentItem(0);
 
         tabBar.addOnTabSelectedListener(this);
+        // give the TabLayout the ViewPager
         tabBar.setupWithViewPager(viewPager);
     }
 
@@ -152,26 +157,42 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
     }
 
+    /**
+     * Inner class for the adapter for viewPager.
+     */
     public class TabPagerAdapter extends FragmentStatePagerAdapter {
 
+        /**
+         * The titles of the tabs.
+         */
         private final String[] pageTitles = {
                 getApplicationContext().getString(R.string.all_documents),
                 getApplicationContext().getString(R.string.my_documents),
                 getApplicationContext().getString(R.string.shared_documents)
         };
 
-        public TabPagerAdapter(FragmentManager fm) {
+        /**
+         * Constructor
+         *
+         * @param fm FragmentManager
+         */
+        public TabPagerAdapter(FragmentManager fm){
             super(fm);
         }
 
+        /**
+         * Return the number of tabs.
+         */
         @Override
         public int getCount() {
             return pageTitles.length;
         }
 
+        /**
+         * Return the Fragment associated with a specified position (tab).
+         */
         @Override
         public Fragment getItem(int position) {
-
             Fragment fragment = new ViewPagerItemFragment();
 
             Bundle bundle = new Bundle();
@@ -181,6 +202,9 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             return fragment;
         }
 
+        /**
+         * Return the title of the tab associated with a specified position.
+         */
         @Override
         public CharSequence getPageTitle(int position) {
             return pageTitles[position];
