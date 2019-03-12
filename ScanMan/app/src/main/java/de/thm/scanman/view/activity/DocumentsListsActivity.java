@@ -78,10 +78,6 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             case R.id.action_stats:
                 new StatsTask(this).execute(user);
                 return true;
-            case R.id.action_settings:
-                Intent i = new Intent(this, SettingsActivity.class);
-                startActivity(i);
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -23,11 +23,7 @@
         app:showAsAction="never"
         android:title="@string/stats"/>
     <item
-        android:id="@+id/action_settings"
-        app:showAsAction="never"
-        android:title="@string/settings"/>
-    <item
-        android:id="@+id/logou"
+        android:id="@+id/logout"
         app:showAsAction="never"
         android:title="@string/logout"/>
 
