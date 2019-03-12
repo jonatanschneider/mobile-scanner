@@ -94,7 +94,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
                     Toast success = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT);
                     Toast fail = Toast.makeText(this, R.string.already_joined_document, Toast.LENGTH_SHORT);
-                    documentDAO.addSharedDocument( doc, Optional.of(success), Optional.of(fail));
+                    documentDAO.addSharedDocument(doc, Optional.of(success), Optional.of(fail));
                 }
             }
         }
@@ -123,7 +123,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     }
 
     // setup and style tab bar
-    private void setUpPagerAndTabs(){
+    private void setUpPagerAndTabs() {
         tabBar.setTabTextColors(ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, R.color.colorAccent));
         tabBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTab));
@@ -158,7 +158,7 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
                 getApplicationContext().getString(R.string.shared_documents)
         };
 
-        public TabPagerAdapter(FragmentManager fm){
+        public TabPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
