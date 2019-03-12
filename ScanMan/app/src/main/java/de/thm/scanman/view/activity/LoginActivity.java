@@ -30,6 +30,8 @@ public class LoginActivity extends AuthenticationBaseActivity {
     private View loginFormView;
 
     private View signUpLink;
+    private boolean joinDocument = false;
+    private Intent joinIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,19 +49,27 @@ public class LoginActivity extends AuthenticationBaseActivity {
         Intent caller = getIntent();
         if (caller != null) {
             Uri data = caller.getData();
-            if (data != null && data.toString().contains("http://de.thm.scanman")) {
-                List<String> params = data.getPathSegments();
-                if (params.size() != 2) return;     // stop process when data is not valid
-
-                String ownerID = params.get(0);
-                String documentID = params.get(1);
-                Intent intent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("ownerID", ownerID);
-                intent.putExtra("documentID", documentID);
-                startActivity(intent);
-            }
+            if (data != null && data.toString().contains("http://de.thm.scanman")) handleJoinIntent(data);
         }
+    }
+
+    private void handleJoinIntent(Uri data) {
+            List<String> params = data.getPathSegments();
+            if (params.size() != 2) return;     // stop process when data is not valid
+
+            String ownerID = params.get(0);
+            String documentID = params.get(1);
+            joinIntent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
+            joinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            joinIntent.putExtra("ownerID", ownerID);
+            joinIntent.putExtra("documentID", documentID);
+
+            // Start Intent or let user login first
+            if (getAuth().getCurrentUser() != null) startActivity(joinIntent);
+            else {
+                setupView();
+                joinDocument = true;
+            }
     }
 
     private void setupView() {
@@ -147,7 +157,8 @@ public class LoginActivity extends AuthenticationBaseActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, start main activity
-                        startMainActivity();
+                        if (joinDocument) joinDocument();
+                        else startMainActivity();
                     } else {
                         // If sign in fails, show the form and an error message
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -172,6 +183,11 @@ public class LoginActivity extends AuthenticationBaseActivity {
         // when trying to close the app
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private void joinDocument() {
+        finish();
+        startActivity(joinIntent);
     }
 
     /**
