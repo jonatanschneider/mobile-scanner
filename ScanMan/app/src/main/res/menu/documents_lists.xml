@@ -26,5 +26,9 @@
         android:id="@+id/action_settings"
         app:showAsAction="never"
         android:title="@string/settings"/>
+    <item
+        android:id="@+id/logou"
+        app:showAsAction="never"
+        android:title="@string/logout"/>
 
 </menu>
