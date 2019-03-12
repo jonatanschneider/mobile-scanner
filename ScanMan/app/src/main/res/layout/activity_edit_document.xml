@@ -29,7 +29,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
 
     <EditText
         android:id="@+id/title_edit"
@@ -42,7 +43,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
 
     <TextView
         android:id="@+id/tags_text"
@@ -53,7 +55,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="75dp"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
 
     <EditText
         android:id="@+id/tags_edit"
@@ -66,7 +69,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="95dp"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/grid_view"
