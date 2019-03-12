@@ -323,8 +323,13 @@ public class EditDocumentActivity extends AppCompatActivity {
         Document document = new Document();
         Date date = new Date();
         document.setCreatedAt(date.getTime());
-        String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
-        document.setName(defaultName);
+        if (title.getText().toString().length() == 0) {
+            String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
+            document.setName(defaultName);
+        } else {
+            document.setName(title.getText().toString());
+        }
+        document.setTags(Arrays.asList(tags.getText().toString().split("\\s")));
         document.setImages(buildImages());
         return document;
     }
