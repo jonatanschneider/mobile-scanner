@@ -484,7 +484,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     private void noPicturesMessage(String location) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(location);
-        builder.setMessage("nicht möglich, da sie noch keine Bilder hinzugefügt haben.");
+        builder.setMessage(getString(R.string.no_pictures));
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
         builder.show();
     }
