@@ -93,26 +93,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                 imageNr = position;
                 Uri uri = imagesList.get(position);
 
-                if (uri.getScheme().equals("file")) {
-                    CropImage.activity(uri).start(this);
-                }
-                else {
-                    Intent i = new Intent(this, ViewImageActivity.class);
-                    i.setData(uri);
-                    startActivity(i);
-                    /*Activity activity = this;
-                    GlideApp.with(this)
-                            .asFile()
-                            .load(FirebaseDatabase.toStorageReference(uri))
-                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                            .into(new SimpleTarget<File>() {
-                                @Override
-                                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                                    //TODO Start Activity to View Image
-                                    CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
-                                }
-                            });*/
-                }
+                Intent i = new Intent(this, ViewImageActivity.class);
+                i.setData(uri);
+                startActivity(i);
             }
         });
 

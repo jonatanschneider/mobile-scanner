@@ -1,6 +1,7 @@
 package de.thm.scanman.view.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -31,6 +32,7 @@ import de.thm.scanman.persistence.GlideApp;
 public class ViewImageActivity extends AppCompatActivity implements View.OnTouchListener {
     private ImageView image;
     private Uri uri;
+    private boolean wasEdited = false;
 
     private static final String TAG = "Touch";
     // These matrices will be used to move and zoom image
@@ -62,10 +64,15 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
 
         uri = getIntent().getData();
         image = findViewById(R.id.image);
-        GlideApp.with(this)
-                .load(FirebaseDatabase.toStorageReference(uri))
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(image);
+
+        if (uri.getScheme().equals("file")) {
+            image.setImageURI(uri);
+        } else {
+            GlideApp.with(this)
+                    .load(FirebaseDatabase.toStorageReference(uri))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(image);
+        }
         image.setOnTouchListener(this);
         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -88,16 +95,21 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
                 return true;
             case R.id.action_edit:
                 Activity activity = this;
-                GlideApp.with(this)
-                        .asFile()
-                        .load(FirebaseDatabase.toStorageReference(uri))
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(new SimpleTarget<File>() {
-                            @Override
-                            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                                CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
-                            }
-                        });
+                wasEdited = true;
+                if (uri.getScheme().equals("file")) {
+                    CropImage.activity(uri).start(activity);
+                } else {
+                    GlideApp.with(this)
+                            .asFile()
+                            .load(FirebaseDatabase.toStorageReference(uri))
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                            .into(new SimpleTarget<File>() {
+                                @Override
+                                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                                    CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
+                                }
+                            });
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -197,4 +209,23 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
         point.set(x / 2, y / 2);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (result != null){
+                if (resultCode == RESULT_OK) {
+                    uri = result.getUri();
+                    image.setImageURI(uri);
+                    // image.
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    System.out.println(result.getError());
+                }
+            } else {
+                System.out.println("result is null!");
+            }
+        }
+    }
+
+    //TODO when "wasEdited" update picture in EditDocumentsActivity
 }
