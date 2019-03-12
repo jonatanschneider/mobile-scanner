@@ -91,11 +91,10 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                exitViewImageActivity();
                 return true;
             case R.id.action_edit:
                 Activity activity = this;
-                wasEdited = true;
                 if (uri.getScheme().equals("file")) {
                     CropImage.activity(uri).start(activity);
                 } else {
@@ -208,12 +207,15 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
         float y = event.getY(0) + event.getY(1);
         point.set(x / 2, y / 2);
     }
-
+    /**
+     * Gets an uri from ImageCropper. This uri is null when cropping is canceled
+     * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (result != null){
+                wasEdited = true;
                 if (resultCode == RESULT_OK) {
                     uri = result.getUri();
                     image.setImageURI(uri);
@@ -226,6 +228,18 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
             }
         }
     }
-
-    //TODO when "wasEdited" update picture in EditDocumentsActivity
+    
+    @Override
+    public void onBackPressed() {
+        exitViewImageActivity();
+    }
+    
+    void exitViewImageActivity(){
+        if (wasEdited) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("uri", uri);
+            setResult(Activity.RESULT_OK, resultIntent);
+        }
+        finish();
+    }
 }

@@ -48,6 +48,7 @@ import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
 public class EditDocumentActivity extends AppCompatActivity {
 
+    private static final int EDIT_IMAGE = 1;
     private FloatingActionButton saveFab;
     GridView gridview;
     ImageAdapter ia;
@@ -95,7 +96,7 @@ public class EditDocumentActivity extends AppCompatActivity {
 
                 Intent i = new Intent(this, ViewImageActivity.class);
                 i.setData(uri);
-                startActivity(i);
+                startActivityForResult(i, EDIT_IMAGE);
             }
         });
 
@@ -271,7 +272,21 @@ public class EditDocumentActivity extends AppCompatActivity {
             } else {
                 System.out.println("result is null!");
             }
-        }
+        } else if (requestCode == EDIT_IMAGE&& resultCode == RESULT_OK
+                && data != null && data.getExtras() != null) {
+            Uri resultUri = (Uri) data.getExtras().get("uri");
+            if (document == null) {
+                document = buildDocument();
+            }
+            if (imageNr == DEFAULT_IMAGE_NR){               // add new image
+                imagesList.add(resultUri);
+                document.setImages(buildImages());
+            } else {                                        // update existing image
+                imagesList.update(imageNr, resultUri);
+                document.getImages().get(imageNr).setFile(resultUri.toString());
+            }
+            ia.notifyDataSetChanged(); // updates the adapter
+        } else System.out.println("Wrong result in EditDocumentActivity");
         firstVisit = false;
     }
 
