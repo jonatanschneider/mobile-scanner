@@ -80,27 +80,32 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             String documentID = intent.getStringExtra("documentID");
             // stop process when document is already added this session
             if (documentIDs.contains(documentID)) return;
-            documentIDs.add(documentID);
-            if (ownerID.equals(FirebaseAuth.getInstance().getUid())) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Sie sind bereits der Besitzer des Dokumentes");
-                builder.setNegativeButton(R.string.cancel, (dialog, which) -> { });
-                builder.show();
-                return;
-            }
-            Document doc = new Document();
-            doc.setOwnerId(ownerID);
-            doc.setId(documentID);
-            if (user != null) {
-                if (user.getSharedDocuments().stream().noneMatch(d -> d.getId().equals(documentID))) {
-                    Toast success = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_SHORT);
-                    Toast fail = Toast.makeText(this, R.string.already_joined_document, Toast.LENGTH_SHORT);
-                    documentDAO.addSharedDocument(doc, Optional.of(success), Optional.of(fail));
-                }
+
+            if (userIsOwner(documentID)) {
+                Toast.makeText(this, "Sie sind bereits der Besitzer des Dokumentes", Toast.LENGTH_LONG).show();
+            } else if (userHasAccess(documentID)) {
+                Toast.makeText(this, "Sie haben bereits Zugriff auf dieses Dokument", Toast.LENGTH_LONG).show();
+            } else {
+                documentIDs.add(documentID);
+                Document doc = new Document();
+                doc.setOwnerId(ownerID);
+                doc.setId(documentID);
+                Toast success = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_LONG);
+                Toast fail = Toast.makeText(this, R.string.already_joined_document, Toast.LENGTH_LONG);
+                documentDAO.addSharedDocument(doc, Optional.of(success), Optional.of(fail));
+
             }
         }
     }
+
+    private boolean userIsOwner(String documentID) {
+        return user.getCreatedDocuments().stream().anyMatch(doc -> doc.getId().equals(documentID));
+    }
+
+    private boolean userHasAccess(String documentID) {
+        return user.getSharedDocuments().stream().anyMatch(doc -> doc.getId().equals(documentID));
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
