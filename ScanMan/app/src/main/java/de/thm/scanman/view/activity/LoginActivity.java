@@ -71,7 +71,7 @@ public class LoginActivity extends AuthenticationBaseActivity {
             joinIntent.putExtra("documentID", documentID);
 
             // Start Intent or let user login first
-            if (getAuth().getCurrentUser() != null) startActivity(joinIntent);
+            if (getAuth().getCurrentUser() != null) joinDocument();
             else {
                 setupView();
                 joinDocument = true;
@@ -171,6 +171,7 @@ public class LoginActivity extends AuthenticationBaseActivity {
                         // Sign in success, start main activity
                         if (joinDocument) joinDocument();
                         else startMainActivity();
+                        finish();
                     } else {
                         // If sign in fails, show the form and an error message
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -198,8 +199,8 @@ public class LoginActivity extends AuthenticationBaseActivity {
     }
 
     private void joinDocument() {
-        finish();
         startActivity(joinIntent);
+        finish();
     }
 
     /**
