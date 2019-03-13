@@ -78,12 +78,18 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             case R.id.action_stats:
                 new StatsTask(this).execute(user);
                 return true;
-            case R.id.action_settings:
-                Intent i = new Intent(this, SettingsActivity.class);
-                startActivity(i);
+            case R.id.logout:
+                logout();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**
