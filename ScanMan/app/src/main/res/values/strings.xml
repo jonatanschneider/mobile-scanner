@@ -58,10 +58,10 @@
     <string name="number_of_images">Anzahl an Aufnahmen</string>
     <string name="ok">OK</string>
     <string name="count_with_bytes">%1$d (%2$s)</string>
-    <string name="number_of_created_documents">Anzahl erstellter Dokumente</string>
-    <string name="number_of_shared_documents">Anzahl geteilter Dokumente</string>
-    <string name="number_of_documents_shared_with_user">Anzahl mit mir geteilter Dokumente</string>
-    <string name="number_of_all_documents">Gesamtzahl an Dokumenten</string>
+    <string name="count_of_created_documents">Anzahl erstellter Dokumente</string>
+    <string name="count_of_documents_shared_with_others">Anzahl geteilter Dokumente</string>
+    <string name="count_of_shared_documents">Anzahl mit mir geteilter Dokumente</string>
+    <string name="count_of_all_documents">Gesamtzahl an Dokumenten</string>
     <string name="added_new_document">Dokument hinzugefügt</string>
     <string name="already_joined_document">Sie sind dem Dokument bereits beigetreten</string>
     <string name="please_log_in">Bitte einloggen</string>
