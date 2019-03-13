@@ -32,12 +32,19 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.apache.commons.io.FileUtils;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
+import de.thm.scanman.model.DocumentStats;
+import de.thm.scanman.model.User;
+import de.thm.scanman.persistence.UserDAO;
+import de.thm.scanman.util.DocumentArrayAdapter;
+import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
@@ -273,6 +280,9 @@ public class ViewPagerItemFragment extends Fragment {
         };
     }
 
+    /**
+     * Shows a dialog with document related stats
+     */
     private class DocumentStatsTask extends AsyncTask<Document, Void, DocumentStats> {
         private Context context;
 
@@ -289,29 +299,25 @@ public class ViewPagerItemFragment extends Fragment {
         @Override
         protected void onPostExecute(DocumentStats stats) {
 
-            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
-            dialogB.setView(R.layout.dialog_document_stats);
-            dialogB.setTitle(stats.getDocument().getName());
-            dialogB.setNeutralButton(R.string.stats_close, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(R.layout.dialog_document_stats);
+            builder.setTitle(stats.getDocument().getName());
+            builder.setNeutralButton(R.string.stats_close, null);
 
-            AlertDialog dialog = dialogB.create();
+            AlertDialog dialog = builder.create();
             dialog.show();
 
             TextView creationDate = dialog.findViewById(R.id.created_at);
             TextView lastUpdateDate = dialog.findViewById(R.id.last_update_at);
             TextView numberOfUsers = dialog.findViewById(R.id.number_of_users);
             TextView numberOfImages = dialog.findViewById(R.id.number_of_images);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-
-            creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
-            long lastUpdate = stats.getDocument().getLastUpdateAt();
-            if (lastUpdate == 0) lastUpdateDate.setText("-");
-            else lastUpdateDate.setText(dateFormat.format(new Date(lastUpdate)));
+            creationDate.setText(stats.creationDate());
+            lastUpdateDate.setText(stats.lastUpdateDate());
+            // String concatenation because otherwise the number would be interpreted as resource id
             numberOfUsers.setText("" + stats.numberOfUsers());
-            String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
-
-            numberOfImages.setText(getResources().getString(R.string.count_with_bytes, stats.numberOfImages(), size));
+            numberOfImages.setText(getResources().getString(
+                    R.string.count_with_bytes, stats.numberOfImages(), stats.documentSize()));
 
 
         }
