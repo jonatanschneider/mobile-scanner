@@ -63,7 +63,6 @@ public class EditDocumentActivity extends AppCompatActivity {
     private Document document;
 
     public static final String FIRST_VISIT = "FirstVisit";
-    private static final int DEFAULT_IMAGE_NR = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,13 +257,10 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (document == null) {
                         document = buildDocument();
                     }
-                    if (imageNr == DEFAULT_IMAGE_NR){               // add new image
-                        imagesList.add(resultUri);
-                        document.setImages(buildImages());
-                    } else {                                        // update existing image
-                        imagesList.update(imageNr, resultUri);
-                        document.getImages().get(imageNr).setFile(resultUri.toString());
-                    }
+                    // add new image
+                    imagesList.add(resultUri);
+                    document.setImages(buildImages());
+
                     ia.notifyDataSetChanged(); // updates the adapter
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     System.out.println(result.getError());
@@ -275,16 +271,9 @@ public class EditDocumentActivity extends AppCompatActivity {
         } else if (requestCode == EDIT_IMAGE&& resultCode == RESULT_OK
                 && data != null && data.getExtras() != null) {
             Uri resultUri = (Uri) data.getExtras().get("uri");
-            if (document == null) {
-                document = buildDocument();
-            }
-            if (imageNr == DEFAULT_IMAGE_NR){               // add new image
-                imagesList.add(resultUri);
-                document.setImages(buildImages());
-            } else {                                        // update existing image
-                imagesList.update(imageNr, resultUri);
-                document.getImages().get(imageNr).setFile(resultUri.toString());
-            }
+            // update existing image
+            imagesList.update(imageNr, resultUri);
+            document.getImages().get(imageNr).setFile(resultUri.toString());
             ia.notifyDataSetChanged(); // updates the adapter
         } else System.out.println("Wrong result in EditDocumentActivity");
         firstVisit = false;
@@ -352,7 +341,6 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
     
     private void shootNewImage() {
-        imageNr = DEFAULT_IMAGE_NR;   // -> adds image in onActivityResult
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
