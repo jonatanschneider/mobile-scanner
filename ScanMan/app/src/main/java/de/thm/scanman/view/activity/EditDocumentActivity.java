@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.GridView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -24,6 +25,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +62,9 @@ public class EditDocumentActivity extends AppCompatActivity {
     private boolean firstVisit;
     private boolean editDocument = false;
     private Document document;
+
+    private EditText title;
+    private EditText tags;
 
     public static final String FIRST_VISIT = "FirstVisit";
     private static final int DEFAULT_IMAGE_NR = -1;
@@ -113,6 +118,9 @@ public class EditDocumentActivity extends AppCompatActivity {
             }
         });
 
+        title = findViewById(R.id.title_edit);
+        tags = findViewById(R.id.tags_edit);
+
         Uri data = getIntent().getData();
         if (data != null && data.toString().equals(FIRST_VISIT)) {
             firstVisit = true;
@@ -125,6 +133,8 @@ public class EditDocumentActivity extends AppCompatActivity {
             editDocument = true;
             liveData.observeForever(doc -> {
                 document = doc;
+                title.setText(doc.getName());
+                tags.setText(doc.getTags().stream().reduce((a, b) -> a + " " + b).orElse(""));
                 document.getImages().forEach(image -> {
                     StorageReference reference = FirebaseDatabase.toStorageReference(Uri.parse(image.getFile()));
                     imagesList.add(Uri.parse(reference.toString()));
@@ -296,6 +306,8 @@ public class EditDocumentActivity extends AppCompatActivity {
 
     private void saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
+        document.setName(title.getText().toString());
+        document.setTags(Arrays.asList(tags.getText().toString().split("\\s")));
         if (editDocument) {
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
@@ -311,8 +323,13 @@ public class EditDocumentActivity extends AppCompatActivity {
         Document document = new Document();
         Date date = new Date();
         document.setCreatedAt(date.getTime());
-        String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
-        document.setName(defaultName);
+        if (title.getText().toString().length() == 0) {
+            String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
+            document.setName(defaultName);
+        } else {
+            document.setName(title.getText().toString());
+        }
+        document.setTags(Arrays.asList(tags.getText().toString().split("\\s")));
         document.setImages(buildImages());
         return document;
     }

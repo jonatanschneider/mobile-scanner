@@ -38,11 +38,16 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="saveDocuments">Dokument speichern?</string>
+    <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>
     <string name="delete">Löschen</string>
     <string name="delete_image">Bild löschen?</string>
     <string name="delete_images">%1$d Bilder löschen?</string>
     <string name="selected">ausgewählt</string>
+    <string name="title">Titel</string>
+    <string name="tags">Tags</string>
+    <string name="title_hint">Titel für das Dokument</string>
+    <string name="tags_hint">Durch Leerzeichen getrennte Schlagworte</string>
     <!-- Stats -->
     <string name="stats_title">Statistik</string>
     <string name="stats_close">Schließen</string>
@@ -57,5 +62,4 @@
     <string name="count_of_documents_shared_with_others">Anzahl geteilter Dokumente</string>
     <string name="count_of_shared_documents">Anzahl mit mir geteilter Dokumente</string>
     <string name="count_of_all_documents">Gesamtzahl an Dokumenten</string>
-
 </resources>
