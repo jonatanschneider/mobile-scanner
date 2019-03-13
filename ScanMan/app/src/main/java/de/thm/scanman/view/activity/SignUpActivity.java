@@ -13,6 +13,19 @@ import de.thm.scanman.R;
 import de.thm.scanman.model.User;
 import de.thm.scanman.persistence.FirebaseDatabase;
 
+/**
+ * Activity allowing the user to create an account (sign up process)
+ * <br>
+ * Asks for
+ * <ul>
+ *     <li>name</li>
+ *     <li>email</li>
+ *     <li>password</li>
+ * </ul>
+ * Uses validation and view utilities of the {@link AuthenticationBaseActivity}.
+ *
+ * @see AuthenticationBaseActivity
+ */
 public class SignUpActivity extends AuthenticationBaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
     private EditText emailView;
@@ -31,12 +44,16 @@ public class SignUpActivity extends AuthenticationBaseActivity {
         setupView();
     }
 
+    /**
+     * Init the content view by referencing views and setting up interaction listeners
+     */
     private void setupView() {
         emailView = findViewById(R.id.email);
         nameView = findViewById(R.id.name);
 
         passwordView = findViewById(R.id.password);
         repeatPasswordView = findViewById(R.id.repeat_password);
+        // Attempt sign up when the user triggers the next / done keyboard event in the last input
         repeatPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                 attemptSignUp();
@@ -52,6 +69,11 @@ public class SignUpActivity extends AuthenticationBaseActivity {
         progressView = findViewById(R.id.sign_up_progress);
     }
 
+    /**
+     * Attempts to sign up the account specified by the sign up form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual sign up attempt is made.
+     */
     private void attemptSignUp() {
         // Reset errors
         emailView.setError(null);
@@ -101,17 +123,31 @@ public class SignUpActivity extends AuthenticationBaseActivity {
         }
     }
 
+    /**
+     * Checks if the passed string is a valid name
+     * @param name
+     * @return <code>true</code> if name is a non empty string; <code>false</code> otherwise
+     */
     private boolean isNameValid(String name) {
         return !TextUtils.isEmpty(name);
     }
 
+    /**
+     * Checks if the repeat password is valid
+     * @param password
+     * @param repeatPassword
+     * @return <code>true</code> if the repeat password equals the password; <code>false</code> otherwise
+     */
     private boolean isRepeatPasswordValid(String password, String repeatPassword) {
         return repeatPassword.equals(password);
     }
 
     /**
-     * Actually make the sign up request based on the credentials validated before and adjust the ui
+     * Actually makes the sign up request based on the credentials validated before and adjust the ui
      * accordingly
+     * @param email
+     * @param name
+     * @param password
      */
     private void makeSignUp(String email, String name, String password) {
         // Show a progress spinner, and kick off a background task to
@@ -129,8 +165,11 @@ public class SignUpActivity extends AuthenticationBaseActivity {
                         user.setId(getAuth().getCurrentUser().getUid());
                         user.setName(name);
                         user.setMail(email);
+
+                        // Add the created user to the users node in the database
                         FirebaseDatabase.userDAO.add(user);
 
+                        // Navigate to the main activity
                         startMainActivity();
                     } else {
                         // If sign in fails, display a message to the user.
