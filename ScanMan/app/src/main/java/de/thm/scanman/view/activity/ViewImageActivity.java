@@ -74,8 +74,12 @@ public class ViewImageActivity extends AppCompatActivity implements View.OnTouch
                     .into(image);
         }
         image.setOnTouchListener(this);
-        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         firstTouch = true;
     }
 
