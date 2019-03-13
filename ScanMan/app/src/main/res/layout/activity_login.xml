@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".view.activity.LoginActivity">
@@ -51,41 +50,34 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColorHint="#FFF">
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/edittext_light"
                         android:hint="@string/prompt_email"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="#FFF" />
+                        android:singleLine="true" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:textColorHint="#FFF">
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/edittext_light"
                         android:hint="@string/prompt_password"
                         android:imeActionId="6"
                         android:imeActionLabel="@string/action_login"
                         android:imeOptions="actionUnspecified"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="#FFF" />
+                        android:singleLine="true" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -104,8 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/action_no_account_yet"
-                    android:textAlignment="center"
-                    android:textColor="#FFF" />
+                    android:textAlignment="center" />
 
             </LinearLayout>
         </LinearLayout>
