@@ -94,14 +94,17 @@ public class DocumentDAO {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) return;
+                if (dataSnapshot.exists()) {
+                    failToast.ifPresent(Toast::show);
+                    return;
+                }
                 reference.setValue(document);
                 successToast.ifPresent(Toast::show);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                failToast.ifPresent(Toast::show);
+
             }
         });
     }
