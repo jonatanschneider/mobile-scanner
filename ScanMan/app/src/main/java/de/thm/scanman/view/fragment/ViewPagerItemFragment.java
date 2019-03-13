@@ -14,8 +14,6 @@ import de.thm.scanman.R;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.model.DocumentStats;
 import de.thm.scanman.model.User;
-import de.thm.scanman.persistence.DocumentDAO;
-import de.thm.scanman.persistence.FirebaseDatabase;
 import de.thm.scanman.persistence.UserDAO;
 import de.thm.scanman.util.DocumentArrayAdapter;
 import de.thm.scanman.view.activity.EditDocumentActivity;
@@ -34,28 +32,53 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.apache.commons.io.FileUtils;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
+import de.thm.scanman.model.DocumentStats;
+import de.thm.scanman.model.User;
+import de.thm.scanman.persistence.UserDAO;
+import de.thm.scanman.util.DocumentArrayAdapter;
+import de.thm.scanman.view.activity.EditDocumentActivity;
 
 import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 
+/**
+ * Fragment that represents a tab of the TabLayout from
+ * {@link de.thm.scanman.view.activity.DocumentsListsActivity}.
+ */
 public class ViewPagerItemFragment extends Fragment {
-    private static final String PAGE_INDEX = "PAGE_INDEX";
-
+    /**
+     * The number which indicates the tab/page.
+     */
     private int page;
 
     private ListView documentsListView;
     private TextView documentListEmpty;
     private DocumentArrayAdapter adapter;
     private UserDAO userDAO;
+
+    /**
+     * List of all documents consisting of the documents created by the user
+     * and shared with the user by other users.
+     */
     private List<Document> allDocuments;
+
+    /**
+     * List of the documents created by the user.
+     */
     private List<Document> createdDocuments;
+
+    /**
+     * List of the documents shared with the user by other users.
+     */
     private List<Document> sharedDocuments;
 
     public ViewPagerItemFragment(){}
@@ -63,8 +86,11 @@ public class ViewPagerItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.page = getArguments().getInt("idx");
+        // get the arguments supplied when the fragment was instantiated
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            // initialize variable page with the value associated with the key "idx"
+            this.page = bundle.getInt("idx");
         } else {
             Log.d("TAG", "Error: no arguments!");
         }
@@ -89,6 +115,7 @@ public class ViewPagerItemFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (adapter != null) {
+                    // filter by input newText
                     adapter.getFilter().filter(newText);
                 }
                 return true;
@@ -115,15 +142,18 @@ public class ViewPagerItemFragment extends Fragment {
 
         userLiveData.observe(this,
                 user -> {
+                    // adapter setup depending on the tab
                     switch (page) {
                         case 0:
                             allDocuments = new ArrayList<>();   // without new creation here it does not work!
                             allDocuments.addAll(user.getCreatedDocuments());
                             allDocuments.addAll(user.getSharedDocuments());
                             if (adapter == null) {
+                                // init allDocuments list
                                 adapter = new DocumentArrayAdapter(getContext(), allDocuments);
                                 documentsListView.setAdapter(adapter);
                             } else {
+                                // update allDocuments list
                                 adapter.clear();
                                 adapter.addAll(allDocuments);
                             }
@@ -132,9 +162,11 @@ public class ViewPagerItemFragment extends Fragment {
                             createdDocuments = new ArrayList<>();   // without new creation here it does not work!
                             createdDocuments.addAll(user.getCreatedDocuments());
                             if (adapter == null) {
+                                // init createdDocuments list
                                 adapter = new DocumentArrayAdapter(getContext(), createdDocuments);
                                 documentsListView.setAdapter(adapter);
                             } else {
+                                // update createdDocuments list
                                 adapter.clear();
                                 adapter.addAll(createdDocuments);
                             }
@@ -143,9 +175,11 @@ public class ViewPagerItemFragment extends Fragment {
                             sharedDocuments = new ArrayList<>();    // without new creation here it does not work!
                             sharedDocuments.addAll(user.getSharedDocuments());
                             if (adapter == null) {
+                                // init sharedDocuments list
                                 adapter = new DocumentArrayAdapter(getContext(), sharedDocuments);
                                 documentsListView.setAdapter(adapter);
                             } else {
+                                // update sharedDocuments list
                                 adapter.clear();
                                 adapter.addAll(sharedDocuments);
                             }
@@ -215,6 +249,7 @@ public class ViewPagerItemFragment extends Fragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_delete:
+                        // show AlertDialog to confirm deletion
                         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
                         builder.setTitle(R.string.delete);
                         if (selectedDocuments.size() == 1) {
@@ -245,6 +280,9 @@ public class ViewPagerItemFragment extends Fragment {
         };
     }
 
+    /**
+     * Shows a dialog with document related stats
+     */
     private class DocumentStatsTask extends AsyncTask<Document, Void, DocumentStats> {
         private Context context;
 
@@ -261,29 +299,25 @@ public class ViewPagerItemFragment extends Fragment {
         @Override
         protected void onPostExecute(DocumentStats stats) {
 
-            AlertDialog.Builder dialogB = new AlertDialog.Builder(context);
-            dialogB.setView(R.layout.dialog_document_stats);
-            dialogB.setTitle(stats.getDocument().getName());
-            dialogB.setNeutralButton(R.string.stats_close, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(R.layout.dialog_document_stats);
+            builder.setTitle(stats.getDocument().getName());
+            builder.setNeutralButton(R.string.stats_close, null);
 
-            AlertDialog dialog = dialogB.create();
+            AlertDialog dialog = builder.create();
             dialog.show();
 
             TextView creationDate = dialog.findViewById(R.id.created_at);
             TextView lastUpdateDate = dialog.findViewById(R.id.last_update_at);
             TextView numberOfUsers = dialog.findViewById(R.id.number_of_users);
             TextView numberOfImages = dialog.findViewById(R.id.number_of_images);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-
-            creationDate.setText(dateFormat.format(new Date(stats.getDocument().getCreatedAt())));
-            long lastUpdate = stats.getDocument().getLastUpdateAt();
-            if (lastUpdate == 0) lastUpdateDate.setText("-");
-            else lastUpdateDate.setText(dateFormat.format(new Date(lastUpdate)));
+            creationDate.setText(stats.creationDate());
+            lastUpdateDate.setText(stats.lastUpdateDate());
+            // String concatenation because otherwise the number would be interpreted as resource id
             numberOfUsers.setText("" + stats.numberOfUsers());
-            String size = FileUtils.byteCountToDisplaySize(stats.getDocument().getSize());
-
-            numberOfImages.setText(getResources().getString(R.string.count_with_bytes, stats.numberOfImages(), size));
+            numberOfImages.setText(getResources().getString(
+                    R.string.count_with_bytes, stats.numberOfImages(), stats.documentSize()));
 
 
         }
