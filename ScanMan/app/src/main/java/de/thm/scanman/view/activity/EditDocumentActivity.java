@@ -196,11 +196,11 @@ public class EditDocumentActivity extends AppCompatActivity {
                             builder.setMessage(getResources().getString(R.string.delete_images, selectedImages.size()));
                         }
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                            madeChanges = true;
                             selectedImages.forEach(image -> {
                                 imagesList.remove(Uri.parse(image.getFile()));
                                 document.getImages().remove(image);
                             });
-                            madeChanges = true;
                             ia.notifyDataSetChanged();
                         });
                         builder.setNeutralButton(R.string.cancel, null);
@@ -334,6 +334,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             ia.notifyDataSetChanged(); // updates the adapter
             madeChanges = true;
         } else System.out.println("Wrong result in EditDocumentActivity");
+        imageNr = DEFAULT_IMAGE_NR;
         firstVisit = false;
     }
 
