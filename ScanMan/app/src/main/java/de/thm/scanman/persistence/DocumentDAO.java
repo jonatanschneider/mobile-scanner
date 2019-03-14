@@ -1,19 +1,24 @@
 package de.thm.scanman.persistence;
 
 import android.net.Uri;
-
-import androidx.lifecycle.LiveData;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import de.thm.scanman.model.Document;
 import de.thm.scanman.persistence.liveData.DocumentListLiveData;
 import de.thm.scanman.persistence.liveData.DocumentLiveData;
@@ -76,14 +81,40 @@ public class DocumentDAO {
 
 
     /**
-     * Add document into the sharedDocuments node
+     * Add document into the sharedDocuments node and shows success toast if set
      *
+     * @param document
+     * @param successToast Show toast on success
+     * @param failToast Show toast on fail
+     */
+    public void addSharedDocument(Document document, Optional<Toast> successToast, Optional<Toast> failToast) {
+        if (userId.equals(document.getOwnerId())) return;
+        if (document.getId() == null || document.getId().equals("")) return;
+        DatabaseReference reference = FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    failToast.ifPresent(Toast::show);
+                    return;
+                }
+                reference.setValue(document);
+                successToast.ifPresent(Toast::show);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * Add document into the sharedDocuments node
      * @param document
      */
     public void addSharedDocument(Document document) {
-        if (userId.equals(document.getOwnerId())) return;
-        if (document.getId() == null || document.getId().equals("")) return;
-        FirebaseDatabase.sharedDocsRef.child(userId).child(document.getId()).setValue(document);
+        addSharedDocument(document, Optional.empty(), Optional.empty());
     }
 
     /**

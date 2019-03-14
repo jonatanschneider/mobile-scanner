@@ -1,13 +1,17 @@
 package de.thm.scanman.view.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.List;
 
 import de.thm.scanman.R;
 
@@ -32,6 +36,8 @@ public class LoginActivity extends AuthenticationBaseActivity {
     private View loginFormView;
 
     private View signUpLink;
+    private boolean joinDocument = false;
+    private Intent joinIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +45,41 @@ public class LoginActivity extends AuthenticationBaseActivity {
         setContentView(R.layout.activity_login);
 
         startMainActivityIfAlreadyLoggedIn();
-
         setupView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent caller = getIntent();
+        if (caller != null) {
+            Uri data = caller.getData();
+            if (data != null && data.toString().contains("http://de.thm.scanman")) handleJoinIntent(data);
+        }
+    }
+
+    /**
+     * If the app is started with a link starting with "http://de.thm.scanman" this method extracts
+     * the ownerID and the documentID from the link and handles starting {}
+     */
+    private void handleJoinIntent(Uri data) {
+            List<String> params = data.getPathSegments();
+            if (params.size() != 2) return;     // stop process when data is not valid
+
+            String ownerID = params.get(0);
+            String documentID = params.get(1);
+            joinIntent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
+            joinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            joinIntent.putExtra("ownerID", ownerID);
+            joinIntent.putExtra("documentID", documentID);
+
+            // Start Intent or let user login first
+            if (getAuth().getCurrentUser() != null) joinDocument();
+            else {
+                setupView();
+                joinDocument = true;
+            }
     }
 
     /**
@@ -134,7 +173,9 @@ public class LoginActivity extends AuthenticationBaseActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, start main activity
-                        startMainActivity();
+                        if (joinDocument) joinDocument();
+                        else startMainActivity();
+                        finish();
                     } else {
                         // If sign in fails, show the form and an error message
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -143,6 +184,27 @@ public class LoginActivity extends AuthenticationBaseActivity {
                         showProgress(loginFormView, progressView, false);
                     }
                 });
+    }
+
+    protected boolean isEmailValid(String email) {
+        return !TextUtils.isEmpty(email) && email.contains("@");
+    }
+
+    protected boolean isPasswordValid(String password) {
+        return !TextUtils.isEmpty(password);
+    }
+
+    protected void startMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
+        // Create no backstack history so a logged in user doesn't get back to the login screen
+        // when trying to close the app
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void joinDocument() {
+        startActivity(joinIntent);
+        finish();
     }
 
     /**

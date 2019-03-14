@@ -9,10 +9,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -21,10 +26,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import de.thm.scanman.R;
+import de.thm.scanman.model.Document;
 import de.thm.scanman.model.UserStats;
 import de.thm.scanman.model.User;
 import de.thm.scanman.view.fragment.ViewPagerItemFragment;
 
+import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
 import static de.thm.scanman.persistence.FirebaseDatabase.userDAO;
 
 /**
@@ -36,6 +43,8 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
     private ViewPager viewPager;
     private FloatingActionButton addFab;
     private User user;
+    private Set<String> documentIDs = new HashSet<>();
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +59,52 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
 
         addFab = findViewById(R.id.add_fab);
         addFab.setOnClickListener(
-            view -> {
-                Intent i = new Intent(this, EditDocumentActivity.class);
-                i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
-                startActivity(i);
-            });
+                view -> {
+                    Intent i = new Intent(this, EditDocumentActivity.class);
+                    i.setData(Uri.parse(String.valueOf(EditDocumentActivity.FIRST_VISIT)));
+                    startActivity(i);
+                });
 
-        userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> user = u);
+        intent = getIntent();
+        userDAO.get(FirebaseAuth.getInstance().getUid()).observe(this, u -> {
+            user = u;
+            handleIntent();
+        });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    /**
+     * This methods handle the import of a shared document. The intent contains owner and
+     * documentID. A Document build with this information is added to the sharedDocuments of the
+     * logged in user. If the user is the owner he will be alerted. If the user already has this
+     * document in his sharedDocuments he will be also alerted.
+     */
+    private void handleIntent() {
+        if (intent != null && intent.getStringExtra("ownerID") != null) {
+            // Add document to shared documents
+            // Uri data = caller.getParcelableExtra("data");
+            String ownerID = intent.getStringExtra("ownerID");
+            String documentID = intent.getStringExtra("documentID");
+            // stop process when document is already added this session
+            if (documentIDs.contains(documentID)) return;
+            documentIDs.add(documentID);
+
+            if (userIsOwner(documentID)) {
+                Toast.makeText(this, R.string.document_owner, Toast.LENGTH_LONG).show();
+                return;
+            }
+            Document doc = new Document();
+            doc.setOwnerId(ownerID);
+            doc.setId(documentID);
+            Toast success = Toast.makeText(this, R.string.added_new_document, Toast.LENGTH_LONG);
+            Toast fail = Toast.makeText(this, R.string.already_joined_document, Toast.LENGTH_LONG);
+            documentDAO.addSharedDocument(doc, Optional.of(success), Optional.of(fail));
+
+
+        }
+    }
+
+    private boolean userIsOwner(String documentID) {
+        return user.getCreatedDocuments().stream().anyMatch(doc -> doc.getId().equals(documentID));
     }
 
     @Override
