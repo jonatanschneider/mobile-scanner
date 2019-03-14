@@ -80,12 +80,12 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
             String documentID = intent.getStringExtra("documentID");
             // stop process when document is already added this session
             if (documentIDs.contains(documentID)) return;
+            documentIDs.add(documentID);
 
             if (userIsOwner(documentID)) {
                 Toast.makeText(this, R.string.document_owner, Toast.LENGTH_LONG).show();
                 return;
             }
-            documentIDs.add(documentID);
             Document doc = new Document();
             doc.setOwnerId(ownerID);
             doc.setId(documentID);

@@ -91,8 +91,7 @@ public class EditDocumentActivity extends AppCompatActivity {
         saveFab = findViewById(R.id.check_fab);
 
         saveFab.setOnClickListener(v -> {
-            saveDocument();
-            finish();
+            exitDocumentActivity();
         });
 
         gridview = findViewById(R.id.grid_view);
@@ -342,9 +341,9 @@ public class EditDocumentActivity extends AppCompatActivity {
     private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
         if (!madeChanges) return document;
-        document.setName(title.getText().toString());
-        document.setTags(Arrays.asList(tags.getText().toString().split("\\s")));
         if (editDocument) {
+            document.setName(title.getText().toString());
+            document.setTags(Arrays.asList(tags.getText().toString().split("\\s")));
             document.setImages(buildImages());
             document.setLastUpdateAt(new Date().getTime());
             documentDAO.update(document);
@@ -352,20 +351,42 @@ public class EditDocumentActivity extends AppCompatActivity {
         else {
             document = buildDocument();
             documentDAO.addCreatedDocument(document);
+            madeChanges = false;
         }
         return document;
+    }
+
+    private boolean metaDataChanged() {
+        return hasTitleChanged() || hasTagsChanged();
+    }
+
+    private boolean hasTitleChanged() {
+        if (document == null) {
+            return !title.getText().toString().equals("");
+        }
+        return !title.getText().toString().equals(document.getName());
+    }
+
+    private boolean hasTagsChanged() {
+        if (document == null) {
+            return !tags.getText().toString().equals("");
+        }
+        return !Arrays.equals(document.getTags().toArray(), tags.getText().toString().split("\\s"));
+    }
+
+    private String getDocumentTitle() {
+        if (title.getText().toString().length() == 0) {
+            Date date = new Date();
+            return new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
+        }
+        return title.getText().toString();
     }
 
     private Document buildDocument() {
         Document document = new Document();
         Date date = new Date();
         document.setCreatedAt(date.getTime());
-        if (title.getText().toString().length() == 0) {
-            String defaultName = new SimpleDateFormat("yyyy_MM_dd HH:mm").format(date) + " Scanman";
-            document.setName(defaultName);
-        } else {
-            document.setName(title.getText().toString());
-        }
+        document.setName(getDocumentTitle());
         document.setTags(Arrays.asList(tags.getText().toString().split("\\s")));
         document.setImages(buildImages());
         return document;
@@ -388,7 +409,11 @@ public class EditDocumentActivity extends AppCompatActivity {
     }
 
     private void exitDocumentActivity() {
+        if (metaDataChanged()) madeChanges = true;
         if ((firstVisit && imagesList.size() < 1) || !madeChanges) {
+            finish();
+        } else if (!editDocument) {
+            saveDocument();
             finish();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -476,15 +501,15 @@ public class EditDocumentActivity extends AppCompatActivity {
     private void shareDocument() {
         Document doc = saveDocument();
         madeChanges = false;
-        String uid = FirebaseAuth.getInstance().getUid();
+        String ownerId = doc.getOwnerId();
         String documentID = doc.getId();
-        String uri = "http://de.thm.scanman/" + uid + "/" + documentID;
+        String uri = "http://de.thm.scanman/" + ownerId + "/" + documentID;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.your_link);
         builder.setMessage(uri);
         builder.setNeutralButton(R.string.copy_to_clipboard, (dialog, which) -> {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            Uri copyUri = Uri.parse(uriStart + uid + "/" + documentID);
+            Uri copyUri = Uri.parse(uriStart + ownerId + "/" + documentID);
             ClipData clip = ClipData.newUri(getContentResolver(), "URI", copyUri);
             clipboard.setPrimaryClip(clip);
         });
