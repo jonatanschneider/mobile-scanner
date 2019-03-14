@@ -1,8 +1,7 @@
 package de.thm.scanman.view.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,12 +11,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.List;
+
 import de.thm.scanman.R;
 
 /**
- * A login screen that offers login via email/password
+ * Activity allowing the user to login
+ * <br>
+ * Asks for
+ * <ul>
+ *     <li>email</li>
+ *     <li>password</li>
+ * </ul>
+ * Uses validation and view utilities of the {@link AuthenticationBaseActivity}.
+ *
+ * @see AuthenticationBaseActivity
  */
-// TODO: Check whether additional logic can be moved to the superclass.
 public class LoginActivity extends AuthenticationBaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -27,6 +36,8 @@ public class LoginActivity extends AuthenticationBaseActivity {
     private View loginFormView;
 
     private View signUpLink;
+    private boolean joinDocument = false;
+    private Intent joinIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +45,51 @@ public class LoginActivity extends AuthenticationBaseActivity {
         setContentView(R.layout.activity_login);
 
         startMainActivityIfAlreadyLoggedIn();
-
         setupView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent caller = getIntent();
+        if (caller != null) {
+            Uri data = caller.getData();
+            if (data != null && data.toString().contains("http://de.thm.scanman")) handleJoinIntent(data);
+        }
+    }
+
+    /**
+     * If the app is started with a link starting with "http://de.thm.scanman" this method extracts
+     * the ownerID and the documentID from the link and handles starting {}
+     */
+    private void handleJoinIntent(Uri data) {
+            List<String> params = data.getPathSegments();
+            if (params.size() != 2) return;     // stop process when data is not valid
+
+            String ownerID = params.get(0);
+            String documentID = params.get(1);
+            joinIntent = new Intent(LoginActivity.this, DocumentsListsActivity.class);
+            joinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            joinIntent.putExtra("ownerID", ownerID);
+            joinIntent.putExtra("documentID", documentID);
+
+            // Start Intent or let user login first
+            if (getAuth().getCurrentUser() != null) joinDocument();
+            else {
+                setupView();
+                joinDocument = true;
+            }
+    }
+
+    /**
+     * Init the content view by referencing views and setting up interaction listeners
+     */
     private void setupView() {
         emailView = findViewById(R.id.email);
 
         passwordView = findViewById(R.id.password);
+        // Attempt login when the user triggers the next / done keyboard event in the last input
         passwordView.setOnEditorActionListener((textView, id, keyEvent) -> {
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                 attemptLogin();
@@ -72,7 +120,7 @@ public class LoginActivity extends AuthenticationBaseActivity {
     }
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
+     * Attempts to login the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
@@ -110,8 +158,10 @@ public class LoginActivity extends AuthenticationBaseActivity {
     }
 
     /**
-     * Actually make the login request based on the credentials validated before and adjust the ui
+     * Actually makes the login request based on the credentials validated before and adjust the ui
      * accordingly
+     * @param email
+     * @param password
      */
     private void makeLogin(String email, String password) {
         // Show a progress spinner, and kick off a background task to
@@ -123,7 +173,9 @@ public class LoginActivity extends AuthenticationBaseActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, start main activity
-                        startMainActivity();
+                        if (joinDocument) joinDocument();
+                        else startMainActivity();
+                        finish();
                     } else {
                         // If sign in fails, show the form and an error message
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -150,30 +202,14 @@ public class LoginActivity extends AuthenticationBaseActivity {
         startActivity(intent);
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    private void showProgress(final boolean show) {
-        int shortAnimationTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        loginFormView.animate().setDuration(shortAnimationTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        progressView.animate().setDuration(shortAnimationTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
+    private void joinDocument() {
+        startActivity(joinIntent);
+        finish();
     }
+
+    /**
+     * Shows the sign up activity
+     */
     private void startSignUpActivity() {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
