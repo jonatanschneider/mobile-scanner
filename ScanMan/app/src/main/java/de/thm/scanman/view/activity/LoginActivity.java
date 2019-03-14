@@ -59,6 +59,10 @@ public class LoginActivity extends AuthenticationBaseActivity {
         }
     }
 
+    /**
+     * If the app is started with a link starting with "http://de.thm.scanman" this method extracts
+     * the ownerID and the documentID from the link and handles starting {}
+     */
     private void handleJoinIntent(Uri data) {
             List<String> params = data.getPathSegments();
             if (params.size() != 2) return;     // stop process when data is not valid

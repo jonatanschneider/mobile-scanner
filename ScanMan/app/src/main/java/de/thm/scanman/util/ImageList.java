@@ -51,13 +51,18 @@ public class ImageList<E> {
         return index >= 0 && index < size();
     }
 
+    /**
+     * Is used to make a selection of the "addImage" impossible
+     */
     public void hideAddImage() {
         if (!addImageIsHidden) {
             list.remove(addImage);
             addImageIsHidden = true;
         }
     }
-
+    /**
+     * Is used to make a selection of the "addImage" possible
+     */
     public void showAddImage() {
         if (addImageIsHidden) {
             list.add(addImage);

@@ -72,6 +72,12 @@ public class DocumentsListsActivity extends AppCompatActivity implements TabLayo
         });
     }
 
+    /**
+     * This methods handle the import of a shared document. The intent contains owner and
+     * documentID. A Document build with this information is added to the sharedDocuments of the
+     * logged in user. If the user is the owner he will be alerted. If the user already has this
+     * document in his sharedDocuments he will be also alerted.
+     */
     private void handleIntent() {
         if (intent != null && intent.getStringExtra("ownerID") != null) {
             // Add document to shared documents

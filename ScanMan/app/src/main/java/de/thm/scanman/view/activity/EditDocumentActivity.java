@@ -53,7 +53,12 @@ import static de.thm.scanman.persistence.FirebaseDatabase.CREATED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.SHARED_DOCUMENT;
 import static de.thm.scanman.persistence.FirebaseDatabase.addImageRef;
 import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
-
+/**
+ * Activity allows to edit a specific document or to build a new one. This activity is started by
+ * {@link EditDocumentActivity}. If the starting intent contains data which includes a
+ * <code>documentID</code> and a <code>documentType</code> this activity loads all images of the
+ * document.
+ */
 public class EditDocumentActivity extends AppCompatActivity {
 
     private FloatingActionButton saveFab;
@@ -66,9 +71,9 @@ public class EditDocumentActivity extends AppCompatActivity {
     private final String uriStart = "http://de.thm.scanman/";
 
     private int imageNr;
-    private boolean firstVisit;
-    private boolean editDocument = false;
-    private boolean madeChanges = false;
+    private boolean firstVisit;             // used to take a photo at the first start
+    private boolean editDocument = false;   // used to show dialog if document is edited
+    private boolean madeChanges = false;    // used to show dialog if document is edited
     private Document document;
 
     private EditText title;
@@ -159,7 +164,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (firstVisit) {   // There is no "real" image
+        if (firstVisit) {   // There is no "real" image -> take a new one
             shootNewImage();
         }
     }
@@ -174,7 +179,7 @@ public class EditDocumentActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // setMultiChoice Listener
+        // set MultiChoiceListener for deleting
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             List<Uri> selectedImagesUris = new ArrayList<>();
@@ -304,6 +309,9 @@ public class EditDocumentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Resolve result of intents that create or update an image
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -338,6 +346,10 @@ public class EditDocumentActivity extends AppCompatActivity {
         exitDocumentActivity();
     }
 
+    /**
+     * This method is used to initiate a upload of a new document or to initiate the update of an
+     * existing document. In every case it returns the document the user is working with.
+    */
     private Document saveDocument() {
         if (liveData != null) liveData.removeObservers(this);
         if (!madeChanges) return document;
@@ -382,6 +394,9 @@ public class EditDocumentActivity extends AppCompatActivity {
         return title.getText().toString();
     }
 
+    /**
+     * Used to build a new document.
+     */
     private Document buildDocument() {
         Document document = new Document();
         Date date = new Date();
@@ -392,6 +407,9 @@ public class EditDocumentActivity extends AppCompatActivity {
         return document;
     }
 
+    /**
+     * This method is used to convert all new images into a <code>Document.Image</code>
+     */
     private List<Document.Image> buildImages() {
         List<Document.Image> images = new ArrayList<>();
         for(int i = 0; i < imagesList.size(); i++) {
@@ -408,6 +426,10 @@ public class EditDocumentActivity extends AppCompatActivity {
         return images;
     }
 
+    /**
+     * Is called when a user tries to exit this activity. When the user did not changed anything
+     * the activity finish. Otherwise a dialog will appear and aks to save changes.
+     */
     private void exitDocumentActivity() {
         if (metaDataChanged()) madeChanges = true;
         if ((firstVisit && imagesList.size() < 1) || !madeChanges) {
@@ -428,7 +450,10 @@ public class EditDocumentActivity extends AppCompatActivity {
             builder.show();
         }
     }
-    
+
+    /**
+     * Starts an intent to take a photo with "ImageCropper"
+     */
     private void shootNewImage() {
         imageNr = DEFAULT_IMAGE_NR;   // -> adds image in onActivityResult
         CropImage.activity()
@@ -436,6 +461,11 @@ public class EditDocumentActivity extends AppCompatActivity {
                 .start(this);
     }
 
+    /**
+     * SendImageTask is used for the "export" of the images. Returns a List of Uris which is build
+     * out of the the uris in the "imageList". After collecting all uris a intent is started to
+     * work with the images.
+     */
     private class SendImageTask extends AsyncTask<Uri, Void, List<Uri>> {
         private Context context;
         private ArrayList<Uri> uriList = new ArrayList<>();
@@ -492,12 +522,18 @@ public class EditDocumentActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Used to change the file-format  of the images from ".0" to ".jpeg".
+     */
     private File changeExtension(File file, int nr) {
         File renamedFile = new File(file.getParent() + "/" + document.getName() + nr + ".jpeg");
         file.renameTo(renamedFile);
         return renamedFile;
     }
 
+    /**
+     * Starts a intent for "sharing"
+     */
     private void shareDocument() {
         Document doc = saveDocument();
         madeChanges = false;
@@ -523,6 +559,9 @@ public class EditDocumentActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Starts an alert if "sharing" or "export" is not possible because the user added no images.
+     */
     private void noPicturesMessage(String location) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(location);
