@@ -61,6 +61,7 @@ import static de.thm.scanman.persistence.FirebaseDatabase.documentDAO;
  */
 public class EditDocumentActivity extends AppCompatActivity {
 
+    private static final int EDIT_IMAGE = 1;
     private FloatingActionButton saveFab;
     GridView gridview;
     ImageAdapter ia;
@@ -111,23 +112,9 @@ public class EditDocumentActivity extends AppCompatActivity {
                 imageNr = position;
                 Uri uri = imagesList.get(position);
 
-                if (uri.getScheme() != null && uri.getScheme().equals("file")) {
-                    CropImage.activity(uri).start(this);
-                }
-                else {
-                    Activity activity = this;
-                    GlideApp.with(this)
-                            .asFile()
-                            .load(FirebaseDatabase.toStorageReference(uri))
-                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                            .into(new SimpleTarget<File>() {
-                                @Override
-                                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                                    //TODO Start Activity to View Image
-                                    CropImage.activity(Uri.parse(resource.toURI().toString())).start(activity);
-                                }
-                            });
-                }
+                Intent i = new Intent(this, ViewImageActivity.class);
+                i.setData(uri);
+                startActivityForResult(i, EDIT_IMAGE);
             }
         });
 
@@ -322,6 +309,7 @@ public class EditDocumentActivity extends AppCompatActivity {
                     if (document == null) {
                         document = buildDocument();
                     }
+
                     if (imageNr == DEFAULT_IMAGE_NR){               // add new image
                         imagesList.add(resultUri);
                         document.setImages(buildImages());
@@ -337,7 +325,14 @@ public class EditDocumentActivity extends AppCompatActivity {
             } else {
                 System.out.println("result is null!");
             }
-        }
+        } else if (requestCode == EDIT_IMAGE&& resultCode == RESULT_OK
+                && data != null && data.getExtras() != null) {
+            Uri resultUri = (Uri) data.getExtras().get("uri");
+            // update existing image
+            imagesList.update(imageNr, resultUri);
+            document.getImages().get(imageNr).setFile(resultUri.toString());
+            ia.notifyDataSetChanged(); // updates the adapter
+        } else System.out.println("Wrong result in EditDocumentActivity");
         firstVisit = false;
     }
 
@@ -455,7 +450,6 @@ public class EditDocumentActivity extends AppCompatActivity {
      * Starts an intent to take a photo with "ImageCropper"
      */
     private void shootNewImage() {
-        imageNr = DEFAULT_IMAGE_NR;   // -> adds image in onActivityResult
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);

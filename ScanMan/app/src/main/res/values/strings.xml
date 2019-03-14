@@ -73,4 +73,6 @@
     <string name="please_log_in">Bitte einloggen</string>
     <string name="no_pictures">Nicht möglich, da Sie noch keine Bilder hinzugefügt haben.</string>
     <string name="document_owner">Sie sind bereits der Besitzer des Dokumentes</string>
+    <!-- ViewImage -->
+    <string name="editImage">Bild bearbeiten</string>
 </resources>
