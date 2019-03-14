@@ -332,6 +332,7 @@ public class EditDocumentActivity extends AppCompatActivity {
             imagesList.update(imageNr, resultUri);
             document.getImages().get(imageNr).setFile(resultUri.toString());
             ia.notifyDataSetChanged(); // updates the adapter
+            madeChanges = true;
         } else System.out.println("Wrong result in EditDocumentActivity");
         firstVisit = false;
     }
