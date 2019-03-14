@@ -47,15 +47,6 @@ public class ImageList<E> {
         return false;
     }
 
-    public boolean remove(int index) {
-        if (validIndex(index)) return remove(get(index));
-        return false;
-    }
-
-    public boolean isEmpty(){
-        return size() == 0;
-    }
-
     private boolean validIndex(int index){
         return index >= 0 && index < size();
     }
