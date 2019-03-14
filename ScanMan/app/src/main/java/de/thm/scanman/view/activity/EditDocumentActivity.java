@@ -476,15 +476,15 @@ public class EditDocumentActivity extends AppCompatActivity {
     private void shareDocument() {
         Document doc = saveDocument();
         madeChanges = false;
-        String uid = FirebaseAuth.getInstance().getUid();
+        String ownerId = doc.getOwnerId();
         String documentID = doc.getId();
-        String uri = "http://de.thm.scanman/" + uid + "/" + documentID;
+        String uri = "http://de.thm.scanman/" + ownerId + "/" + documentID;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.your_link);
         builder.setMessage(uri);
         builder.setNeutralButton(R.string.copy_to_clipboard, (dialog, which) -> {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            Uri copyUri = Uri.parse(uriStart + uid + "/" + documentID);
+            Uri copyUri = Uri.parse(uriStart + ownerId + "/" + documentID);
             ClipData clip = ClipData.newUri(getContentResolver(), "URI", copyUri);
             clipboard.setPrimaryClip(clip);
         });
