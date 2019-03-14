@@ -19,8 +19,9 @@ public class ImageList<E> {
         list.add(addImage);
     }
 
-    public List<E> getList() {
-        return list;
+    public List<E> getList(boolean withAdd) {
+        if (withAdd) return list;
+        else return list.subList(0, size());
     }
 
     public E get (int index){
@@ -46,26 +47,22 @@ public class ImageList<E> {
         return false;
     }
 
-    public boolean remove(int index) {
-        if (validIndex(index)) return remove(get(index));
-        return false;
-    }
-
-    public boolean isEmpty(){
-        return size() == 0;
-    }
-
     private boolean validIndex(int index){
-        return index >= 0 && index <= size();
+        return index >= 0 && index < size();
     }
 
+    /**
+     * Is used to make a selection of the "addImage" impossible
+     */
     public void hideAddImage() {
         if (!addImageIsHidden) {
             list.remove(addImage);
             addImageIsHidden = true;
         }
     }
-
+    /**
+     * Is used to make a selection of the "addImage" possible
+     */
     public void showAddImage() {
         if (addImageIsHidden) {
             list.add(addImage);

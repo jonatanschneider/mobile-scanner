@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
+import de.thm.scanman.R;
 import de.thm.scanman.persistence.FirebaseDatabase;
 import de.thm.scanman.persistence.GlideApp;
 
@@ -81,6 +82,11 @@ public class ImageAdapter extends BaseAdapter {
         if (!uri.getScheme().equals("file")) {
             GlideApp.with(mContext)
                     .load(FirebaseDatabase.toStorageReference(uri))
+                    .error(
+                            GlideApp
+                                    .with(view.getContext())
+                                    .load(R.drawable.ic_camera_alt_black_24dp)
+                    )
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
         }
